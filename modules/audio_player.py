@@ -21,14 +21,14 @@ class AudioPlayer:
     player.delete()
 
 
-# if __name__ == "__main__":
-#   source = pyglet.media.load('.\\audio\\1s.ogg')
-#   player.queue(source)
-#   player.play()
-#   while(True):
-#     sleep(1)
-#     pyglet.clock.tick()
-#     pyglet.app.platform_event_loop.dispatch_posted_events()
+if __name__ == "__main__":
+  source = pyglet.media.load('../audio/1s.ogg')
+  player.queue(source)
+  player.play()
+  while(True):
+    sleep(1)
+    pyglet.clock.tick()
+    pyglet.app.platform_event_loop.dispatch_posted_events()
 
-#     if player.playing == False:
-#       print("ended")
+    if player.playing == False:
+      print("ended")

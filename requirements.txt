@@ -1,2 +1,6 @@
-opencv-python==4.5.5
+opencv-python==4.5.5.62
 pyglet==1.5.21
+gstreamer-player
+PythonFileLibrary==1.0.1
+PyGObject
+pycairo

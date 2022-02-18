@@ -4,15 +4,23 @@ Project to run lightdream-scripts code on an rpi instead.
 
 
 
+```
+# not sure how many of these are necessary but hey why not
+sudo apt-get install gstreamer1.0-tools gstreamer1.0-pulseaudio \
+  libgirepository1.0-dev libcairo2-dev gir1.2-gstreamer-1.0
+
+# @TODO this doesn't work great but you need all these packages
+pip install -r requirements.txt
+
+# check audio output device and make sure it's not HDMI
 
 
-/**
-might need this on rpi
+```
 
-sudo apt-get install python-gst-1.0 \ 
-                     gir1.2-gstreamer-1.0 \ 
-                     gstreamer1.0-tools \
-                     gir1.2-gst-plugins-base-1.0 \
-                     gstreamer1.0-plugins-good \
-                     gstreamer1.0-plugins-ugly   
-*/
+@TODO features
+
+- make file paths OS-agnostic
+- touchscreen interface that works on rpi
+- send out artnet data
+- calibration settings (order of artnet ip's)
+- modify frame data by combining with other frames
