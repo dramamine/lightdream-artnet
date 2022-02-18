@@ -1,9 +1,11 @@
-from modules.sequence_player import SequencePlayer
+from modules.playlist import Playlist
+from time import sleep
 
-path = "..\\video\\rotate_gradient_red2red_12unis.mp4"
+fps = 40
 
-sp = SequencePlayer(path, False)
+pl = Playlist()
 
 while(True):
-  next(sp.read_frames())
-  
+  pl.tick()
+  # @TODO use precision timer instead of this
+  sleep(1/fps)
