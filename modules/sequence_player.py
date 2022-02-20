@@ -1,23 +1,40 @@
 import cv2
 import os
 
+# all blacks
+nullframe = [[0 for col in range(512)] for row in range(80)]
+
 class SequencePlayer:
   def __init__(self, loop=False):
     self.vid = None
+    self.path = ""
+    self.loop = loop
 
   def play(self, path):
+    self.path = path
     self.vid = cv2.VideoCapture(path)
+
+    # @TODO nice to have but not necessary... maybe verify
+    # these match what we're expecting.
+    # should be 512, ex. len(frame[0]) == 512
     self.width = int(self.vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+    # should be 80, ex. len(frame) == 80
     self.height = int(self.vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    print("{}x{}".format(self.width, self.height))
   
   def read_frames(self):
-    # while not self.vid:
-    #   yield None
+    if not self.vid:
+      print("need 2 play a video before reading frames")
+      return nullframe
 
     ret,frame = self.vid.read()
     if ret:
-      print("a frame")
-      yield frame
+      print( len(frame), len(frame[0]) )
+      return frame
     else:
       print("that was all the frames.")
-      return
+      if (self.loop):
+        self.play(self.path)
+        return self.read_frames()
+      return nullframe
