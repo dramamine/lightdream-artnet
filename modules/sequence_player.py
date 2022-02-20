@@ -30,8 +30,10 @@ class SequencePlayer:
 
     ret,frame = self.vid.read()
     if ret:
-      print( len(frame), len(frame[0]) )
-      return frame
+      # should be 80, 512
+      # print( len(frame), len(frame[0]) )
+      reduced = list(map(lambda row: list(map(lambda x: x[0], row)), frame))
+      return reduced
     else:
       print("that was all the frames.")
       if (self.loop):

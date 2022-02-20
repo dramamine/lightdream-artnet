@@ -29,7 +29,11 @@ class Playlist:
   def start_track(self, track_name):
     print("hello from start track")
 
-    self.ap.play( os.path.join('audio', '{}.ogg'.format(track_name)))
+    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
+    self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
+
+  def test_metronome(self):
+    self.ap.play(os.path.join('audio', 'metronome.wav'))
     self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
 
   # check status of audio; return next LED frame from the sequence
