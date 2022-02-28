@@ -17,6 +17,9 @@ class Playlist:
     self.sp = SequencePlayer()
     self.ap = AudioPlayer()
 
+  def restart(self):
+    self.start_track(self.pick_track())
+
   def __del__(self):
     self.ap.stop()
 
