@@ -29,11 +29,11 @@ class Autoplay:
     random.shuffle(files)
     self.idx = 0
 
-    self.spa = SequencePlayer(loop=False)
+    self.spa = SequencePlayer(loop=True)
     self.spa.play(os.path.join('video', 'autoclips', files[self.idx]))
     self.spa_active = True
 
-    self.spb = SequencePlayer(loop=False)
+    self.spb = SequencePlayer(loop=True)
     self.spb_active = False
 
     self.timer = time.time()

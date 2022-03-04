@@ -1,8 +1,9 @@
 import cv2
 import os
+import numpy as np
 
 # all blacks
-nullframe = [[0 for col in range(512)] for row in range(80)]
+nullframe = np.zeros((30, 512))
 
 class SequencePlayer:
   def __init__(self, loop=False):
@@ -24,7 +25,6 @@ class SequencePlayer:
     self.height = int(self.vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     print(int(self.vid.get(cv2.CAP_PROP_FRAME_COUNT)))
-
     print("{}x{}".format(self.width, self.height))
   
   def read_frames(self):
@@ -33,12 +33,24 @@ class SequencePlayer:
       return nullframe
 
     ret,frame = self.vid.read()
+    # should be 80, 512
+    # print( len(frame), len(frame[0]) )
+    
     if ret:
       self.framecount += 1
-      # should be 80, 512
-      # print( len(frame), len(frame[0]) )
-      reduced = list(map(lambda row: list(map(lambda x: x[0], row)), frame))
-      return reduced
+
+      reduced = []
+      for i in range(5):
+        for j in range(6):
+          reduced.append(list(map(lambda x: x[0], frame[i*16+j] )))
+      # reduced = list(map(lambda row: list(map(lambda x: x[0], row)), frame))
+      
+      # should be 30, 512
+      # print( len(reduced), len(reduced[0]) )
+      data = np.array(reduced, dtype=np.uint8)
+      return data
+
+
     else:
       print("that was all the frames.", ret, self.framecount)
       if (self.loop):
