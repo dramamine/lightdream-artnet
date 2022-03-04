@@ -22,10 +22,16 @@ sudo apt-get install gstreamer1.0-tools gstreamer1.0-pulseaudio \
 
 ```
 
-@TODO features
+Features:
 
-- make file paths OS-agnostic
+- sends out artnet data
+- autoplay mode
+- sequenced audio mode
+- metronome / calibration mode
+- filter system to modify frame data in realtime
+
+@TODO features:
+
 - touchscreen interface that works on rpi
-- send out artnet data
 - calibration settings (order of artnet ip's)
-- modify frame data by combining with other frames
+- respond to keyboard / touchscreen events
