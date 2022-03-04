@@ -2,14 +2,16 @@ import os
 import random
 import time
 from modules.sequence_player import SequencePlayer
+import numpy as np
+# from modules.filters import mixer
 
 # all blacks
-nullframe = [[0 for col in range(512)] for row in range(80)]
+nullframe = np.zeros((30,512))
 
 files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswith('.mp4')]
 
-INTERVAL = 10
-CROSSFADE = 2
+INTERVAL = 50
+CROSSFADE = 5
 
 # mix (float): 0-1, 0 being all A, 1, being all B
 def row_mixer(row_a, row_b, mix):
@@ -27,29 +29,29 @@ class Autoplay:
     random.shuffle(files)
     self.idx = 0
 
-    self.spa = SequencePlayer(loop=True)
+    self.spa = SequencePlayer(loop=False)
     self.spa.play(os.path.join('video', 'autoclips', files[self.idx]))
     self.spa_active = True
 
-    self.spb = SequencePlayer(loop=True)
+    self.spb = SequencePlayer(loop=False)
     self.spb_active = False
 
     self.timer = time.time()
     return self
 
   def crossfade_to_next_track(self):
-    self.idx += 1
+    self.idx = (self.idx+1) % len(files)
 
     if self.idx % 2 == 1:
-      print("need to activate b")
+      # print("need to activate b")
       self.spb.play(os.path.join('video', 'autoclips', files[self.idx]))
       self.spb_active = True
     else:
-      print("need to activate a")
+      # print("need to activate a")
       self.spa.play(os.path.join('video', 'autoclips', files[self.idx]))
       self.spa_active = True
     
-    print("started playing:", files[self.idx])
+   #  print("started playing:", files[self.idx])
     self.timer = time.time()
     pass
 
@@ -63,10 +65,10 @@ class Autoplay:
     if time_since > CROSSFADE:
       # deactivate one of them
       if self.spa_active and self.idx % 2 == 1:
-        print("deactivating a")
+        # print("deactivating a")
         self.spa_active = False
       elif self.spb_active and self.idx % 2 == 0:
-        print("deactivating b")
+        # print("deactivating b")
         self.spb_active = False
 
     if self.spa_active and self.spb_active:
@@ -85,9 +87,3 @@ class Autoplay:
 
     print("Error: neither SequencePlayer was marked as active")
     return nullframe
-
-
-
-if __name__ == "__main__":
-  ap = Autoplay()
-  # ap.get_filelist()

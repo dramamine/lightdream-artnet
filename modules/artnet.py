@@ -36,6 +36,7 @@ brain_positions = [
   [1,0,4,3,2]
 ]
 
+# which brain_position to use? @TODO move to config
 bp = 3
 
 # universes: list of 6 Artnet instances
@@ -45,35 +46,12 @@ def _send_to_brain(universes, channels):
   assert len(channels) == 6
 
   for i in range(6):
-    universes[i].send(bytearray(channels[i]))
+    universes[i].send(bytearray(list(channels[i])))
 
 
 def show(frame):
-  assert len(frame) == 80
+  assert len(frame) == 30
   for i in range(5):
     positions = brain_positions[bp]
     universe_lists_idx = positions[i]
-    _send_to_brain(universe_lists[universe_lists_idx], frame[16*i:16*i+6])
-
-
-
-if __name__ == "__main__":
-  redframe = flatten([[255, 0, 0] for col in range(170)])
-
-  # demo code
-  packet_size = 512
-  packet = bytearray(redframe)		# create packet for Artnet
-  # for i in range(packet_size):			# fill packet with sequential values
-  #     packet[i] = (i % 256)
-
-  for uni in universe_lists[1]:
-    print(uni)
-    uni.send(packet)
-
-  print("shown")
-
-  time.sleep(5)
-
-  for uni in universe_lists[1]:
-    uni.blackout()
-  time.sleep(2)
+    _send_to_brain(universe_lists[universe_lists_idx], frame[6*i:6*i+6])
