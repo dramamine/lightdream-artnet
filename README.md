@@ -32,6 +32,50 @@ Features:
 
 @TODO features:
 
-- touchscreen interface that works on rpi
+### Touchscreen Interface
+
+Milestone 0: debug menu
+- ability to toggle autoplay(DJ mode) vs. sequenced songs mode
+- ability to add song to queue
+  - ex. `audio_player.queue(id: string)`
+- ability to toggle calibration on/off
+  - marten to figure this out
+
+Milestone 1: simple on/off effects
+- call fn's ex. `toggle(id: string, on: boolean)`
+- "mask" style: blobs, nuclear, spiral, radiant lines
+- "replace" style: lightning bolts
+
+Milestone 2: position-based effects
+- call fn's ex. `finger(fingerid: int, action: int (0=on, 1=off, 2=motion), x, y)`
+  - which are part of some finger manager class
+- each effect calls the finger class to ask which fingers are currently touching it
+- "mask" style: rings, wedges
+- "theta" style: colorwheel 
+- complex "mask" style: rainbow spotlight
+
+```python
+class PosEffect:
+  boundingBox = (x, y, w, h)
+  getFingers:
+    return fingerManager(self.boundingBox)
+  
+  getFilters:
+    for fingerpos in self.getFingers():
+    
+    return [] # a list of filters to be applied, marten to figure this out
+
+  translateFingertoRelativeCoordinate(x,y):
+    return (x,y) # x,y between 0-1
+```
+
+Milestone 3: new effects?
+- color inverter
+- turn some auto clips into simple on/off effects
+
+Milestone 4: finalize arrangement
+
+
+
 - calibration settings (order of artnet ip's)
 - respond to keyboard / touchscreen events
