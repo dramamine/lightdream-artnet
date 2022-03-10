@@ -2,6 +2,7 @@ from modules.playlist import Playlist
 from modules.autoplay import Autoplay
 from modules.artnet import show
 from modules.filters import Filters
+# from modules.audio_input import audio_input
 from lib.periodicrun import periodicrun
 from time import time
 
@@ -14,6 +15,7 @@ pl = Playlist()
 ap = Autoplay()
 filters = Filters()
 # pl.test_metronome()
+# audio_input.open_stream()
 
 
 
