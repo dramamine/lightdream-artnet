@@ -5,20 +5,23 @@ import numpy as np
 from numpy.fft import fft, ifft
 import matplotlib.pyplot as plt
 
-p = pyaudio.PyAudio()
-print(p.get_device_count())
+p = None
+stream = None
 
-for i in range(p.get_device_count()):
-    print(p.get_device_info_by_index(i))
 
 CHANNELS = 1
 RATE = 44100
 
-fulldata = np.array([])
-dry_data = np.array([])
+def init():
+    global p
+    p = pyaudio.PyAudio()
+    print(p.get_device_count())
+
+    for i in range(p.get_device_count()):
+        print(p.get_device_info_by_index(i))
 
 def callback(in_data, frame_count, time_info, flag):
-    global b,a,fulldata,dry_data,frames 
+    global b,a,frames 
     audio_data = np.frombuffer(in_data, dtype=np.int8)
     # dry_data = np.append(dry_data,audio_data)
     #do processing here
@@ -41,31 +44,10 @@ def callback(in_data, frame_count, time_info, flag):
     
     return (audio_data, pyaudio.paContinue)
 
-def graph(audio_data):
-    
-    # sampling rate
-    sr = 128
-    # sampling interval
-    ts = 1.0/sr
 
-    N = len(audio_data)
-    n = np.arange(N)
-    T = N/sr
-    freq = n/T
-    print(np.abs(audio_data))
-    
-    t = np.arange(0,1,ts)
-    plt.style.use('seaborn-poster')
-    plt.stem(freq, np.abs(audio_data), 'b', \
-         markerfmt=" ", basefmt="-b")
-    plt.xlabel('Freq (Hz)')
-    plt.ylabel('FFT Amplitude |X(freq)|')
-    plt.xlim(0, 10)
-    # plt.figure(figsize = (8, 6))
-    # plt.plot(t, audio_data, 'r')
-    # plt.show()
 
 def open_stream():
+    global p, stream
     stream = p.open(format=pyaudio.paInt8,
                 channels=CHANNELS,
                 rate=RATE,

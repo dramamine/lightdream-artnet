@@ -3,8 +3,7 @@ from modules.autoplay import Autoplay
 from modules.artnet import show
 from modules.filters import Filters
 
-# from modules.audio_input import audio_input
-from lib.periodicrun import periodicrun
+from modules.alsa_input import get_energy
 
 from util.periodicrun import periodicrun
 from time import time
@@ -18,6 +17,7 @@ pl = Playlist()
 ap = Autoplay()
 filters = Filters()
 # pl.test_metronome()
+# audio_input.init()
 # audio_input.open_stream()
 
 
@@ -30,6 +30,8 @@ def loop():
   frame = filters.apply_filters_numpy(frame)
 
   show(frame)
+  
+  energy = get_energy()
   
 
 def toggle_mode():
