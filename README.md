@@ -54,6 +54,9 @@ Milestone 2: position-based effects
 - "theta" style: colorwheel 
 - complex "mask" style: rainbow spotlight
 
+
+Trying to decide between Format A (treat screen as an object; whole screen listens for touches)
+
 ```python
 class PosEffect:
   boundingBox = (x, y, w, h)
@@ -69,13 +72,33 @@ class PosEffect:
     return (x,y) # x,y between 0-1
 ```
 
+and Format B (treat each effect as an object; each has its own listener / callbacks)
+
+```python
+class PosEffect:
+  boundingBox = (x, y, w, h)
+  draw():
+    pass
+
+  onTouch():
+  
+  onRelease():
+  getFingers()
+  
+  getFilters:
+    for fingerpos in self.getFingers():
+    
+    return [] # a list of filters to be applied, marten to figure this out
+```
+
 Milestone 3: new effects?
 - color inverter
 - turn some auto clips into simple on/off effects
 
 Milestone 4: finalize arrangement
 
+### Other Stuff
 
-
+- DJ mode: use FFT to listen for bass
 - calibration settings (order of artnet ip's)
 - respond to keyboard / touchscreen events

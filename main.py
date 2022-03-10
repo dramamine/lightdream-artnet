@@ -2,8 +2,11 @@ from modules.playlist import Playlist
 from modules.autoplay import Autoplay
 from modules.artnet import show
 from modules.filters import Filters
+
 # from modules.audio_input import audio_input
 from lib.periodicrun import periodicrun
+
+from util.periodicrun import periodicrun
 from time import time
 
 fps = 40
