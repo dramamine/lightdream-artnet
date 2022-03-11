@@ -100,5 +100,10 @@ Milestone 4: finalize arrangement
 ### Other Stuff
 
 - DJ mode: use FFT to listen for bass
+  + "get energy" cmd
+  - create filters based on that energy
 - calibration settings (order of artnet ip's)
+  + it exists
+  - need a way to toggle metronome
 - respond to keyboard / touchscreen events
+- using alsaaudio for input but pyglet for output. is that OK or bad?
