@@ -3,7 +3,7 @@ from modules.autoplay import Autoplay
 from modules.artnet import show
 from modules.filters import Filters
 
-from modules.alsa_input import get_energy
+from modules.alsa_input_mock import get_energy
 
 from util.periodicrun import periodicrun
 from time import time
@@ -23,15 +23,16 @@ filters = Filters()
 
 
 def loop():
-  frame = pl.tick() if mode == "playlist" else ap.tick()
 
-  # show(filters.apply_filters(frame))
-  # filters.apply_filters_inplace(frame)
+  frame = pl.tick() if mode == "playlist" else ap.tick()
+  
+  if mode == "autoplay":
+    # @TODO apply fun filters based on song energy
+    energy = get_energy()
+
   frame = filters.apply_filters_numpy(frame)
 
   show(frame)
-  
-  energy = get_energy()
   
 
 def toggle_mode():
