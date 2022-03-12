@@ -29,7 +29,7 @@ def thread_ender():
   proc.terminate()
   try:
     proc.wait(timeout=0.2)
-    print('== subprocess exited with rc =', proc.returncode)
+    print('== audio input subprocess exited with return code ', proc.returncode)
   except subprocess.TimeoutExpired:
     print('subprocess did not terminate in time')
 

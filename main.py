@@ -70,7 +70,7 @@ def loop_timer():
   #   print(time() - start_time)
 
   loop_time = time() - loop_timer
-  if loop_time > 0.005:
+  if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
 pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy=0.025)
