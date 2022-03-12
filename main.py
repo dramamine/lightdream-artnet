@@ -8,11 +8,8 @@ from util.config import config
 from util.periodicrun import periodicrun
 from time import time
 
-if config['ENV'] == 'prod':
-  from modules.alsa_input import get_energy
-else:
-  from modules.alsa_input_mock import get_energy
 
+import modules.audio_input.runner as audio_listener
 
 fps = 40
 
@@ -37,11 +34,13 @@ def loop():
   if mode == "autoplay":
     frame = ap.tick()
     # @TODO apply fun filters based on song energy
-    energy = get_energy()
+    energy = audio_listener.get_energy()
+    # print(energy)
   else:
     frame = pl.tick()
 
   frame = filters.apply_filters_numpy(frame)
+  
   if config['ENV'] == "prod":
     show(frame)
   
@@ -71,8 +70,12 @@ def loop_timer():
   #   print(time() - start_time)
 
   loop_time = time() - loop_timer
-  if loop_time > 0.020:
+  if loop_time > 0.005:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
 pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy=0.025)
-pr.run()
+
+try:
+  pr.run()
+finally:
+  audio_listener.thread_ender()

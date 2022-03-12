@@ -12,15 +12,6 @@ files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswit
 INTERVAL = 50
 CROSSFADE = 5
 
-# mix (float): 0-1, 0 being all A, 1, being all B
-def row_mixer(row_a, row_b, mix):
-  return list(map(lambda a, b: round(a * (1-mix) + b * mix), row_a, row_b))
-
-# mix (float): 0-1, 0 being all A, 1, being all B
-def mixer(frame_a, frame_b, mix):
-  return list(map(lambda a, b: row_mixer(a, b, mix), frame_a, frame_b))
-  
-
 def dumb_mix(a, b, mix):
   return a * (1-mix) + b * mix
 
@@ -83,12 +74,12 @@ class Autoplay:
       mix = time_since / CROSSFADE
       if self.idx % 2 == 1:
         # print("fading from a to b", mix)
-        return self.spa.read_frames()
-        # return numpy_mixer(self.spa.read_frames(), self.spb.read_frames(), mix)
+        # return self.spa.read_frames()
+        return numpy_mixer(self.spa.read_frames(), self.spb.read_frames(), mix)
       else:
         # print("fading from b to a", mix)
-        return self.spb.read_frames()
-        # return numpy_mixer(self.spb.read_frames(), self.spa.read_frames(), mix)
+        # return self.spb.read_frames()
+        return numpy_mixer(self.spb.read_frames(), self.spa.read_frames(), mix)
 
     elif self.spa_active:
       return self.spa.read_frames()
