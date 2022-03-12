@@ -36,7 +36,7 @@ class Playlist:
     print("starting audio:", track_name)
 
     self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
-    self.sp.play(os.path.join('video', '{}.mp4'.format(track_name)))
+    self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
 
   def test_metronome(self):
     self.ap.play(os.path.join('audio', 'metronome.wav'))
@@ -48,7 +48,7 @@ class Playlist:
       print("song ended.")
       self.start_track( self.pick_track() )
     
-    return self.sp.read_frames()
+    return self.sp.read_frame()
   
   def enqueue(self, track_name):
     # assert(track_name in songs)

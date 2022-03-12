@@ -3,6 +3,8 @@ from modes.autoplay import Autoplay, numpy_mixer
 from modules.artnet import show
 from modules.filters import Filters
 
+from filters.masks import nuclearFilter, spiralFilter, blobsFilter
+
 from util.config import config
 
 from util.periodicrun import periodicrun
@@ -18,5 +20,9 @@ def loop():
   frame = numpy_mixer(frame, frame, 0.343095)
 
   frame = filters.apply_filters(frame)
+
+  frame = nuclearFilter.apply(frame)
+  frame = spiralFilter.apply(frame)
+  frame = blobsFilter.apply(frame)
 
 print("avg in ms:", timeit.timeit('loop()', globals=globals(), number=5000) / 5)

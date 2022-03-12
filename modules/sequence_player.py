@@ -30,7 +30,7 @@ class SequencePlayer:
       path, frames, math.floor(frames/(40*60)), math.floor(frames/40) % 60
     ))
   
-  def read_frames(self):
+  def read_frame(self):
     if self.ended:
       return nullframe
       
@@ -58,9 +58,9 @@ class SequencePlayer:
       return data
 
     else:
-      print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
       if (self.loop):
         self.play(self.path)
-        return self.read_frames()
+        return self.read_frame()
+      print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
       self.ended = True
       return nullframe

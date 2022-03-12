@@ -69,17 +69,17 @@ class Autoplay:
       mix = time_since / CROSSFADE
       if self.idx % 2 == 1:
         # print("fading from a to b", mix)
-        # return self.spa.read_frames()
-        return numpy_mixer(self.spa.read_frames(), self.spb.read_frames(), mix)
+        # return self.spa.read_frame()
+        return numpy_mixer(self.spa.read_frame(), self.spb.read_frame(), mix)
       else:
         # print("fading from b to a", mix)
-        # return self.spb.read_frames()
-        return numpy_mixer(self.spb.read_frames(), self.spa.read_frames(), mix)
+        # return self.spb.read_frame()
+        return numpy_mixer(self.spb.read_frame(), self.spa.read_frame(), mix)
 
     elif self.spa_active:
-      return self.spa.read_frames()
+      return self.spa.read_frame()
     elif self.spb_active:
-      return self.spb.read_frames()
+      return self.spb.read_frame()
 
     print("Error: neither SequencePlayer was marked as active")
     return nullframe
