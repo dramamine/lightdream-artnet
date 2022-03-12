@@ -55,7 +55,6 @@ class SequencePlayer:
       # should be 30, 512
       assert(len(data) == 30)
       assert(len(data[0]) == 512)
-
       return data
 
     else:

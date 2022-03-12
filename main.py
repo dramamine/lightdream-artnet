@@ -68,8 +68,8 @@ def loop_timer():
   loop()
 
   # this should look pretty consistently as a multiple of 1
-  if frame_counter % 40 == 0:
-    print(time() - start_time)
+  # if frame_counter % 40 == 0:
+  #   print(time() - start_time)
 
   loop_time = time() - loop_timer
   if loop_time > 0.020:

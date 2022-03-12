@@ -10,4 +10,4 @@ class Filters:
     self.brightness_filter = np.vectorize(lambda x: ceil(x*brightness))
 
   def apply_filters_numpy(self, frame):
-    return self.brightness_filter(frame)
+    return frame * 0.2
