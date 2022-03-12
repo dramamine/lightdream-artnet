@@ -4,3 +4,4 @@ PythonFileLibrary==1.0.1
 stupidArtnet==1.1.2
 numpy==1.22.2
 aubio==0.4.9
+pyyaml==6.0

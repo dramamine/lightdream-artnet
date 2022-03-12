@@ -4,6 +4,7 @@ import alsaaudio
 import numpy as np
 import aubio
 
+
 # constants
 samplerate = 44100
 win_s = 2048
@@ -11,11 +12,9 @@ hop_s = win_s // 2
 framesize = hop_s
 
 # set up audio input
-recorder = alsaaudio.PCM(type=alsaaudio.PCM_CAPTURE)
+recorder = alsaaudio.PCM(type=alsaaudio.PCM_CAPTURE mode=alsaaudio.PCM_NONBLOCK rate=samplerate
+    channels=1 format=alsaaudio.PCM_FORMAT_FLOAT_LE)
 recorder.setperiodsize(framesize)
-recorder.setrate(samplerate)
-recorder.setformat(alsaaudio.PCM_FORMAT_FLOAT_LE)
-recorder.setchannels(1)
 
 # create aubio pitch detection (first argument is method, "default" is
 # "yinfft", can also be "yin", "mcomb", fcomb", "schmitt").
@@ -24,7 +23,6 @@ pitcher = aubio.pitch("default", win_s, hop_s, samplerate)
 pitcher.set_unit("Hz")
 # ignore frames under this level (dB)
 pitcher.set_silence(-40)
-
 
 def get_energy():
     # read data from audio input
@@ -38,4 +36,3 @@ def get_energy():
     # do something with the results
     print("{:10.4f} {:10.4f}".format(freq,energy))
     return energy
-
