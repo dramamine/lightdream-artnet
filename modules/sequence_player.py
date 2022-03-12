@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 import math
-
+from time import time 
 # all blacks
 nullframe = np.zeros((30, 512))
 
@@ -43,18 +43,20 @@ class SequencePlayer:
     if ret:
       self.framecount += 1
 
-      reduced = []
-      for i in range(5):
-        for j in range(6):
-          reduced.append(list(map(lambda x: x[0], frame[i*16+j] )))
+      reduced = np.minimum.reduce(
+        np.array(frame, dtype=np.uint8), 2
+      )
       
+      # remove empties
+      mask = np.zeros(len(reduced), dtype=bool)
+      mask[[0,1,2,3,4,5, 16,17,18,19,20,21, 32,33,34,35,36,37, 48,49,50,51,52,53, 64,65,66,67,68,69]] = True
+      data = reduced[mask,...]
+
       # should be 30, 512
-      assert(len(reduced) == 30)
-      assert(len(reduced[0]) == 512)
+      assert(len(data) == 30)
+      assert(len(data[0]) == 512)
 
-      data = np.array(reduced, dtype=np.uint8)
       return data
-
 
     else:
       print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
