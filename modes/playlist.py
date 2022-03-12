@@ -9,15 +9,17 @@ import random
 
 # assume mode is sequences, at least for this file.
 
-song_options = ['asineedyou', 'dyscontrolled', 'misty', 'moses']
+songs = ['asineedyou', 'misty', 'moses']
 
 class Playlist:
   def __init__(self):
     self.queue = []
+    self.idx = 0
     self.sp = SequencePlayer()
     self.ap = AudioPlayer()
 
-  def restart(self):
+  def start(self):
+    random.shuffle(songs)
     self.start_track(self.pick_track())
 
   def __del__(self):
@@ -27,10 +29,11 @@ class Playlist:
     if self.queue:
       return self.queue.pop(0)
     
-    return random.choice(song_options)
+    self.idx = (self.idx+1) % len(songs)
+    return songs[self.idx]
     
   def start_track(self, track_name):
-    print("hello from start track:", track_name)
+    print("starting audio:", track_name)
 
     self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
     self.sp.play(os.path.join('video', '{}.mp4'.format(track_name)))
@@ -42,6 +45,7 @@ class Playlist:
   # check status of audio; return next LED frame from the sequence
   def tick(self):
     if not self.ap.is_playing():
+      print("song ended.")
       self.start_track( self.pick_track() )
     
     return self.sp.read_frames()

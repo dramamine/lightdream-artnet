@@ -107,3 +107,4 @@ Milestone 4: finalize arrangement
   - need a way to toggle metronome
 - respond to keyboard / touchscreen events
 - using alsaaudio for input but pyglet for output. is that OK or bad?
++ add envs so that we're not importing bad things. prod vs dev? or platform-specific?

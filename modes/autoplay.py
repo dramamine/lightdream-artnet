@@ -3,14 +3,13 @@ import random
 import time
 from modules.sequence_player import SequencePlayer
 import numpy as np
-# from modules.filters import mixer
 
 # all blacks
 nullframe = np.zeros((30,512))
 
 files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswith('.mp4')]
 
-INTERVAL = 50
+INTERVAL = 10
 CROSSFADE = 5
 
 # mix (float): 0-1, 0 being all A, 1, being all B
@@ -23,9 +22,9 @@ def mixer(frame_a, frame_b, mix):
 
 class Autoplay:
   def __init__(self):
-    self.restart()
+    pass
 
-  def restart(self):
+  def start(self):
     random.shuffle(files)
     self.idx = 0
 

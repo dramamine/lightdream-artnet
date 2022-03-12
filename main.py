@@ -1,17 +1,23 @@
-from modules.playlist import Playlist
-from modules.autoplay import Autoplay
+from modes.playlist import Playlist
+from modes.autoplay import Autoplay
 from modules.artnet import show
 from modules.filters import Filters
 
-from modules.alsa_input_mock import get_energy
+from util.config import config
 
 from util.periodicrun import periodicrun
 from time import time
 
+if config['ENV'] == 'prod':
+  from modules.alsa_input import get_energy
+else:
+  from modules.alsa_input_mock import get_energy
+
+
 fps = 40
 
-# "playlist" | "autoplay"
-mode = "autoplay"
+# "playlist" | "autoplay" | "metronome"
+mode = config['MODE']
 
 pl = Playlist()
 ap = Autoplay()
@@ -20,25 +26,32 @@ filters = Filters()
 # audio_input.init()
 # audio_input.open_stream()
 
-
+if mode == "metronome":
+  pl.test_metronome()
+elif mode == "autoplay":
+  ap.start()
+elif mode == "playlist":
+  pl.start()
 
 def loop():
-
-  frame = pl.tick() if mode == "playlist" else ap.tick()
-  
   if mode == "autoplay":
+    print("hmm mode was autoplay")
+    frame = ap.tick()
     # @TODO apply fun filters based on song energy
     energy = get_energy()
+  else:
+    frame = pl.tick()
 
   frame = filters.apply_filters_numpy(frame)
 
-  show(frame)
+  if config['ENV'] == "prod":
+    show(frame)
   
 
 def toggle_mode():
   if mode == "playlist":
     mode = "autoplay"
-    ap.restart()
+    ap.start()
   else:
     mode = "playlist"
     pl.restart()

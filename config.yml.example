@@ -1,0 +1,3 @@
+ENV: prod | dev
+PLATFORM: rpi | mac | win
+MODE: playlist | autoplay | metronome
