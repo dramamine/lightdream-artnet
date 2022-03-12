@@ -12,13 +12,8 @@ files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswit
 INTERVAL = 50
 CROSSFADE = 5
 
-def dumb_mix(a, b, mix):
-  return a * (1-mix) + b * mix
-
-vmix = np.vectorize(dumb_mix)
-
 def numpy_mixer(frame_a, frame_b, mix):
-  return vmix(frame_a, frame_b, mix)
+  return frame_a * (1-mix) + frame_b * mix
 
 class Autoplay:
   def __init__(self):

@@ -49,3 +49,8 @@ class Playlist:
       self.start_track( self.pick_track() )
     
     return self.sp.read_frames()
+  
+  def enqueue(self, track_name):
+    # assert(track_name in songs)
+    self.queue.append(track_name)
+
