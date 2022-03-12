@@ -39,7 +39,7 @@ while True:
         # compute energy of current block
         energy = np.sum(samples**2)/len(samples)
         # do something with the results
-        print("{:10.4f} {:10.4f}".format(freq,energy))
+        print("{:10.4f} {:10.4f}".format(freq,1000*energy))
     except KeyboardInterrupt:
         print("Ctrl+C pressed, exiting")
         break

@@ -9,7 +9,7 @@ nullframe = np.zeros((30,512))
 
 files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswith('.mp4')]
 
-INTERVAL = 10
+INTERVAL = 55
 CROSSFADE = 5
 
 # mix (float): 0-1, 0 being all A, 1, being all B

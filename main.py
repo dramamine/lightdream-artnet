@@ -35,7 +35,6 @@ elif mode == "playlist":
 
 def loop():
   if mode == "autoplay":
-    print("hmm mode was autoplay")
     frame = ap.tick()
     # @TODO apply fun filters based on song energy
     energy = get_energy()
@@ -69,8 +68,8 @@ def loop_timer():
   loop()
 
   # this should look pretty consistently as a multiple of 1
-  # if frame_counter % 40 == 0:
-  #   print(time() - start_time)
+  if frame_counter % 40 == 0:
+    print(time() - start_time)
 
   loop_time = loop_timer - time()
   if loop_time > 0.020:

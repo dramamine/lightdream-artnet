@@ -12,8 +12,8 @@ hop_s = win_s // 2
 framesize = hop_s
 
 # set up audio input
-recorder = alsaaudio.PCM(type=alsaaudio.PCM_CAPTURE mode=alsaaudio.PCM_NONBLOCK rate=samplerate
-    channels=1 format=alsaaudio.PCM_FORMAT_FLOAT_LE)
+recorder = alsaaudio.PCM(type=alsaaudio.PCM_CAPTURE, mode=alsaaudio.PCM_NONBLOCK, rate=samplerate,
+    channels=1, format=alsaaudio.PCM_FORMAT_FLOAT_LE)
 recorder.setperiodsize(framesize)
 
 # create aubio pitch detection (first argument is method, "default" is
