@@ -71,7 +71,7 @@ def loop_timer():
   if frame_counter % 40 == 0:
     print(time() - start_time)
 
-  loop_time = loop_timer - time()
+  loop_time = time() - loop_timer
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
