@@ -3,8 +3,8 @@ import yaml
 
 config_file = 'config.yml'
 defaults = {
-  "ENV": "prod",
-  "PLATFORM": "rpi",
+  "ENV": "dev",
+  "PLATFORM": "mac",
   "MODE": "autoplay"
 }
 
