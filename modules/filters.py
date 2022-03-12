@@ -8,6 +8,16 @@ class Filters:
 
   def set_brightness(self, brightness):
     self.brightness_filter = np.vectorize(lambda x: ceil(x*brightness))
+  
+  def another_brightness(self, frame):
+    return np.multiply(frame, 0.7)
+    
+  def divider_brightness(self, frame):
+    return np.floor_divide(frame, 2)
 
   def apply_filters_numpy(self, frame):
-    return frame * 0.2
+    # print("before:", frame[0][0], frame[0][1], frame[0][2])
+    frame = self.another_brightness(frame)
+    frame = frame.astype(np.uint8)
+    # print("after:", frame[0][0], frame[0][1], frame[0][2])
+    return frame

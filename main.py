@@ -42,7 +42,6 @@ def loop():
     frame = pl.tick()
 
   frame = filters.apply_filters_numpy(frame)
-
   if config['ENV'] == "prod":
     show(frame)
   
