@@ -1,9 +1,17 @@
 from math import ceil
 import numpy as np
+import effects.filters as filters
 
-class Filters:
+class EffectsManager:
   def __init__(self, brightness = 0.5):
-    self.dynamic_filters_list = []
+
+    self.source_effects = []
+    self.mask_effects = []
+    self.filter_effects = [
+      filters.brightness_filter,
+      filters.validate_filter
+    ]
+    
     self.set_brightness(brightness)
 
   def set_brightness(self, brightness):
@@ -16,11 +24,18 @@ class Filters:
 
   # note that 'frame' could be dtype uint8 or float64 at this point.
   # but output has gotta be uint8 so we can convert to bytearray later.
-  def apply_filters(self, frame):
+  def apply_effects(self, frame):
     # print("before:", frame[0][0], frame[0][1], frame[0][2])
-    frame = self.apply_brightness(frame)
+
+    for effects_list in [self.source_effects, self.mask_effects, self.filter_effects]:
+      for effect in effects_list:
+        frame = effect.apply(frame)
+
     frame = np.minimum(frame, 255)
     frame = np.maximum(frame, 0)
     frame = frame.astype(np.uint8)
+
     # print("after:", frame[0][0], frame[0][1], frame[0][2])
     return frame
+
+effects_manager = EffectsManager()

@@ -1,7 +1,7 @@
 from modes.playlist import Playlist
 from modes.autoplay import Autoplay
 from modules.artnet import show
-from modules.filters import Filters
+from effects.effects import effects_manager
 
 from util.config import config
 
@@ -18,7 +18,6 @@ mode = config['MODE']
 
 pl = Playlist()
 ap = Autoplay()
-filters = Filters()
 # pl.test_metronome()
 # audio_input.init()
 # audio_input.open_stream()
@@ -39,7 +38,7 @@ def loop():
   else:
     frame = pl.tick()
 
-  frame = filters.apply_filters(frame)
+  frame = effects_manager.apply_effects(frame)
 
   if config['ENV'] == "prod":
     show(frame)

@@ -1,7 +1,7 @@
 from modules.sequence_player import SequencePlayer
 import os
 
-class MaskFilter:
+class MaskEffect:
   def __init__(self, filename):
     self.sp = SequencePlayer(loop=True)
     self.sp.play(os.path.join('video', 'masks', filename))
@@ -11,6 +11,6 @@ class MaskFilter:
     return frame * mask
 
 
-nuclearFilter = MaskFilter("nuclear.mp4")
-blobsFilter = MaskFilter("blobs.mp4")
-spiralFilter = MaskFilter("spiral.mp4")
+nuclearEffect = MaskEffect("nuclear.mp4")
+blobsEffect = MaskEffect("blobs.mp4")
+spiralEffect = MaskEffect("spiral.mp4")
