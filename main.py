@@ -8,13 +8,28 @@ from util.config import config
 from util.periodicrun import periodicrun
 from time import time
 
-
 import modules.audio_input.runner as audio_listener
+
+#
+# Touchscreen
+#
+from touchscreen.db import get_application_mode
+
+start = time()
+
+mode = get_application_mode()
+print("application start mode", mode)
+
+end = time()
+print("query timing", end - start)
+# query timing 0.0016818046569824219
+#
+#
 
 fps = 40
 
 # "playlist" | "autoplay" | "metronome"
-mode = config['MODE']
+# mode = config['MODE']
 
 pl = Playlist()
 ap = Autoplay()
@@ -30,7 +45,7 @@ elif mode == "playlist":
   pl.start()
 
 def loop():
-  if mode == "autoplay":
+  if get_application_mode() == "autoplay":
     frame = ap.tick()
     # @TODO apply fun filters based on song energy
     energy = audio_listener.get_energy()
@@ -42,7 +57,6 @@ def loop():
 
   if config['ENV'] == "prod":
     show(frame)
-  
 
 def toggle_mode():
   if mode == "playlist":

@@ -5,3 +5,5 @@ stupidArtnet==1.1.2
 numpy==1.22.2
 aubio==0.4.9
 pyyaml==6.0
+flask==2.0.3
+peewee==3.14.10

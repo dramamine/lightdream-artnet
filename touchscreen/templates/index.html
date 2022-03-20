@@ -1,0 +1,100 @@
+<html>
+
+<head>
+  <style>
+    body {
+      min-height: 100vh;
+      min-width: 100%;
+      margin: 0px;
+      font-family: helvetica;
+    }
+
+    .header {
+      background-color: red;
+    }
+
+    .content {
+      background-color: black;
+      min-height: 90vh;
+    }
+
+    .top-bar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    }
+
+    .top-bar-cell {
+      flex: 1;
+      text-align: center;
+    }
+
+    .shiny-neon-text {
+      color: #fff;
+      text-shadow: -1px 2px 0px black, 0 2px 5px #fff, 0 0 10px #fff, 0 0 15px #ff2d95, 0 0 20px #ff2d95, 0 0 30px #ff2d95, 0 0 40px #ff2d95, 0 0 50px #ff2d95, 0 0 75px #ff2d95;
+      font: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="top-bar">
+      <div class="top-bar-cell">
+        <h2 id="js-dj-mode">
+          DJ Mode
+        </h2>
+      </div>
+      <div class="top-bar-cell">
+        <h2>
+          <span id="js-playlist">
+            Playlist
+          </span>
+        </h2>
+      </div>
+    </div>
+  </div>
+  <script type='text/javascript'>
+    currentApplicationMode = "{{mode}}";
+    buttonDjMode = document.getElementById('js-dj-mode');
+    buttonPlaylistMode = document.getElementById('js-playlist');
+
+    var ajaxToNewState = function (url) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.send(null);
+    };
+
+    var resetButtonHighlights = function () {
+      if (currentApplicationMode == "autoplay") {
+        buttonDjMode.classList.add('shiny-neon-text');
+        buttonPlaylistMode.classList.remove('shiny-neon-text');
+      }
+      if (currentApplicationMode == "playlist") {
+        buttonDjMode.classList.remove('shiny-neon-text');
+        buttonPlaylistMode.classList.add('shiny-neon-text');
+      }
+    };
+
+    var init = function () {
+      resetButtonHighlights();
+
+      buttonDjMode.ontouchstart = buttonDjMode.onclick = function (e) {
+        currentApplicationMode = 'autoplay';
+        ajaxToNewState('/api/dj-mode');
+        resetButtonHighlights();
+      };
+
+      buttonPlaylistMode.ontouchstart = buttonPlaylistMode.onclick = function (e) {
+        currentApplicationMode = 'playlist';
+        ajaxToNewState('/api/playlist');
+        resetButtonHighlights();
+      };
+
+      console.log("current mood: ", currentApplicationMode);
+    }
+    setTimeout(init, 200);
+  </script>
+</body>
+
+</html>
