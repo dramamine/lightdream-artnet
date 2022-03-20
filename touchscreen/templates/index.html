@@ -35,11 +35,17 @@
       font: 30px;
     }
   </style>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
   <div class="header">
     <div class="top-bar">
+      <div class="top-bar-cell">
+        <h2 id="js-fullscreen">
+          Fullscreen
+        </h2>
+      </div>
       <div class="top-bar-cell">
         <h2 id="js-dj-mode">
           DJ Mode
@@ -56,8 +62,10 @@
   </div>
   <script type='text/javascript'>
     currentApplicationMode = "{{mode}}";
+
     buttonDjMode = document.getElementById('js-dj-mode');
     buttonPlaylistMode = document.getElementById('js-playlist');
+    buttonFullscreen = document.getElementById('js-fullscreen');
 
     var ajaxToNewState = function (url) {
       var xhr = new XMLHttpRequest();
@@ -79,6 +87,19 @@
     var init = function () {
       resetButtonHighlights();
 
+      buttonFullscreen.ontouchstart = buttonFullscreen.onclick = function (e) {
+        var docElm = document.documentElement;
+        if (docElm.requestFullscreen) {
+          docElm.requestFullscreen();
+        } else if (docElm.msRequestFullscreen) {
+          docElm.msRequestFullscreen();
+        } else if (docElm.mozRequestFullScreen) {
+          docElm.mozRequestFullScreen();
+        } else if (docElm.webkitRequestFullScreen) {
+          docElm.webkitRequestFullScreen();
+        }
+      };
+
       buttonDjMode.ontouchstart = buttonDjMode.onclick = function (e) {
         currentApplicationMode = 'autoplay';
         ajaxToNewState('/api/dj-mode');
@@ -90,8 +111,6 @@
         ajaxToNewState('/api/playlist');
         resetButtonHighlights();
       };
-
-      console.log("current mood: ", currentApplicationMode);
     }
     setTimeout(init, 200);
   </script>
