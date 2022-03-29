@@ -1,8 +1,8 @@
 import subprocess, threading
 
 URL_TO_OPEN = 'Running on http'
-DJ_MODE = 'GET /api/dj-mode HTTP/1.1'
-PLAYLIST_MODE = 'GET /api/playlist HTTP/1.1'
+DJ_MODE = 'GET /api/dj-mode HTTP'
+PLAYLIST_MODE = 'GET /api/playlist HTTP'
 
 current_mode = 'autoplay'
 
@@ -35,6 +35,8 @@ def output_reader(proc):
     if URL_TO_OPEN in decoded:
       print('')
       print(decoded)
+    # else:
+    #   print(decoded)
 
 
 def get_application_mode():
