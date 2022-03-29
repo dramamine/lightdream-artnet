@@ -10,26 +10,18 @@ from time import time
 
 import modules.audio_input.runner as audio_listener
 
-#
-# Touchscreen
-#
-from touchscreen.db import get_application_mode
 
-start = time()
-
-mode = get_application_mode()
-print("application start mode", mode)
-
-end = time()
-print("query timing", end - start)
-# query timing 0.0016818046569824219
-#
-#
+from touchscreen.server import start_touchscreen_server
+from touchscreen.server import get_application_mode
 
 fps = 40
 
 # "playlist" | "autoplay" | "metronome"
-# mode = config['MODE']
+mode = config['MODE']
+
+
+start_touchscreen_server(mode=mode)
+
 
 pl = Playlist()
 ap = Autoplay()

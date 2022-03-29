@@ -1,60 +1,40 @@
-import sys, getopt
-from flask import Flask
-from flask import render_template
-from flask import redirect
+import subprocess, threading
 
-# Necessary for python pathing for `flask` command
-import sys, os; sys.path.append(os.path.dirname(__file__))
+DJ_MODE = "GET /api/dj-mode HTTP/1.1"
+PLAYLIST_MODE = "GET /api/playlist HTTP/1.1"
 
-from touchscreen.db import DB
-from touchscreen.db import start_up
-from touchscreen.db import get_application_mode
-from touchscreen.db import set_application_mode
+current_mode = 'autoplay'
 
 
-start_up()
+def start_touchscreen_server(mode=''):
+  global current_mode
+  current_mode = mode
+  proc = subprocess.Popen(
+      ['python', '-u', 'touchscreen/flask_server.py'],
+      stdout=subprocess.PIPE,
+      stderr=subprocess.STDOUT
+  )
+
+  t = threading.Thread(target=output_reader, args=(proc,))
+  t.start()
 
 
-app = Flask(__name__)
+def output_reader(proc):
+  global current_mode
+  for line in iter(proc.stdout.readline, b''):
+    decoded = line.decode('utf-8')
+    if DJ_MODE in decoded:
+      current_mode = 'autoplay'
+      print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+      print("DJ MODE")
+    if PLAYLIST_MODE in decoded:
+      current_mode = 'playlist'
+      print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+      print("PLAYLIST MODE")
+    if not "GET /" in decoded:
+      print(decoded)
 
 
-@app.before_request
-def before_request():
-    DB.connect()
-
-
-@app.after_request
-def after_request(response):
-    DB.close()
-    return response
-
-
-@app.route("/")
-def index(pathvar=""):
-    current_mode = get_application_mode()
-    print("OMFG", current_mode)
-
-    return render_template(
-        "index.html",
-        mode=current_mode
-    )
-
-
-@app.route("/api/dj-mode")
-def dj_mode():
-    print("=========> dj mode")
-    set_application_mode('autoplay')
-    return "{}"
-
-
-@app.route("/api/playlist")
-def song_select():
-    print("=========> playlist mode")
-    set_application_mode('playlist')
-    return "{}"
-
-
-if __name__ == '__main__':
-    # argv = sys.argv[1:]
-    # opts, args = getopt.getopt(argv, "d", ["disco="])
-    app.run(debug=True, host='0.0.0.0')
+def get_application_mode():
+  global current_mode
+  return current_mode
