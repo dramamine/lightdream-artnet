@@ -1,7 +1,8 @@
 import subprocess, threading
 
-DJ_MODE = "GET /api/dj-mode HTTP/1.1"
-PLAYLIST_MODE = "GET /api/playlist HTTP/1.1"
+URL_TO_OPEN = 'Running on http'
+DJ_MODE = 'GET /api/dj-mode HTTP/1.1'
+PLAYLIST_MODE = 'GET /api/playlist HTTP/1.1'
 
 current_mode = 'autoplay'
 
@@ -25,13 +26,14 @@ def output_reader(proc):
     decoded = line.decode('utf-8')
     if DJ_MODE in decoded:
       current_mode = 'autoplay'
-      print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-      print("DJ MODE")
+      print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+      print('DJ MODE')
     if PLAYLIST_MODE in decoded:
       current_mode = 'playlist'
-      print("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-      print("PLAYLIST MODE")
-    if not "GET /" in decoded:
+      print('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
+      print('PLAYLIST MODE')
+    if URL_TO_OPEN in decoded:
+      print('')
       print(decoded)
 
 
