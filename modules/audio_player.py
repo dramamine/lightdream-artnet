@@ -3,7 +3,6 @@ import pyglet
 from util.config import config
 
 if config['PLATFORM'] == 'mac':
-
   pyglet.options['audio'] = ('silent')
 
 player = pyglet.media.Player()
