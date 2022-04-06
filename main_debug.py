@@ -15,7 +15,7 @@ pyglet.options['debug_gl'] = False
 def on_window_close(window):
     event_loop.exit()
 
-fps = 40.0
+fps = 40.3
 
 # "playlist" | "autoplay" | "metronome"
 mode = config['MODE']

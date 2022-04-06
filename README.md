@@ -11,7 +11,7 @@ Project to run lightdream-scripts code on an rpi instead.
 pip install -r requirements.txt
 
 # RPi: you also need these:
-pip install gstreamer-player PyGObject pycairo
+pip install gstreamer-player PyGObject pycairo mesa-utils
 
 # RPi: not sure how many of these are necessary but hey why not
 sudo apt-get install gstreamer1.0-tools gstreamer1.0-pulseaudio \
