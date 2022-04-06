@@ -155,4 +155,6 @@ config.yml
 *-raw.mp4
 *-orig.mp4
 *-orig_1.mp4
-video/*.mp4
+video/**/*.mp4
+audio/*.ogg
+desktop.ini
