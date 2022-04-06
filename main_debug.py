@@ -22,9 +22,8 @@ mode = config['MODE']
 
 pl = Playlist()
 ap = Autoplay()
-# pl.test_metronome()
-# audio_input.init()
-# audio_input.open_stream()
+
+effects_manager.set_brightness(1.0)
 
 if mode == "metronome":
   pl.test_metronome()
