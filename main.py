@@ -8,6 +8,8 @@ from util.config import config
 from util.periodicrun import periodicrun
 from time import time
 
+from modules.fingers import finger_manager
+
 
 import modules.audio_input.runner as audio_listener
 
@@ -38,7 +40,7 @@ def loop():
   else:
     frame = pl.tick()
 
-  frame = effects_manager.apply_effects(frame)
+  frame = effects_manager.apply_effects(frame, finger_manager)
 
   if config['ENV'] == "prod":
     show(frame)
