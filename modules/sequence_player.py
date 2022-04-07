@@ -2,7 +2,9 @@ import cv2
 import os
 import numpy as np
 import math
-from time import time 
+from time import time
+
+from util.util import remove_unused_pixels_from_frame 
 # all blacks
 nullframe = np.zeros((30, 512))
 
@@ -43,19 +45,7 @@ class SequencePlayer:
     if ret:
       self.framecount += 1
 
-      reduced = np.minimum.reduce(
-        np.array(frame, dtype=np.uint8), 2
-      )
-      
-      # remove empties
-      mask = np.zeros(len(reduced), dtype=bool)
-      mask[[0,1,2,3,4,5, 16,17,18,19,20,21, 32,33,34,35,36,37, 48,49,50,51,52,53, 64,65,66,67,68,69]] = True
-      data = reduced[mask,...]
-
-      # should be 30, 512
-      assert(len(data) == 30)
-      assert(len(data[0]) == 512)
-      return data
+      return remove_unused_pixels_from_frame(frame)
 
     else:
       if (self.loop):

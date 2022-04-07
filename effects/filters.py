@@ -1,6 +1,7 @@
+import math
 import numpy as np
 from util.hsv2rgb import hsv2rgb
-from util.util import make_rgb_frame, numpy_mixer
+from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame
 from time import time
 
 # these straight-up replace the input frame
@@ -76,41 +77,29 @@ import cv2
 class RingsFilter:
   def __init__(self):
     self.key = 'rings'
-    # self.vid = cv2.VideoCapture( os.path.join('video', 'overlays', 'rings-edit.mp4') )
 
   def read_frame(self, idx):
+    assert(idx >= 0)
+    assert(idx <= 178)
+    idx_str = '{:03d}'.format(idx)
     # each finger = one ring of visibility
     # rings000.png = outer edges / base of dome
     # rings178.png = dead center of dome
-    frame = cv2.imread(os.path.join('video', 'overlays', 'rings', 'rings126.png'))
+    frame = cv2.imread(os.path.join('video', 'overlays', 'rings', 
+      'rings{}.png'.format(idx_str)))
 
-    if frame.any():
-      # @TODO copy pasted from sequence player
-      reduced = np.minimum.reduce(
-        np.array(frame, dtype=np.uint8), 2
-      )
-      
-      # remove empties
-      mask = np.zeros(len(reduced), dtype=bool)
-      mask[[0,1,2,3,4,5, 16,17,18,19,20,21, 32,33,34,35,36,37, 48,49,50,51,52,53, 64,65,66,67,68,69]] = True
-      data = reduced[mask,...]
-
-      # should be 30, 512
-      assert(len(data) == 30)
-      assert(len(data[0]) == 512)
-      return data
-    
-    # else, there's a problem
-    print("ret was bad", ret, frame)
-    return None
+    return remove_unused_pixels_from_frame(frame)
 
 
+  def value_to_frame_idx(self, value):
+    return round(179 * value)
 
   def apply(self, frame, fingers):
     if not fingers:
       return frame
 
-    frame = self.read_frame(126)
-    return frame
+    frames = list(map(lambda x: self.read_frame( self.value_to_frame_idx(x) ), fingers))
+    combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
+    return combined
 
 rings_filter = RingsFilter()

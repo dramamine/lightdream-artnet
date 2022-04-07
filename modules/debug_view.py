@@ -14,11 +14,10 @@ def on_draw():
 
 def update_pixels(frame):
   global ledscreen, leds
-  data = np.delete(frame, (510,511), axis=1)
   # array is size 15300
   # 170 * 30 * 3
   # width * height * color data length
-  data = np.reshape(data, (170*30, 3))
+  data = np.reshape(frame, (170*30, 3))
 
   # add alpha channel
   data = np.insert(data, 3, 255, axis=1)
