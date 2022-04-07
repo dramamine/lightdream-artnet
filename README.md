@@ -42,17 +42,27 @@ Milestone 0: debug menu
   - marten to figure this out
 
 Milestone 1: simple on/off effects
-- call fn's ex. `toggle(id: string, on: boolean)`
 - "mask" style: blobs, nuclear, spiral, radiant lines
 - "replace" style: lightning bolts
+- parameters: boolean
 
 Milestone 2: position-based effects
-- call fn's ex. `finger(fingerid: int, action: int (0=on, 1=off, 2=motion), x, y)`
-  - which are part of some finger manager class
-- each effect calls the finger class to ask which fingers are currently touching it
-- "mask" style: rings, wedges
-- "theta" style: colorwheel 
-- complex "mask" style: rainbow spotlight
+- "mask" style
+  - rings:
+    - parameters: distance from center (0.0 - 1.0)
+    - animation: scale a rainbow ring so that there's a ring where the fingers are
+  - wedges:
+    - parameters: theta (0.0 at top, to 1.0, going clockwise)
+    - animation: show a wedge where the fingers are
+- "filter" style
+  - huewheel:
+    - parameters: theta (0.0 at top, to 1.0, going clockwise)
+    - animation: ??
+  
+- complex "mask" style
+  - rainbow spotlight
+    - parameters: (x,y) values where x and y are 0.0 - 1.0
+    - animation: rainbow wheel where the fingers are?
 
 Milestone 3: new effects?
 - color inverter
