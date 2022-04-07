@@ -69,3 +69,48 @@ class HueshiftFilter:
     return mixed * mixed / 255
 
 hueshift_filter = HueshiftFilter()
+
+import os
+import cv2
+
+class RingsFilter:
+  def __init__(self):
+    self.key = 'rings'
+    # self.vid = cv2.VideoCapture( os.path.join('video', 'overlays', 'rings-edit.mp4') )
+
+  def read_frame(self, idx):
+    # each finger = one ring of visibility
+    # rings000.png = outer edges / base of dome
+    # rings178.png = dead center of dome
+    frame = cv2.imread(os.path.join('video', 'overlays', 'rings', 'rings126.png'))
+
+    if frame.any():
+      # @TODO copy pasted from sequence player
+      reduced = np.minimum.reduce(
+        np.array(frame, dtype=np.uint8), 2
+      )
+      
+      # remove empties
+      mask = np.zeros(len(reduced), dtype=bool)
+      mask[[0,1,2,3,4,5, 16,17,18,19,20,21, 32,33,34,35,36,37, 48,49,50,51,52,53, 64,65,66,67,68,69]] = True
+      data = reduced[mask,...]
+
+      # should be 30, 512
+      assert(len(data) == 30)
+      assert(len(data[0]) == 512)
+      return data
+    
+    # else, there's a problem
+    print("ret was bad", ret, frame)
+    return None
+
+
+
+  def apply(self, frame, fingers):
+    if not fingers:
+      return frame
+
+    frame = self.read_frame(126)
+    return frame
+
+rings_filter = RingsFilter()

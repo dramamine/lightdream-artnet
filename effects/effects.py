@@ -8,6 +8,7 @@ class EffectsManager:
     self.source_effects = []
     self.mask_effects = []
     self.filter_effects = [
+      filters.rings_filter,
       filters.hueshift_filter,
       filters.brightness_filter,
       filters.validate_filter
