@@ -6,7 +6,8 @@ from util.config import config
 from time import time
 import modules.audio_input.runner as audio_listener
 import pyglet
-from modules.debug_view import update_pixels
+from modules.debug_view import update_pixels, win
+from modules.fingers import finger_manager
 
 event_loop = pyglet.app.EventLoop()
 pyglet.options['debug_gl'] = False
@@ -41,7 +42,7 @@ def loop():
   else:
     frame = pl.tick()
 
-  frame = effects_manager.apply_effects(frame)
+  frame = effects_manager.apply_effects(frame, finger_manager)
 
   update_pixels(frame)
     
@@ -77,6 +78,41 @@ def loop_timer(x):
 
 # WARNING: timing seems broken on Windows, runs too slow
 pyglet.clock.schedule_interval(loop_timer, 1.0/fps)
+
+
+
+@win.event
+def on_key_press(symbol, modifiers):
+  print("key pressed:", symbol, modifiers)
+  if symbol == pyglet.window.key.Z:
+    finger_manager.append('hueshift', 0)
+  elif symbol == pyglet.window.key.X:
+    finger_manager.append('hueshift', 0.13)
+  elif symbol == pyglet.window.key.C:
+    finger_manager.append('hueshift', 0.26)
+  elif symbol == pyglet.window.key.V:
+    finger_manager.append('hueshift', 0.5)
+  elif symbol == pyglet.window.key.B:
+    finger_manager.append('hueshift', 0.68)
+  elif symbol == pyglet.window.key.N:
+    finger_manager.append('hueshift', 0.82)
+  
+
+@win.event
+def on_key_release(symbol, modifiers):
+  if symbol == pyglet.window.key.Z:
+    finger_manager.remove('hueshift', 0)
+  elif symbol == pyglet.window.key.X:
+    finger_manager.remove('hueshift', 0.13)
+  elif symbol == pyglet.window.key.C:
+    finger_manager.remove('hueshift', 0.26)
+  elif symbol == pyglet.window.key.V:
+    finger_manager.remove('hueshift', 0.5)
+  elif symbol == pyglet.window.key.B:
+    finger_manager.remove('hueshift', 0.68)
+  elif symbol == pyglet.window.key.N:
+    finger_manager.remove('hueshift', 0.82)  
+  pass
 
 
 try:
