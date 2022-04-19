@@ -1,8 +1,9 @@
-import math
 import numpy as np
 from util.hsv2rgb import hsv2rgb
 from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame
 from time import time
+import os
+import cv2
 
 # these straight-up replace the input frame
 class BrightnessFilter:
@@ -71,28 +72,27 @@ class HueshiftFilter:
 
 hueshift_filter = HueshiftFilter()
 
-import os
-import cv2
 
-class RingsFilter:
-  def __init__(self):
-    self.key = 'rings'
+
+class ImageFilter:
+  def __init__(self, key, count):
+    self.key = key
+    self.count = count
+
 
   def read_frame(self, idx):
     assert(idx >= 0)
-    assert(idx <= 178)
+    assert(idx <= self.count)
     idx_str = '{:03d}'.format(idx)
-    # each finger = one ring of visibility
-    # rings000.png = outer edges / base of dome
-    # rings178.png = dead center of dome
-    frame = cv2.imread(os.path.join('video', 'overlays', 'rings', 
-      'rings{}.png'.format(idx_str)))
+
+    frame = cv2.imread(os.path.join('video', 'overlays', self.key, 
+      '{}{}.png'.format(self.key, idx_str)))
 
     return remove_unused_pixels_from_frame(frame)
 
 
   def value_to_frame_idx(self, value):
-    return round(179 * value)
+    return round(self.count * value)
 
   def apply(self, frame, fingers):
     if not fingers:
@@ -100,6 +100,13 @@ class RingsFilter:
 
     frames = list(map(lambda x: self.read_frame( self.value_to_frame_idx(x) ), fingers))
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
-    return combined
+    return (combined/255) * frame
 
-rings_filter = RingsFilter()
+# each finger = one ring of visibility
+# rings000.png = outer edges / base of dome
+# rings178.png = dead center of dome
+rings_filter = ImageFilter('rings', 178)
+
+# each finger = one pie wedge
+# wedges000.png = top, going clockwise
+wedges_filter = ImageFilter('wedges', 202)

@@ -85,33 +85,33 @@ pyglet.clock.schedule_interval(loop_timer, 1.0/fps)
 def on_key_press(symbol, modifiers):
   print("key pressed:", symbol, modifiers)
   if symbol == pyglet.window.key.Z:
-    finger_manager.append('rings', 0)
+    finger_manager.append('wedges', 0.01)
   elif symbol == pyglet.window.key.X:
-    finger_manager.append('rings', 0.13)
+    finger_manager.append('wedges', 0.13)
   elif symbol == pyglet.window.key.C:
-    finger_manager.append('rings', 0.26)
+    finger_manager.append('wedges', 0.26)
   elif symbol == pyglet.window.key.V:
-    finger_manager.append('rings', 0.5)
+    finger_manager.append('wedges', 0.5)
   elif symbol == pyglet.window.key.B:
-    finger_manager.append('rings', 0.68)
+    finger_manager.append('wedges', 0.68)
   elif symbol == pyglet.window.key.N:
-    finger_manager.append('rings', 0.82)
+    finger_manager.append('wedges', 0.82)
   
 
 @win.event
 def on_key_release(symbol, modifiers):
   if symbol == pyglet.window.key.Z:
-    finger_manager.remove('rings', 0)
+    finger_manager.remove('wedges', 0.01)
   elif symbol == pyglet.window.key.X:
-    finger_manager.remove('rings', 0.13)
+    finger_manager.remove('wedges', 0.13)
   elif symbol == pyglet.window.key.C:
-    finger_manager.remove('rings', 0.26)
+    finger_manager.remove('wedges', 0.26)
   elif symbol == pyglet.window.key.V:
-    finger_manager.remove('rings', 0.5)
+    finger_manager.remove('wedges', 0.5)
   elif symbol == pyglet.window.key.B:
-    finger_manager.remove('rings', 0.68)
+    finger_manager.remove('wedges', 0.68)
   elif symbol == pyglet.window.key.N:
-    finger_manager.remove('rings', 0.82)  
+    finger_manager.remove('wedges', 0.82)  
   pass
 
 
@@ -119,4 +119,3 @@ try:
   pyglet.app.run()
 finally:
   audio_listener.thread_ender()
-
