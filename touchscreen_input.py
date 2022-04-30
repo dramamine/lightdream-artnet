@@ -28,8 +28,8 @@ class InputCoordinateMapper:
     """
     open_cursors = {}
 
-    def __init__(self, full_width):
-        self.FULL_WIDTH = full_width
+    def __init__(self, image_width):
+        self.IMAGE_WIDTH = image_width
 
         # order by radius, to check the biggest circles first
         self.LEFT_CIRCLES = [
@@ -49,7 +49,7 @@ class InputCoordinateMapper:
 
     def get_touchscreen_circle_key(self, point):
         # divide circles into LEFT and RIGHT for half as many compares
-        if point[0] < self.FULL_WIDTH / 2:
+        if point[0] < self.IMAGE_WIDTH / 2:
             for circle in self.LEFT_CIRCLES:
                 if self.circle_contains_point(circle, point):
                     return circle.key
