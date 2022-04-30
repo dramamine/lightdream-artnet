@@ -2,7 +2,6 @@
 class FingerManager:
   def __init__(self):
     self.object_tracker = {}
-    pass
 
   def get_values(self, key):
     if not key:
@@ -12,7 +11,8 @@ class FingerManager:
 
   def set_values(self, key, values):
     self.object_tracker[key] = values
-    print(f'{key} => {values}')
+    if (values):
+      print(f'{key} => {values}')
     return
 
   def append(self, key, value):
@@ -32,5 +32,9 @@ class FingerManager:
 
   def clear_values(self, key):
     self.set_values(key, [])
+
+  def clear_all_values(self):
+    for _, key in enumerate(self.object_tracker):
+      self.object_tracker[key] = []
 
 finger_manager = FingerManager()

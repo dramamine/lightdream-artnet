@@ -23,6 +23,9 @@ height = FULL_HEIGHT * SCALE_FACTOR
 # creating a window
 window = pyglet.window.Window(width, height, 'lightdream', fullscreen=FULLSCREEN)
 
+# keep the real WxH for scaling
+(REAL_WIDTH, REAL_HEIGHT) = window.get_size()
+
 # render the layout
 image = pyglet.image.load('./images/!touchscreen layout 3.png')
 sprite = pyglet.sprite.Sprite(image, x=0, y=0)
@@ -63,8 +66,8 @@ def on_draw():
 # # # # # # # # # # # # # # # # # # # # # # # #
 
 def scale_image_coordinates(x, y):
-    scaled_x = round(x / width * FULL_WIDTH)
-    scaled_y = round(y / height * FULL_HEIGHT)
+    scaled_x = round(x / REAL_WIDTH * FULL_WIDTH)
+    scaled_y = round(y / REAL_HEIGHT * FULL_HEIGHT)
     return (scaled_x, scaled_y)
 
 
@@ -92,8 +95,21 @@ class InputCoordinateMapper:
     open_cursors = {}
 
     def __init__(self):
-        # Replace hardcoded key names with Filter.key values
-        self.NUCLEAR = TouchscreenCircle('nuclear', (166, 260), 66)
+        # order by radius, to check the biggest circles first
+        self.CIRCLES = [
+            # TODO - replace hardcoded key names with Filter.key values
+            TouchscreenCircle('hueshift', (312, 683), 262),
+            TouchscreenCircle('lightning', (414, 146), 106),
+            TouchscreenCircle('nuclear', (166, 260), 106),
+            TouchscreenCircle('spiral', (160, 1095), 106),
+            TouchscreenCircle('radiant-lines', (416, 1205), 106),
+        ]
+
+    def get_touchscreen_circle_key(self, point):
+        for circle in self.CIRCLES:
+            if self.circle_contains_point(circle, point):
+                return circle.key
+        return None
 
     # triangles!
     def circle_contains_point(self, circle, point):
@@ -102,39 +118,36 @@ class InputCoordinateMapper:
         side_c = math.sqrt(side_a**2 + side_b**2)
         return side_c < circle.radius
 
-    def get_touchscreen_circle_key(self, point):
-        # TODO - check the biggest circles first
-        if self.circle_contains_point(self.NUCLEAR, point):
-            # return as soon as we've found a circle
-            return self.NUCLEAR.key
-        return None
+    def update_fingers(self):
+        # clear everything
+        finger_manager.clear_all_values()
+        # for each cursor
+        for _, cursor_key in enumerate(self.open_cursors):
+            cursor = self.open_cursors[cursor_key]
+            circle_key = self.get_touchscreen_circle_key(cursor)
+            # if it is in a circle, update that circle
+            if circle_key:
+                finger_manager.append(circle_key, cursor)
 
     def process_mouse_down(self, point):
         self.open_cursors['mouse'] = point
-
-        finger_manager.clear_values(self.NUCLEAR.key)
-        for index, cursor_key in enumerate(self.open_cursors):
-            cursor = self.open_cursors[cursor_key]
-            if self.get_touchscreen_circle_key(cursor) == self.NUCLEAR.key:
-                finger_manager.append(self.NUCLEAR.key, cursor)
+        self.update_fingers()
 
     def process_mouse_up(self):
         del self.open_cursors['mouse']
-        # Clear all values from the finger manager.  NO TOUCHING
-        finger_manager.clear_values(self.NUCLEAR.key)
+        self.update_fingers()
 
     def process_touch_enter(self, cursor, point):
-        # register the cursor with the input mapper
-        pass
+        self.open_cursors[cursor] = point
+        self.update_fingers()
 
     def process_touch_motion(self, cursor, point):
-        # update the values for the cursor
-        # get all cursor values and send to finger_manager
-        pass
+        self.open_cursors[cursor] = point
+        self.update_fingers()
 
     def process_touch_leave(self, cursor):
-        # remove the cursor from the input mapper
-        pass
+        del self.open_cursors[cursor]
+        self.update_fingers()
 
 
 input_mapper = InputCoordinateMapper()
@@ -143,6 +156,7 @@ input_mapper = InputCoordinateMapper()
 @window.event
 def on_mouse_press(x, y, button, modifiers):
     point = scale_image_coordinates(x,y)
+    print("point", point)
     input_mapper.process_mouse_down(point)
 
 
