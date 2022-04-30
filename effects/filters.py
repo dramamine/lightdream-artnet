@@ -3,6 +3,19 @@ from util.hsv2rgb import hsv2rgb
 from util.util import make_rgb_frame, numpy_mixer
 from time import time
 
+
+class FilterNames:
+  HUESHIFT = 'hueshift'
+  KALEIDOSCOPE = 'kaleidoscope'
+  TUNNEL = 'tunnel'
+
+  LIGHTNING = 'lightning'
+  RADIANTLINES = 'radiant-lines'
+  NUCLEAR = 'nuclear'
+  SPIRAL = 'spiral'
+
+
+
 # these straight-up replace the input frame
 class BrightnessFilter:
   def __init__(self, brightness):
@@ -13,7 +26,7 @@ class BrightnessFilter:
     assert(brightness >= 0.0)
     assert(brightness <= 1.0)
     self.brightness = brightness
-  
+
   def apply(self, frame, _unused):
     return np.multiply(frame, self.brightness)
 
@@ -33,7 +46,7 @@ validate_filter = ValidateFilter()
 
 class HueshiftFilter:
   def __init__(self):
-    self.key = 'hueshift'
+    self.key = FilterNames.HUESHIFT
     self.active = False
 
   # static method
@@ -52,7 +65,7 @@ class HueshiftFilter:
 
     if not self.active:
       self.active = time()
-    
+
     # seconds since active: (0 - 0.15) mapped to (0.15 - 0.30)
     mix_amount = min(time() - self.active, 0.15) + 0.15
 
