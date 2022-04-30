@@ -23,18 +23,18 @@ class TouchscreenCircle:
         self.full_image_radius = full_image_radius
 
     # we can use this to place the image sprites
-    def lower_right_corner(self):
+    def lower_left_corner(self):
         x = self.center[0] - self.radius
         y = self.center[1] - self.radius
         return (x, y)
 
     @property
     def X(self):
-        return self.lower_right_corner()[0]
+        return self.lower_left_corner()[0]
 
     @property
     def Y(self):
-        return self.lower_right_corner()[1]
+        return self.lower_left_corner()[1]
 
     @property
     def SCALE(self):
