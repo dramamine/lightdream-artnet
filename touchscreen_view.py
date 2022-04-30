@@ -62,7 +62,6 @@ def unscale_image_coordinates(x, y):
     return (scaled_x, scaled_y)
 
 
-# test layout sprite
 def get_layout_sprite():
     image = pyglet.image.load('./images/!touchscreen layout 3.png')
     sprite = pyglet.sprite.Sprite(image, x=0, y=0)
@@ -88,7 +87,7 @@ def draw_circle(key, sprite, sprite_active):
         sprite.draw()
 
 
-# layout test sprite
+# layout test sprite - for coordinate testing purposes only
 sprite_layout = get_layout_sprite()
 
 # circle sprites - inactive

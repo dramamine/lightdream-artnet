@@ -18,7 +18,6 @@ class FilterNames:
   SPIRAL = 'spiral'
 
 
-
 # these straight-up replace the input frame
 class BrightnessFilter:
   def __init__(self, brightness):
