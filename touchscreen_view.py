@@ -7,7 +7,7 @@ from modules.fingers import finger_manager
 from effects.filters import FilterNames
 
 # Set this to true when running in production
-FULLSCREEN = False
+FULLSCREEN = True
 
 # Scale factor is irrelevant if FULLSCREEN=True
 SCALE_FACTOR = 0.5
@@ -41,10 +41,10 @@ def unscale_image_coordinates(x, y):
 
 
 # TODO
-# <0> Find centerpoint for each circle
-# <1> Render the layout as a black background with the other sprites on top of it
-# <2> on touch events, add the touches to the finger manager
-# <3> during render, render the sprites as active or inactive by checking finger manager
+# <0> Add touch events
+# <1> Possibly fix filter / circle naming convention
+# <2> Add right side circles
+# <3> Implement other controls
 
 
 class TouchscreenCircle:
@@ -248,15 +248,18 @@ sprite_layout = pyglet.sprite.Sprite(image_layout, x=0, y=0)
 sprite_layout.scale = SCALE_FACTOR
 
 
-def get_circle_sprite(circle):
-    image = pyglet.image.load(circle.path)
+def get_circle_sprite(circle, active=False):
+    path = circle.path
+    if active:
+        path = path.replace('.png', '-active.png')
+    image = pyglet.image.load(path)
     lower_right = unscale_image_coordinates(circle.X, circle.Y)
     sprite = pyglet.sprite.Sprite(image, x=lower_right[0], y=lower_right[1])
     sprite.scale = circle.SCALE
     return sprite
 
 
-# circle sprites
+# circle sprites - inactive
 sprite_hueshift = get_circle_sprite(HUESHIFT)
 sprite_kaleidoscope = get_circle_sprite(KALEIDOSCOPE)
 sprite_tunnel = get_circle_sprite(TUNNEL)
@@ -264,6 +267,21 @@ sprite_lightning = get_circle_sprite(LIGHTNING)
 sprite_nuclear = get_circle_sprite(NUCLEAR)
 sprite_spiral = get_circle_sprite(SPIRAL)
 sprite_radiantlines = get_circle_sprite(RADIANTLINES)
+
+sprite_hueshift_active = get_circle_sprite(HUESHIFT, active=True)
+sprite_kaleidoscope_active = get_circle_sprite(KALEIDOSCOPE, active=True)
+sprite_tunnel_active = get_circle_sprite(TUNNEL, active=True)
+sprite_lightning_active = get_circle_sprite(LIGHTNING, active=True)
+sprite_nuclear_active = get_circle_sprite(NUCLEAR, active=True)
+sprite_spiral_active = get_circle_sprite(SPIRAL, active=True)
+sprite_radiantlines_active = get_circle_sprite(RADIANTLINES, active=True)
+
+
+def draw_circle(key, sprite, sprite_active, finger_manager):
+    if bool(finger_manager.get_values(key)):
+        sprite_active.draw()
+    else:
+        sprite.draw()
 
 
 # on draw event
@@ -275,14 +293,15 @@ def on_draw():
 
     if LAYOUT_TEST:
         sprite_layout.draw()
-    else:
-        sprite_hueshift.draw()
-        sprite_kaleidoscope.draw()
-        sprite_tunnel.draw()
-        sprite_lightning.draw()
-        sprite_nuclear.draw()
-        sprite_spiral.draw()
-        sprite_radiantlines.draw()
+        return
+
+    draw_circle(HUESHIFT.key, sprite_hueshift, sprite_hueshift_active, finger_manager)
+    draw_circle(KALEIDOSCOPE.key, sprite_kaleidoscope, sprite_kaleidoscope_active, finger_manager)
+    draw_circle(TUNNEL.key, sprite_tunnel, sprite_tunnel_active, finger_manager)
+    draw_circle(LIGHTNING.key, sprite_lightning, sprite_lightning_active, finger_manager)
+    draw_circle(NUCLEAR.key, sprite_nuclear, sprite_nuclear_active, finger_manager)
+    draw_circle(SPIRAL.key, sprite_spiral, sprite_spiral_active, finger_manager)
+    draw_circle(RADIANTLINES.key, sprite_radiantlines, sprite_radiantlines_active, finger_manager)
 
 
 pyglet.app.run()
