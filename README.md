@@ -70,6 +70,12 @@ Milestone 3: new effects?
 
 Milestone 4: finalize arrangement
 
+Fit N Finish
+-----
+- make sure initial state of touchscreen works and is not annoying
+- make sure layout works in Fullscreen mode
+
+
 ### Other Stuff
 
 - DJ mode: use FFT to listen for bass
