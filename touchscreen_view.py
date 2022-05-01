@@ -21,7 +21,7 @@ from touchscreen_input import InputCoordinateMapper
 
 # Set this to true to render the full layout png
 # This is useful for testing the input_mapper
-LAYOUT_TEST = False
+LAYOUT_TEST = True
 
 # Set this to true when running in production
 FULLSCREEN = False
@@ -40,7 +40,7 @@ width = LAYOUT_IMAGE_WIDTH * LAYOUT_TEST_SCALE_FACTOR
 height = LAYOUT_IMAGE_HEIGHT * LAYOUT_TEST_SCALE_FACTOR
 
 # creating a window
-window = pyglet.window.Window(width, height, 'lightdream', fullscreen=FULLSCREEN)
+window = pyglet.window.Window(width=int(width), height=int(height), caption='lightdream', fullscreen=FULLSCREEN) 
 
 # keep the real WxH for scaling
 (WINDOW_WIDTH, WINDOW_HEIGHT) = window.get_size()
