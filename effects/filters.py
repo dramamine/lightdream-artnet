@@ -1,3 +1,4 @@
+from modules.sequence_player import SequencePlayer
 import numpy as np
 from util.hsv2rgb import hsv2rgb
 from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame
@@ -79,26 +80,26 @@ class ImageFilter:
     self.key = key
     self.count = count
 
-
-  def read_frame(self, idx):
+  def read_frame(self, key, idx):
     assert(idx >= 0)
     assert(idx <= self.count)
     idx_str = '{:03d}'.format(idx)
-
-    frame = cv2.imread(os.path.join('video', 'overlays', self.key, 
-      '{}{}.png'.format(self.key, idx_str)))
-
+    frame = cv2.imread(os.path.join('video', 'overlays', key, 
+      '{}{}.png'.format(key, idx_str)))
     return remove_unused_pixels_from_frame(frame)
-
 
   def value_to_frame_idx(self, value):
     return round(self.count * value)
 
+  # frame: the frame to which we apply this effect
+  # fingers: a list of parameters 0-1
   def apply(self, frame, fingers):
     if not fingers:
       return frame
 
-    frames = list(map(lambda x: self.read_frame( self.value_to_frame_idx(x) ), fingers))
+    frames = list(map(lambda x: self.read_frame( 
+      self.key, self.value_to_frame_idx(x)
+    ), fingers))
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
     return (combined/255) * frame
 
@@ -110,3 +111,37 @@ rings_filter = ImageFilter('rings', 178)
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
 wedges_filter = ImageFilter('wedges', 202)
+
+class RainbowFilter(ImageFilter):
+  def __init__(self, key, count):
+    self.key = key
+    self.count = count
+
+    self.sp = SequencePlayer(loop=True)
+    self.sp.play(os.path.join('video', 'sources', 'colorwheels.mp4'))
+
+  # frame: the frame to which we apply this effect
+  # fingers: a list of parameters, which are, pairs of x,y values 0-1
+  def apply(self, frame, fingers):
+    if not fingers:
+      return frame
+
+    verticals = list(map(lambda x: self.read_frame( 
+      'vertical-stripe', self.value_to_frame_idx(x[0])
+    ), fingers))
+
+    horizontals = list(map(lambda x: self.read_frame( 
+      'horizontal-stripe', self.value_to_frame_idx(x[1])
+    ), fingers))
+
+    cwframe = self.sp.read_frame()
+
+    frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe, 
+      range(len(fingers))))
+
+    combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
+    return combined
+    # return (combined/255) * frame
+
+
+rainbow_filter = RainbowFilter('rainbow', 389)

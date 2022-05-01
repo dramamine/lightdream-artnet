@@ -96,6 +96,18 @@ def on_key_press(symbol, modifiers):
     finger_manager.append('wedges', 0.68)
   elif symbol == pyglet.window.key.N:
     finger_manager.append('wedges', 0.82)
+  elif symbol == pyglet.window.key.A:
+    finger_manager.append('rainbow', [0.01, 0.01])
+  elif symbol == pyglet.window.key.S:
+    finger_manager.append('rainbow', [0.13, 0.13])
+  elif symbol == pyglet.window.key.D:
+    finger_manager.append('rainbow', [0.26, 0.26])
+  elif symbol == pyglet.window.key.F:
+    finger_manager.append('rainbow', [0.5, 0.5])
+  elif symbol == pyglet.window.key.G:
+    finger_manager.append('rainbow', [0.68, 0.68])
+  elif symbol == pyglet.window.key.H:
+    finger_manager.append('rainbow', [0.82, 0.82])
   
 
 @win.event
@@ -112,6 +124,18 @@ def on_key_release(symbol, modifiers):
     finger_manager.remove('wedges', 0.68)
   elif symbol == pyglet.window.key.N:
     finger_manager.remove('wedges', 0.82)  
+  elif symbol == pyglet.window.key.A:
+    finger_manager.remove('rainbow', [0.01, 0.01])
+  elif symbol == pyglet.window.key.S:
+    finger_manager.remove('rainbow', [0.13, 0.13])
+  elif symbol == pyglet.window.key.D:
+    finger_manager.remove('rainbow', [0.26, 0.26])
+  elif symbol == pyglet.window.key.F:
+    finger_manager.remove('rainbow', [0.5, 0.5])
+  elif symbol == pyglet.window.key.G:
+    finger_manager.remove('rainbow', [0.68, 0.68])
+  elif symbol == pyglet.window.key.H:
+    finger_manager.remove('rainbow', [0.82, 0.82])      
   pass
 
 
