@@ -20,7 +20,7 @@ class BrightnessFilter:
   def apply(self, frame, _unused):
     return np.multiply(frame, self.brightness)
 
-brightness_filter = BrightnessFilter(0.5)
+brightness = BrightnessFilter(0.5)
 
 class ValidateFilter:
   def __init__(self):
@@ -32,7 +32,7 @@ class ValidateFilter:
     frame = frame.astype(np.uint8)
     return frame
 
-validate_filter = ValidateFilter()
+validate = ValidateFilter()
 
 class HueshiftFilter:
   def __init__(self):
@@ -71,7 +71,7 @@ class HueshiftFilter:
     # exponent & divide should fix contrast, i.e. blacks stay black
     return mixed * mixed / 255
 
-hueshift_filter = HueshiftFilter()
+hueshift = HueshiftFilter()
 
 
 
@@ -106,11 +106,11 @@ class ImageFilter:
 # each finger = one ring of visibility
 # rings000.png = outer edges / base of dome
 # rings178.png = dead center of dome
-rings_filter = ImageFilter('rings', 178)
+rings = ImageFilter('rings', 178)
 
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
-wedges_filter = ImageFilter('wedges', 202)
+wedges = ImageFilter('wedges', 202)
 
 class RainbowFilter(ImageFilter):
   def __init__(self, key, count):
@@ -144,4 +144,4 @@ class RainbowFilter(ImageFilter):
     # return (combined/255) * frame
 
 
-rainbow_filter = RainbowFilter('rainbow', 389)
+rainbow = RainbowFilter('rainbow', 389)

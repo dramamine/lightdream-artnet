@@ -2,19 +2,27 @@ from math import ceil
 import numpy as np
 import effects.filters as filters
 import effects.reshapers as reshapers
+import effects.masks as masks
+import effects.sources as sources
 
 class EffectsManager:
   def __init__(self, brightness = 0.5):
 
-    self.source_effects = []
-    self.mask_effects = []
+    self.source_effects = [
+      sources.lightning
+    ]
+    self.mask_effects = [
+      masks.nuclear,
+      masks.blobs,
+      masks.spiral
+    ]
     self.filter_effects = [
-      filters.rings_filter,
-      filters.wedges_filter,
-      filters.rainbow_filter,
-      filters.hueshift_filter,
-      filters.brightness_filter,
-      filters.validate_filter,
+      filters.rings,
+      filters.wedges,
+      filters.rainbow,
+      filters.hueshift,
+      filters.brightness,
+      filters.validate,
     ]
     self.reshaper_effects = [
       reshapers.tunnel,

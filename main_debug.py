@@ -84,7 +84,7 @@ pyglet.clock.schedule_interval(loop_timer, 1.0/fps)
 @win.event
 def on_key_press(symbol, modifiers):
   if symbol == pyglet.window.key.Z:
-    finger_manager.append('wedges', 0.01)
+    finger_manager.append('lightning', 0.01)
   elif symbol == pyglet.window.key.X:
     finger_manager.append('wedges', 0.13)
   elif symbol == pyglet.window.key.C:
@@ -123,7 +123,7 @@ def on_key_press(symbol, modifiers):
 @win.event
 def on_key_release(symbol, modifiers):
   if symbol == pyglet.window.key.Z:
-    finger_manager.remove('wedges', 0.01)
+    finger_manager.remove('lightning', 0.01)
   elif symbol == pyglet.window.key.X:
     finger_manager.remove('wedges', 0.13)
   elif symbol == pyglet.window.key.C:
