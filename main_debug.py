@@ -83,7 +83,6 @@ pyglet.clock.schedule_interval(loop_timer, 1.0/fps)
 
 @win.event
 def on_key_press(symbol, modifiers):
-  print("key pressed:", symbol, modifiers)
   if symbol == pyglet.window.key.Z:
     finger_manager.append('wedges', 0.01)
   elif symbol == pyglet.window.key.X:
@@ -108,7 +107,18 @@ def on_key_press(symbol, modifiers):
     finger_manager.append('rainbow', [0.68, 0.68])
   elif symbol == pyglet.window.key.H:
     finger_manager.append('rainbow', [0.82, 0.82])
-  
+  elif symbol == pyglet.window.key.Q:
+    finger_manager.append('kaleidoscope', [0.51, 0.51])
+  elif symbol == pyglet.window.key.W:
+    finger_manager.append('kaleidoscope', [0.51, 0.61])
+  elif symbol == pyglet.window.key.E:
+    finger_manager.append('kaleidoscope', [0.65, 0.75])
+  elif symbol == pyglet.window.key.R:
+    finger_manager.append('kaleidoscope', [0.65, 0.85])
+  elif symbol == pyglet.window.key.T:
+    finger_manager.append('kaleidoscope', [0.88, 0.88])
+  elif symbol == pyglet.window.key.Y:
+    finger_manager.append('kaleidoscope', [0.88, 0.98])
 
 @win.event
 def on_key_release(symbol, modifiers):
@@ -135,7 +145,19 @@ def on_key_release(symbol, modifiers):
   elif symbol == pyglet.window.key.G:
     finger_manager.remove('rainbow', [0.68, 0.68])
   elif symbol == pyglet.window.key.H:
-    finger_manager.remove('rainbow', [0.82, 0.82])      
+    finger_manager.remove('rainbow', [0.82, 0.82])     
+  elif symbol == pyglet.window.key.Q:
+    finger_manager.remove('kaleidoscope', [0.51, 0.51])
+  elif symbol == pyglet.window.key.W:
+    finger_manager.remove('kaleidoscope', [0.51, 0.61])
+  elif symbol == pyglet.window.key.E:
+    finger_manager.remove('kaleidoscope', [0.65, 0.75])
+  elif symbol == pyglet.window.key.R:
+    finger_manager.remove('kaleidoscope', [0.65, 0.85])
+  elif symbol == pyglet.window.key.T:
+    finger_manager.remove('kaleidoscope', [0.88, 0.88])
+  elif symbol == pyglet.window.key.Y:
+    finger_manager.remove('kaleidoscope', [0.88, 0.98])     
   pass
 
 

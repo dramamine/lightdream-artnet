@@ -1,3 +1,4 @@
+import math
 import numpy as np
 
 def numpy_mixer(frame_a, frame_b, mix):
@@ -25,3 +26,11 @@ def remove_unused_pixels_from_frame(frame):
   assert(len(frame) == 30)
   assert(len(frame[0]) == 510)
   return frame
+
+# convert to polar coordinate, assuming center is (0.5, 0.5)
+def to_polar(point):
+  x = point[0] - 0.5
+  y = point[1] - 0.5
+  r = (x ** 2 + y ** 2) ** .5
+  theta = math.degrees(math.atan2(y,x)) % 360
+  return r, theta

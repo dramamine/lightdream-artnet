@@ -1,6 +1,7 @@
 from math import ceil
 import numpy as np
 import effects.filters as filters
+import effects.reshapers as reshapers
 
 class EffectsManager:
   def __init__(self, brightness = 0.5):
@@ -13,7 +14,11 @@ class EffectsManager:
       filters.rainbow_filter,
       filters.hueshift_filter,
       filters.brightness_filter,
-      filters.validate_filter
+      filters.validate_filter,
+    ]
+    self.reshaper_effects = [
+      reshapers.tunnel,
+      reshapers.kaleidoscope
     ]
     
     self.set_brightness(brightness)
@@ -31,7 +36,7 @@ class EffectsManager:
   def apply_effects(self, frame, finger_manager):
     # print("before:", frame[0][0], frame[0][1], frame[0][2])
 
-    for effects_list in [self.source_effects, self.mask_effects, self.filter_effects]:
+    for effects_list in [self.source_effects, self.mask_effects, self.filter_effects, self.reshaper_effects]:
       for effect in effects_list:
         frame = effect.apply(frame, finger_manager.get_values(effect.key) )
 
