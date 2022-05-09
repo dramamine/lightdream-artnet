@@ -6,7 +6,7 @@ from util.config import config
 from time import time
 import modules.audio_input.runner as audio_listener
 import pyglet
-from modules.debug_view import update_pixels, win
+from modules.debug_view import update_audio_viewer, update_pixels, win
 from modules.fingers import finger_manager
 
 event_loop = pyglet.app.EventLoop()
@@ -45,9 +45,8 @@ def loop():
   frame = effects_manager.apply_effects(frame, finger_manager)
 
   update_pixels(frame)
-    
+  update_audio_viewer(audio_listener.energy_original, audio_listener.energy_modified)
 
-  
 def toggle_mode():
   if mode == "playlist":
     mode = "autoplay"

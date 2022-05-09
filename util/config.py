@@ -5,7 +5,8 @@ config_file = 'config.yml'
 defaults = {
   "ENV": "dev",
   "PLATFORM": "mac",
-  "MODE": "autoplay"
+  "MODE": "autoplay",
+  "AUDIO_DEBUG": False
 }
 
 if not exists(config_file):

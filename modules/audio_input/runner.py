@@ -1,10 +1,31 @@
+from collections import deque
+from math import e
 from util.config import config
 import subprocess, threading
-from util.periodicrun import periodicrun
-from time import time
+from itertools import repeat
+
 
 freq = 0.0
 energy = 0.0
+values_to_keep = 200
+
+energy_original = deque(maxlen=values_to_keep)
+energy_original.extend(list(repeat(0,values_to_keep)))
+energy_modified = deque(maxlen=values_to_keep)
+energy_modified.extend(list(repeat(0,values_to_keep)))
+
+# range: -0.1 is a really sharp decay (10% per frame)
+#        -0.01 is weaker (1% per frame)
+decay_constant = -0.1
+
+def update_energy(value):
+  energy_original.appendleft(value)
+
+  # see if a decayed value would be higher
+  decayed = energy_modified[0] * e ** decay_constant
+  energy_modified.appendleft( max(value, decayed) )
+
+
 
 def output_reader(proc):
     global freq, energy
@@ -13,6 +34,7 @@ def output_reader(proc):
         values = line.decode('utf-8').strip().split()
         freq = values[0]
         energy = values[1]
+        update_energy(float(energy))
 
 
 is_mock = "" if config['PLATFORM'] == "rpi" else "_mock"
@@ -36,4 +58,4 @@ def thread_ender():
   t.join()
 
 def get_energy():
-  return energy
+  return energy_modified[0]
