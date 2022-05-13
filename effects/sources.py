@@ -21,10 +21,9 @@ class SourceEffect:
     if not fingers:
       return frame
     
-    print("hello from lightning")
     source = self.sp.read_frame()
     return prefer_a_vectorized(source, frame)
 
-# radiant = SourceEffect("radiant")
-# triforce = SourceEffect("triforce")
+radiant = SourceEffect("radiant")
+triforce = SourceEffect("triforce")
 lightning = SourceEffect("lightning")

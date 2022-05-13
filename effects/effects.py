@@ -9,6 +9,8 @@ class EffectsManager:
   def __init__(self, brightness = 0.5):
 
     self.source_effects = [
+      sources.lightning,
+      sources.radiant,
       sources.lightning
     ]
     self.mask_effects = [
