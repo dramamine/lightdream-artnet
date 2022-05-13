@@ -2,6 +2,7 @@ import pyglet
 import numpy as np
 import os
 from util.config import config
+from modules.audio_input.runner import max_energy
 
 WIDTH = 680
 HEIGHT = 360
@@ -29,6 +30,10 @@ def on_draw():
   leds.draw()
   audio_batch.draw()
   pass
+
+###
+### AUDIO DEBUGGER DISPLAY BELOW
+###
 
 FRAMES_TO_DISPLAY = int(WIDTH/20)
 
@@ -61,13 +66,8 @@ for i in range(0,FRAMES_TO_DISPLAY):
   )
 
 
-def energy_value_to_color(energy):
-  if energy > 5:
-    return red_image
-  return green_image
-
 def energy_value_to_opacity(energy):
-  percent = min(energy / 10, 1)
+  percent = min(energy / max_energy, 1)
   return int(255 * percent)
   
 
