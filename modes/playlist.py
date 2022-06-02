@@ -1,15 +1,11 @@
-from ctypes import sizeof
-from email.mime import audio
 import os
-
+from util.track_metadata import tracks
 
 from modules.audio_player import AudioPlayer
 from modules.sequence_player import SequencePlayer
 import random
 
 # assume mode is sequences, at least for this file.
-
-songs = ['asineedyou', 'misty', 'moses']
 
 class Playlist:
   def __init__(self):
@@ -19,7 +15,7 @@ class Playlist:
     self.ap = AudioPlayer()
 
   def start(self):
-    random.shuffle(songs)
+    random.shuffle(tracks)
     self.start_track(self.pick_track())
 
   def __del__(self):
@@ -29,8 +25,8 @@ class Playlist:
     if self.queue:
       return self.queue.pop(0)
     
-    self.idx = (self.idx+1) % len(songs)
-    return songs[self.idx]
+    self.idx = (self.idx+1) % len(tracks)
+    return tracks[self.idx]
     
   def start_track(self, track_name):
     print("starting audio:", track_name)
@@ -51,6 +47,6 @@ class Playlist:
     return self.sp.read_frame()
   
   def enqueue(self, track_name):
-    # assert(track_name in songs)
+    # assert(track_name in tracks)
     self.queue.append(track_name)
 

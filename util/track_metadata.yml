@@ -1,0 +1,145 @@
+aphex:
+  track_name: Vordhosbn
+  artist_name: Aphex Twin
+  bpm: 170
+  energy: high
+asineedyou:
+  track_name: As I Need You
+  artist_name: Spor & Tasha Baxter
+  bpm: 172
+  energy: high
+baths:
+  track_name: Ocean Death
+  artist_name: Baths
+  bpm: 120
+  energy: medium
+better:
+  track_name: I Wanna Get Better
+  artist_name: Bleachers
+  bpm: 192
+  energy: medium
+bite:
+  track_name: I Bite Through It
+  artist_name: Oneohtrix Point Never
+  bpm: 
+  energy: 
+dyscontrolled:
+  track_name: Dyscontrolled Galaxy
+  artist_name: Camellia?
+  bpm: 
+  energy: 
+faster:
+  track_name: Happy Faster
+  artist_name: UFO Project
+  bpm: 154
+  energy: medium 
+girlblunt:
+  track_name: Girl Blunt
+  artist_name: Leikeli47
+  bpm: 190
+  energy: medium
+gone:
+  track_name: Gone for Never -Crunch Mix-
+  artist_name: LSN & AxH
+  bpm: 143
+  energy: medium
+heartaches:
+  track_name: Heartaches
+  artist_name: Tropkillaz
+  bpm: 160
+  energy: medium
+hmu:
+  track_name: HMU
+  artist_name: Space Jesus
+  bpm: 172
+  energy: medium
+hotpink:
+  track_name: Hot Pink
+  artist_name: Lets Eat Grandma
+  bpm: 105
+  energy: medium
+hustlebones:
+  track_name: Hustle Bones
+  artist_name: Death Grips
+  bpm: 215
+  energy: high
+ithica:
+  track_name: Ithica 27 o 9
+  artist_name: Mogwai
+  bpm: 165
+  energy: low
+misty:
+  track_name: I Awoke on a Misty Morning
+  artist_name: Julie Fowlis
+  bpm: 172
+  energy: low
+moses:
+  track_name: Colouour
+  artist_name: Moses Sumney
+  bpm: 97
+  energy: low 
+nofuture:
+  track_name: Nos Prometieron Futuro
+  artist_name: Techno Para Dos
+  bpm: 119
+  energy: medium
+ocean:
+  track_name: Ocean (Goja Remix)
+  artist_name: Martin Garrix ft. Khalid
+  bpm: 176
+  energy: medium
+polish:
+  track_name: Polish Dream
+  artist_name: Full Court
+  bpm: 125
+  energy: medium
+promises:
+  track_name: Promises
+  artist_name: Floating Points
+  bpm: 99
+  energy: low 
+quietstorm:
+  track_name: Quiet Storm (Tim Reaper Remix)
+  artist_name: Speacial Rquest
+  bpm: 166
+  energy: medium
+rage:
+  track_name: Rage
+  artist_name: Rico Nasty
+  bpm: 141
+  energy: high
+redlips:
+  track_name: Red Lips
+  artist_name: Skrillex
+  bpm: 
+  energy: 
+runes:
+  track_name: Put the Runes on U
+  artist_name: Slugabed
+  bpm: 
+  energy: 
+seahorses: 
+  track_name: Sea Horses
+  artist_name: Mr Oizo
+  bpm: 106
+  energy: medium
+seethrough:
+  track_name: See Through
+  artist_name: Electrobro
+  bpm: 141
+  energy: medium
+star:
+  track_name: Star
+  artist_name: Machinedrum
+  bpm: 141
+  energy: medium
+vroom:
+  track_name: Vroom Vroom
+  artist_name: Charli XCX
+  bpm: 152
+  energy: medium
+wildfire:
+  track_name: Wildfire
+  artist_name: Sbtrkt
+  bpm: 140
+  energy: medium

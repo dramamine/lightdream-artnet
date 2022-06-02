@@ -73,8 +73,6 @@ class HueshiftFilter:
 
 hueshift = HueshiftFilter()
 
-
-
 class ImageFilter:
   def __init__(self, key, count):
     self.key = key

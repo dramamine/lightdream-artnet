@@ -1,4 +1,3 @@
-from os.path import exists
 import yaml
 
 config_file = 'config.yml'
@@ -7,6 +6,10 @@ defaults = {
   "PLATFORM": "mac",
   "MODE": "autoplay",
   "AUDIO_DEBUG": False,
+
+  # if true, only use the 3 songs committed to the repo.
+  # this gets disabled in production.
+  "DEBUG_TRACKLIST": True,
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)
   "decay_constant": -0.05,
@@ -15,6 +18,15 @@ defaults = {
   # 1.0 is no brightness adjustment. range: 0 -> inf
   "brightness": 1.0,
 
+  # range: 0 -> 1
+  "aural_effect_strength_multiplier": 0.25,
+  # seconds until changing auto-clip
+  "autoplay_interval": 50,
+  # seconds over which we fade from one section to the next
+  "autoplay_crossfade": 5,
+
+  # from artnet.py, how is the dome oriented? range: 0 -> 9
+  "brain_position": 3,
 }
 
 class Config:

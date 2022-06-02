@@ -1,5 +1,5 @@
 from stupidArtnet import StupidArtnet
-import time
+from util.config import config
 
 def flatten(list_of_lists):
   return [val for sublist in list_of_lists for val in sublist]
@@ -36,9 +36,6 @@ brain_positions = [
   [1,0,4,3,2]
 ]
 
-# which brain_position to use? @TODO move to config
-bp = 3
-
 # universes: list of 6 Artnet instances
 # channels: list of 6 sets of channel data
 def _send_to_brain(universes, channels):
@@ -52,6 +49,6 @@ def _send_to_brain(universes, channels):
 def show(frame):
   assert len(frame) == 30
   for i in range(5):
-    positions = brain_positions[bp]
+    positions = brain_positions[config.read("brain_position")]
     universe_lists_idx = positions[i]
     _send_to_brain(universe_lists[universe_lists_idx], frame[6*i:6*i+6])

@@ -4,14 +4,12 @@ import time
 from modules.sequence_player import SequencePlayer
 from effects.aural import aural
 import numpy as np
+from util.config import config
 
 # all blacks
 nullframe = np.zeros((30,512))
 
 files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswith('.mp4')]
-
-INTERVAL = 50
-CROSSFADE = 5
 
 def numpy_mixer(frame_a, frame_b, mix):
   return frame_a * (1-mix) + frame_b * mix
@@ -54,11 +52,11 @@ class Autoplay:
   def tick(self):
     time_since = time.time() - self.timer
     # print(time_since)
-    if time_since > INTERVAL:
+    if time_since > config.read("autoplay_interval"):
       self.crossfade_to_next_track()
       time_since = 0
     
-    if time_since > CROSSFADE:
+    if time_since > config.read("autoplay_crossfade"):
       # deactivate one of them
       if self.spa_active and self.idx % 2 == 1:
         # print("deactivating a")
@@ -68,7 +66,7 @@ class Autoplay:
         self.spb_active = False
 
     if self.spa_active and self.spb_active:
-      mix = time_since / CROSSFADE
+      mix = time_since / config.read("autoplay_crossfade")
       if self.idx % 2 == 1:
         # print("fading from a to b", mix)
         # return self.spa.read_frame()
