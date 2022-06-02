@@ -34,3 +34,6 @@ def to_polar(point):
   r = (x ** 2 + y ** 2) ** .5
   theta = math.degrees(math.atan2(y,x)) % 360
   return r, theta
+
+# all blacks
+nullframe = np.zeros((30,512))

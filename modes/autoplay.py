@@ -5,9 +5,7 @@ from modules.sequence_player import SequencePlayer
 from effects.aural import aural
 import numpy as np
 from util.config import config
-
-# all blacks
-nullframe = np.zeros((30,512))
+from util.util import nullframe
 
 files = [x for x in os.listdir( os.path.join('video', 'autoclips')) if x.endswith('.mp4')]
 

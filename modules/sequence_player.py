@@ -4,9 +4,7 @@ import numpy as np
 import math
 from time import time
 
-from util.util import remove_unused_pixels_from_frame 
-# all blacks
-nullframe = np.zeros((30, 512))
+from util.util import remove_unused_pixels_from_frame, nullframe
 
 class SequencePlayer:
   def __init__(self, loop=False):
