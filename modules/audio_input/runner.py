@@ -65,7 +65,7 @@ def get_energy():
 
 # returns a float 0-1 for how strong we want the audio visualization effect to be
 def get_visual_strength():
-  return max( 1, get_energy() / max_energy )
+  return min( 1, get_energy() / max_energy )
 
 def update_max_energy(val):
   assert(val > 0)

@@ -2,6 +2,7 @@ import os
 import random
 import time
 from modules.sequence_player import SequencePlayer
+from effects.aural import aural
 import numpy as np
 
 # all blacks
@@ -47,6 +48,7 @@ class Autoplay:
     
    #  print("started playing:", files[self.idx])
     self.timer = time.time()
+    aural.rotate_aural_effects()
     pass
 
   def tick(self):

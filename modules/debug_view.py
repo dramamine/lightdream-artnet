@@ -39,31 +39,15 @@ FRAMES_TO_DISPLAY = int(WIDTH/20)
 
 energy_original_images_bg = []
 energy_original_images_fg = []
-for i in range(0,FRAMES_TO_DISPLAY):
-  energy_original_images_bg.append(
-    pyglet.sprite.Sprite(img=green_image, x=20*i, y=360, batch=audio_batch)
-  )
-  
-for i in range(0,FRAMES_TO_DISPLAY):
-  sp = pyglet.sprite.Sprite(img=red_image, x=20*i, y=360, batch=audio_batch)
-  sp.opacity = 0
-  energy_original_images_fg.append(
-    sp
-  )
 
 energy_modified_images_bg = []
 energy_modified_images_fg = []
+
 for i in range(0,FRAMES_TO_DISPLAY):
-  energy_modified_images_bg.append(
-    pyglet.sprite.Sprite(img=green_image, x=20*i, y=380, batch=audio_batch)
-  )
-  
-for i in range(0,FRAMES_TO_DISPLAY):
-  sp = pyglet.sprite.Sprite(img=red_image, x=20*i, y=380, batch=audio_batch)
-  sp.opacity = 0
-  energy_modified_images_fg.append(
-    sp
-  )
+  energy_original_images_bg.append(pyglet.sprite.Sprite(img=green_image, x=20*i, y=360, batch=audio_batch))
+  energy_original_images_fg.append(pyglet.sprite.Sprite(img=red_image, x=20*i, y=360, batch=audio_batch))
+  energy_modified_images_bg.append(pyglet.sprite.Sprite(img=green_image, x=20*i, y=380, batch=audio_batch))
+  energy_modified_images_fg.append(pyglet.sprite.Sprite(img=red_image, x=20*i, y=380, batch=audio_batch))
 
 
 def energy_value_to_opacity(energy):
@@ -90,10 +74,12 @@ def update_pixels(frame):
 
 def update_audio_viewer(energy_original, energy_modified):
   for i in range(0,FRAMES_TO_DISPLAY):
-    energy_original_images_fg[i].opacity = energy_value_to_opacity(
-      energy_original[i]
-    )
-    energy_modified_images_fg[i].opacity = energy_value_to_opacity(
-      energy_modified[i]
-    )
+
+    o = energy_value_to_opacity(energy_original[i])
+    energy_original_images_fg[i].opacity = o
+    energy_original_images_bg[i].opacity = 255-o
+
+    p = energy_value_to_opacity(energy_modified[i])
+    energy_modified_images_fg[i].opacity = p
+    energy_modified_images_bg[i].opacity = 255-p
   pass
