@@ -16,7 +16,7 @@ import modules.audio_input.runner as audio_listener
 fps = 40
 
 # "playlist" | "autoplay" | "metronome"
-mode = config['MODE']
+mode = config.read("MODE")
 
 pl = Playlist()
 ap = Autoplay()
@@ -32,6 +32,8 @@ elif mode == "playlist":
   pl.start()
 
 def loop():
+  mode = config.read("MODE")
+  
   if mode == "autoplay":
     frame = ap.tick()
     # @TODO apply fun filters based on song energy
@@ -42,16 +44,16 @@ def loop():
 
   frame = effects_manager.apply_effects(frame, finger_manager)
 
-  if config['ENV'] == "prod":
+  if config.read("ENV") == "prod":
     show(frame)
   
 
 def toggle_mode():
   if mode == "playlist":
-    mode = "autoplay"
+    config.write("MODE", "autoplay")
     ap.start()
   else:
-    mode = "playlist"
+    config.write("MODE", "playlist")
     pl.restart()
 
 

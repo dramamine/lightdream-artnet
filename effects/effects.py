@@ -5,9 +5,10 @@ import effects.reshapers as reshapers
 import effects.masks as masks
 import effects.sources as sources
 import effects.aural as aural
+from util.config import config
 
 class EffectsManager:
-  def __init__(self, brightness = 0.5):
+  def __init__(self):
 
     self.source_effects = [
       sources.lightning,
@@ -34,16 +35,11 @@ class EffectsManager:
     self.audio_based_effects = [
       aural.aural
     ]
-    
-    self.set_brightness(brightness)
 
-  def set_brightness(self, brightness):
-    assert(brightness >= 0.0)
-    assert(brightness <= 1.0)
-    self.brightness = brightness
   
   def apply_brightness(self, frame):
-    return np.multiply(frame, self.brightness)
+    return np.multiply(frame, config.read("brightness"))
+    
   # note that 'frame' could be dtype uint8 or float64 at this point.
   # but output has gotta be uint8 so we can convert to bytearray later.
   def apply_effects(self, frame, finger_manager):

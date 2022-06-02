@@ -31,7 +31,7 @@ class Aural:
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1
   def apply(self, frame, fingers):
-    mode = config['MODE']
+    mode = config.read("MODE")
     if mode != "autoplay":
       return frame
     

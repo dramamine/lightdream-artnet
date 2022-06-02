@@ -5,8 +5,6 @@ from effects.effects import effects_manager
 import modules.audio_input.runner as audio_listener
 from effects.masks import nuclearEffect, spiralEffect, blobsEffect
 
-from util.config import config
-
 from util.periodicrun import periodicrun
 import timeit
 

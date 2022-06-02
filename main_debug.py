@@ -19,12 +19,10 @@ def on_window_close(window):
 fps = 40.3
 
 # "playlist" | "autoplay" | "metronome"
-mode = config['MODE']
+mode = config.read("MODE")
 
 pl = Playlist()
 ap = Autoplay()
-
-effects_manager.set_brightness(1.0)
 
 if mode == "metronome":
   pl.test_metronome()
@@ -34,6 +32,7 @@ elif mode == "playlist":
   pl.start()
 
 def loop():
+  mode = config.read("MODE")
   if mode == "autoplay":
     frame = ap.tick()
     # @TODO apply fun filters based on song energy
@@ -49,10 +48,10 @@ def loop():
 
 def toggle_mode():
   if mode == "playlist":
-    mode = "autoplay"
+    config.write("MODE", "autoplay")
     ap.start()
   else:
-    mode = "playlist"
+    config.write("MODE", "playlist")
     pl.restart()
 
 
@@ -77,8 +76,6 @@ def loop_timer(x):
 
 # WARNING: timing seems broken on Windows, runs too slow
 pyglet.clock.schedule_interval(loop_timer, 1.0/fps)
-
-
 
 @win.event
 def on_key_press(symbol, modifiers):

@@ -2,12 +2,11 @@ import pyglet
 import numpy as np
 import os
 from util.config import config
-from modules.audio_input.runner import max_energy
 
 WIDTH = 680
 HEIGHT = 360
 try:
-  if config['AUDIO_DEBUG'] == True:
+  if config.read("AUDIO_DEBUG") == True:
     HEIGHT = HEIGHT + 40
 except:
   pass
@@ -51,7 +50,7 @@ for i in range(0,FRAMES_TO_DISPLAY):
 
 
 def energy_value_to_opacity(energy):
-  percent = min(energy / max_energy, 1)
+  percent = min(energy / config.read("max_energy"), 1)
   return int(255 * percent)
   
 
