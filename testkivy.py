@@ -1,11 +1,8 @@
-from random import random
 from kivy.app import App
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.graphics import Color, Ellipse, Line
+from kivy.config import Config
 from kivy.core.image import Image
+from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import StringProperty
 
 from touchscreen_circles import HUESHIFT
 from touchscreen_circles import KALEIDOSCOPE
@@ -29,7 +26,6 @@ WINDOW_WIDTH, WINDOW_HEIGHT = LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
 
 
-from kivy.config import Config
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
@@ -52,17 +48,14 @@ class Touchable(Screen):
     def on_touch_down(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
         # print("point", point)
-        print(touch.id)
         input_mapper.process_touch_enter(touch.id, point)
 
     def on_touch_move(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        print(touch.id)
         input_mapper.process_touch_motion(touch.id, point)
 
     def on_touch_up(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        print(touch.id)
         input_mapper.process_touch_leave(touch.id)
 
 
