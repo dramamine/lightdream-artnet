@@ -72,8 +72,8 @@ class LayoutTestScreen(Touchable):
 
 class MainApp(App):
     def build(self):
-        return LayoutTestScreen()
-        # return LightdreamTouchScreen()
+        # return LayoutTestScreen()
+        return LightdreamTouchScreen()
 
 if __name__ == '__main__':
     MainApp().run()
