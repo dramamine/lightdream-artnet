@@ -52,15 +52,18 @@ class Touchable(Screen):
     def on_touch_down(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
         # print("point", point)
-        input_mapper.process_touch_enter("TODO", point)
+        print(touch.id)
+        input_mapper.process_touch_enter(touch.id, point)
 
     def on_touch_move(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        input_mapper.process_touch_motion("TODO", point)
+        print(touch.id)
+        input_mapper.process_touch_motion(touch.id, point)
 
     def on_touch_up(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        input_mapper.process_touch_leave("TODO")
+        print(touch.id)
+        input_mapper.process_touch_leave(touch.id)
 
 
 class LightdreamTouchScreen(Touchable):
