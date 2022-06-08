@@ -1,3 +1,8 @@
+<TouchscreenCircle@Image>:
+    size_hint: None, None
+    allow_stretch: True
+    keep_ratio: False
+
 <LightdreamTouchScreen>:
     name: "lightdream"
     canvas.before:
@@ -6,25 +11,25 @@
         Rectangle:
             pos: self.pos
             size: self.size
-    Image:
+    TouchscreenCircle:
         id: HUESHIFT
         size: 550, 550
-    Image:
+    TouchscreenCircle:
         id: KALEIDOSCOPE
         size: 550, 550
-    Image:
+    TouchscreenCircle:
         id: TUNNEL
         size: 550, 550
-    Image:
+    TouchscreenCircle:
         id: LIGHTNING
         size: 215, 215
-    Image:
+    TouchscreenCircle:
         id: NUCLEAR
         size: 250, 250
-    Image:
+    TouchscreenCircle:
         id: SPIRAL
         size: 215, 215
-    Image:
+    TouchscreenCircle:
         id: RADIANTLINES
         size: 215, 215
 
