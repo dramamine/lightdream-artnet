@@ -7,9 +7,46 @@
             pos: self.pos
             size: self.size
     Image:
-        source: 'images/colorwheel-dithered.png'
-        size: self.texture_size
-
+        id: HUESHIFT
+        asdf: 42
+        size_hint: None, None
+        allow_stretch: True
+        keep_ratio: False
+        size: 550, 550
+        center_x: 312
+        center_y: 683
+    Image:
+        source: 'images/kaleidoscope.png'
+        size_hint: None, None
+        allow_stretch: True
+        keep_ratio: False
+        size: 550, 550
+        center_x: 850
+        center_y: 1015
+    Image:
+        source: 'images/tunnel.png'
+        size_hint: None, None
+        allow_stretch: True
+        keep_ratio: False
+        size: 550, 550
+        center_x: 850
+        center_y: 288
+    Image:
+        source: 'images/lightning.png'
+        size_hint: None, None
+        allow_stretch: True
+        keep_ratio: False
+        size: 215, 215
+        center_x: 414
+        center_y: 146
+    Image:
+        source: 'images/nuclear.png'
+        size_hint: None, None
+        allow_stretch: True
+        keep_ratio: False
+        size: 250, 250
+        center_x: 166
+        center_y: 260
 
 <LayoutTestScreen>:
     name: "layout_test"

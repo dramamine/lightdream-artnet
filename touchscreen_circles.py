@@ -15,7 +15,8 @@ class TouchscreenCircle:
      - to adjust the fit between touch-target and image, adjust full_image_radius.
 
     """
-    def __init__(self, path='', key='', center=None, radius=0, full_image_radius=0):
+    def __init__(self, name='', path='', key='', center=None, radius=0, full_image_radius=0):
+        self.name = name
         self.path = path
         self.key = key
         self.center = center
@@ -45,6 +46,7 @@ class TouchscreenCircle:
 HUESHIFT = TouchscreenCircle(
     path='./images/colorwheel-dithered.png',
     key=FilterNames.HUESHIFT,
+    name='HUESHIFT',
     center=(312, 683),
     radius=262,
     full_image_radius=800
@@ -52,6 +54,7 @@ HUESHIFT = TouchscreenCircle(
 KALEIDOSCOPE = TouchscreenCircle(
     path='./images/kaleidoscope.png',
     key=FilterNames.KALEIDOSCOPE,
+    name='KALEIDOSCOPE',
     center=(850, 1015),
     radius=262,
     full_image_radius=800
@@ -59,6 +62,7 @@ KALEIDOSCOPE = TouchscreenCircle(
 TUNNEL = TouchscreenCircle(
     path='./images/tunnel.png',
     key=FilterNames.TUNNEL,
+    name='TUNNEL',
     center=(850, 288),
     radius=262,
     full_image_radius=800
@@ -67,6 +71,7 @@ TUNNEL = TouchscreenCircle(
 LIGHTNING = TouchscreenCircle(
     path='./images/lightning.png',
     key=FilterNames.LIGHTNING,
+    name='LIGHTNING',
     center=(414, 146),
     radius=106,
     full_image_radius=500
@@ -74,6 +79,7 @@ LIGHTNING = TouchscreenCircle(
 NUCLEAR = TouchscreenCircle(
     path='./images/nuclear.png',
     key=FilterNames.NUCLEAR,
+    name='NUCLEAR',
     center=(166, 260),
     radius=106,
     full_image_radius=500
@@ -81,6 +87,7 @@ NUCLEAR = TouchscreenCircle(
 SPIRAL = TouchscreenCircle(
     path='./images/spiral.png',
     key=FilterNames.SPIRAL,
+    name='SPIRAL',
     center=(160, 1095),
     radius=106,
     full_image_radius=500
@@ -88,6 +95,7 @@ SPIRAL = TouchscreenCircle(
 RADIANTLINES = TouchscreenCircle(
     path='./images/radiant-lines.png',
     key=FilterNames.RADIANTLINES,
+    name='RADIANTLINES',
     center=(416, 1205),
     radius=106,
     full_image_radius=500
