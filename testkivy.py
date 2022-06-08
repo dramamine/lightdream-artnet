@@ -73,6 +73,12 @@ class LightdreamTouchScreen(Touchable):
         super().__init__()
         for circle in self.CIRCLES.keys():
             self.ids[circle].source = self.CIRCLES[circle].path
+            self.ids[circle].center_x = self.CIRCLES[circle].center[0]
+            self.ids[circle].center_y = self.CIRCLES[circle].center[1]
+            # TODO these display props should be set in or inherited in the kv file
+            self.ids[circle].allow_stretch = True
+            self.ids[circle].keep_ratio = False
+            self.ids[circle].size_hint = (None, None)
 
     def update_active(self):
         for circle in self.CIRCLES.keys():
