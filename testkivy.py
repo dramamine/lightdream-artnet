@@ -8,7 +8,12 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import StringProperty
 
 from touchscreen_circles import HUESHIFT
+from touchscreen_circles import KALEIDOSCOPE
+from touchscreen_circles import TUNNEL
+from touchscreen_circles import LIGHTNING
 from touchscreen_circles import NUCLEAR
+from touchscreen_circles import SPIRAL
+from touchscreen_circles import RADIANTLINES
 
 from touchscreen_input import InputCoordinateMapper
 
@@ -51,29 +56,35 @@ class Touchable(Screen):
 
     def on_touch_move(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        # print("point", point)
         input_mapper.process_touch_motion("TODO", point)
 
     def on_touch_up(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        # print("point", point)
         input_mapper.process_touch_leave("TODO")
 
 
 class LightdreamTouchScreen(Touchable):
-    CIRCLE_IDS = [
-        'HUESHIFT',
-    ]
+    CIRCLES = {
+        'HUESHIFT': HUESHIFT,
+        'KALEIDOSCOPE': KALEIDOSCOPE,
+        'TUNNEL': TUNNEL,
+        'LIGHTNING': LIGHTNING,
+        'NUCLEAR': NUCLEAR,
+        'SPIRAL': SPIRAL,
+        'RADIANTLINES': RADIANTLINES,
+    }
     def __init__(self):
         super().__init__()
-        self.ids.HUESHIFT.source = HUESHIFT.path
+        for circle in self.CIRCLES.keys():
+            self.ids[circle].source = self.CIRCLES[circle].path
 
     def update_active(self):
-        for circle in self.CIRCLE_IDS:
-            if input_mapper.is_active(HUESHIFT.key):
-                self.ids['HUESHIFT'].source = HUESHIFT.path.replace('.png', '-active.png')
+        for circle in self.CIRCLES.keys():
+            circle_config = self.CIRCLES[circle]
+            if input_mapper.is_active(circle_config.key):
+                self.ids[circle].source = circle_config.path.replace('.png', '-active.png')
             else:
-                self.ids['HUESHIFT'].source = HUESHIFT.path
+                self.ids[circle].source = circle_config.path
 
     def on_touch_down(self, touch):
         super().on_touch_down(touch)
