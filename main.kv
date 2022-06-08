@@ -1,0 +1,16 @@
+<LightdreamTouchScreen>:
+    name: "lightdream"
+    canvas.before:
+        Color:
+            rgba: 0, 0, 0, 0
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<LayoutTestScreen>:
+    name: "layout_test"
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "images/!touchscreen layout 3.png"
