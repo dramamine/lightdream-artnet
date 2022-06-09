@@ -15,8 +15,8 @@ from touchscreen_circles import RADIANTLINES
 from touchscreen_input import InputCoordinateMapper
 
 
-LAYOUT_IMAGE_WIDTH = 2405
-LAYOUT_IMAGE_HEIGHT = 1357
+LAYOUT_IMAGE_WIDTH = 1920
+LAYOUT_IMAGE_HEIGHT = 1080
 
 
 # TODO - get this from real window if necessary
@@ -47,7 +47,7 @@ def window_coordinates(x, y):
 class Touchable(Screen):
     def on_touch_down(self, touch):
         point = layout_image_coordinates(touch.x, touch.y)
-        # print("point", point)
+        print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
     def on_touch_move(self, touch):

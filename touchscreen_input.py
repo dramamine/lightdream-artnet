@@ -40,11 +40,10 @@ class InputCoordinateMapper:
             # small circles
             LIGHTNING,
             NUCLEAR,
-            SPIRAL,
-            RADIANTLINES,
         ]
         self.RIGHT_CIRCLES = [
-            # TODO
+            SPIRAL,
+            RADIANTLINES,
         ]
 
     def get_touchscreen_circle_key(self, point):

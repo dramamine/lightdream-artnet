@@ -47,24 +47,24 @@ HUESHIFT = TouchscreenCircle(
     path='./images/colorwheel-dithered.png',
     key=FilterNames.HUESHIFT,
     name='HUESHIFT',
-    center=(312, 683),
-    radius=262,
+    center=(250, 545),
+    radius=210,
     full_image_radius=800
 )
 KALEIDOSCOPE = TouchscreenCircle(
     path='./images/kaleidoscope.png',
     key=FilterNames.KALEIDOSCOPE,
     name='KALEIDOSCOPE',
-    center=(850, 1015),
-    radius=262,
+    center=(681, 812),
+    radius=210,
     full_image_radius=800
 )
 TUNNEL = TouchscreenCircle(
     path='./images/tunnel.png',
     key=FilterNames.TUNNEL,
     name='TUNNEL',
-    center=(850, 288),
-    radius=262,
+    center=(677, 228),
+    radius=210,
     full_image_radius=800
 )
 # LEFT smaller circles
@@ -72,32 +72,32 @@ LIGHTNING = TouchscreenCircle(
     path='./images/lightning.png',
     key=FilterNames.LIGHTNING,
     name='LIGHTNING',
-    center=(414, 146),
-    radius=106,
+    center=(333, 114),
+    radius=80,
     full_image_radius=500
 )
 NUCLEAR = TouchscreenCircle(
     path='./images/nuclear.png',
     key=FilterNames.NUCLEAR,
     name='NUCLEAR',
-    center=(166, 260),
-    radius=106,
+    center=(130, 206),
+    radius=80,
     full_image_radius=500
 )
 SPIRAL = TouchscreenCircle(
     path='./images/spiral.png',
     key=FilterNames.SPIRAL,
     name='SPIRAL',
-    center=(160, 1095),
-    radius=106,
+    center=(1549, 965),
+    radius=80,
     full_image_radius=500
 )
 RADIANTLINES = TouchscreenCircle(
     path='./images/radiant-lines.png',
     key=FilterNames.RADIANTLINES,
     name='RADIANTLINES',
-    center=(416, 1205),
-    radius=106,
+    center=(1751, 873),
+    radius=80,
     full_image_radius=500
 )
 
