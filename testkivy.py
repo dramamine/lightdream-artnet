@@ -2,6 +2,7 @@ from kivy.app import App
 from kivy.config import Config
 from kivy.core.image import Image
 from kivy.uix.widget import Widget
+from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 from touchscreen_circles import HUESHIFT
@@ -19,47 +20,43 @@ LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
 
 
-# TODO - get this from real window if necessary
-WINDOW_WIDTH, WINDOW_HEIGHT = LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT
+Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
+Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
 
 
-Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
-Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
-
-
-# when detecting circles, use coordinates scaled to the layout image
-def layout_image_coordinates(x, y):
-    scaled_x = round((x / WINDOW_WIDTH) * LAYOUT_IMAGE_WIDTH)
-    scaled_y = round((y / WINDOW_HEIGHT) * LAYOUT_IMAGE_HEIGHT)
-    return (scaled_x, scaled_y)
-
-
-# when placing sprites, use coordinates scaled to the window
-def window_coordinates(x, y):
-    scaled_x = round((x / LAYOUT_IMAGE_WIDTH) * WINDOW_WIDTH)
-    scaled_y = round((y / LAYOUT_IMAGE_HEIGHT) * WINDOW_HEIGHT)
-    return (scaled_x, scaled_y)
-
-
 class Touchable(Screen):
     def on_touch_down(self, touch):
-        point = layout_image_coordinates(touch.x, touch.y)
-        print("============================>point", point)
+        point = (touch.x, touch.y)
+        # print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
+        # Annoying: touch bindings on the Touchable screens override all button
+        # press bindings.  DebugMenu screen has working on_press() bindings,
+        # and shouldn't need to check for button collisions in the touch handler.
+        if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
+            self.next_screen_callback(touch)
+
+        return super().on_touch_down(touch)
+
     def on_touch_move(self, touch):
-        point = layout_image_coordinates(touch.x, touch.y)
+        point = (touch.x, touch.y)
         input_mapper.process_touch_motion(touch.id, point)
+        return super().on_touch_move(touch)
 
     def on_touch_up(self, touch):
-        point = layout_image_coordinates(touch.x, touch.y)
+        point = (touch.x, touch.y)
         input_mapper.process_touch_leave(touch.id)
+        return super().on_touch_up(touch)
+
+    def next_screen_callback(self):
+        pass
 
 
 class LightdreamTouchScreen(Touchable):
+    title = 'Lightdream'
     CIRCLES = {
         'HUESHIFT': HUESHIFT,
         'KALEIDOSCOPE': KALEIDOSCOPE,
@@ -80,31 +77,46 @@ class LightdreamTouchScreen(Touchable):
         for circle in self.CIRCLES.keys():
             circle_config = self.CIRCLES[circle]
             if input_mapper.is_active(circle_config.key):
-                self.ids[circle].source = circle_config.path.replace('.png', '-active.png')
+                self.ids[circle].source = circle_config.active_path
             else:
                 self.ids[circle].source = circle_config.path
 
     def on_touch_down(self, touch):
-        super().on_touch_down(touch)
         self.update_active()
+        return super().on_touch_down(touch)
 
     def on_touch_move(self, touch):
-        super().on_touch_move(touch)
         self.update_active()
+        return super().on_touch_move(touch)
 
     def on_touch_up(self, touch):
-        super().on_touch_up(touch)
         self.update_active()
+        return super().on_touch_up(touch)
+
+    def next_screen_callback(self, touch):
+        self.manager.current = 'debug_menu'
+        self.manager.title = 'Debug Menu'
+
+
+class DebugMenuScreen(Screen):
+    def next_screen_callback(self, touch):
+        self.manager.current = 'layout_test'
+        self.manager.title = 'Layout Test'
 
 
 class LayoutTestScreen(Touchable):
-    pass
+    def next_screen_callback(self, touch):
+        self.manager.current = 'lightdream'
+        self.manager.title = 'Lightdream'
 
 
 class MainApp(App):
     def build(self):
-        # return LayoutTestScreen()
-        return LightdreamTouchScreen()
+        sm = ScreenManager()
+        sm.add_widget(LightdreamTouchScreen(), name='lightdream')
+        sm.add_widget(DebugMenuScreen(), name='debug_menu')
+        sm.add_widget(LayoutTestScreen(), name='layout_test')
+        return sm
 
 
 if __name__ == '__main__':

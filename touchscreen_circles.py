@@ -41,6 +41,10 @@ class TouchscreenCircle:
     def SCALE(self):
         return self.radius / self.full_image_radius
 
+    @property
+    def active_path(self):
+        return self.path.replace('.png', '-active.png')
+
 
 # LEFT bigger circles
 HUESHIFT = TouchscreenCircle(
