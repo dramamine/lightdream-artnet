@@ -2,13 +2,13 @@ import math
 
 from modules.fingers import finger_manager
 
-from touchscreen_circles import HUESHIFT
-from touchscreen_circles import KALEIDOSCOPE
-from touchscreen_circles import TUNNEL
-from touchscreen_circles import LIGHTNING
-from touchscreen_circles import NUCLEAR
-from touchscreen_circles import SPIRAL
-from touchscreen_circles import RADIANTLINES
+from touch_circles import HUESHIFT
+from touch_circles import KALEIDOSCOPE
+from touch_circles import TUNNEL
+from touch_circles import LIGHTNING
+from touch_circles import NUCLEAR
+from touch_circles import SPIRAL
+from touch_circles import RADIANTLINES
 
 
 class InputCoordinateMapper:

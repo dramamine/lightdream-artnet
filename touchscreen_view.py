@@ -5,15 +5,15 @@ from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-from touchscreen_circles import HUESHIFT
-from touchscreen_circles import KALEIDOSCOPE
-from touchscreen_circles import TUNNEL
-from touchscreen_circles import LIGHTNING
-from touchscreen_circles import NUCLEAR
-from touchscreen_circles import SPIRAL
-from touchscreen_circles import RADIANTLINES
+from touch_circles import HUESHIFT
+from touch_circles import KALEIDOSCOPE
+from touch_circles import TUNNEL
+from touch_circles import LIGHTNING
+from touch_circles import NUCLEAR
+from touch_circles import SPIRAL
+from touch_circles import RADIANTLINES
 
-from touchscreen_input import InputCoordinateMapper
+from touch_input import InputCoordinateMapper
 
 
 LAYOUT_IMAGE_WIDTH = 1920
