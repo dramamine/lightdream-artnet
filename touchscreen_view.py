@@ -27,13 +27,13 @@ Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
 
 
-class Touchable(Screen):
+class TouchableScreen(Screen):
     def on_touch_down(self, touch):
         point = (touch.x, touch.y)
         # print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
-        # Annoying: touch bindings on the Touchable screens override all button
+        # Annoying: touch bindings on the TouchableScreens override all button
         # press bindings.  DebugMenu screen has working on_press() bindings,
         # and shouldn't need to check for button collisions in the touch handler.
         if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
@@ -55,8 +55,7 @@ class Touchable(Screen):
         pass
 
 
-class LightdreamTouchScreen(Touchable):
-    title = 'Lightdream'
+class LightdreamTouchScreen(TouchableScreen):
     CIRCLES = {
         'HUESHIFT': HUESHIFT,
         'KALEIDOSCOPE': KALEIDOSCOPE,
@@ -104,7 +103,7 @@ class DebugMenuScreen(Screen):
         self.manager.title = 'Layout Test'
 
 
-class LayoutTestScreen(Touchable):
+class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
         self.manager.current = 'lightdream'
         self.manager.title = 'Lightdream'
