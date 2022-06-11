@@ -15,6 +15,8 @@ from touch_circles import RADIANTLINES
 
 from touch_input import InputCoordinateMapper
 
+from util.track_metadata import track_metadata
+
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
@@ -112,8 +114,8 @@ class LayoutTestScreen(TouchableScreen):
 class MainApp(App):
     def build(self):
         sm = ScreenManager()
-        sm.add_widget(LightdreamTouchScreen(), name='lightdream')
         sm.add_widget(DebugMenuScreen(), name='debug_menu')
+        sm.add_widget(LightdreamTouchScreen(), name='lightdream')
         sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 

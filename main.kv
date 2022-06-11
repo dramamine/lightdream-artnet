@@ -71,6 +71,25 @@
         text: 'Next (Layout Test)'
         on_press:
             root.next_screen_callback(args[0])
+    GridLayout:
+        cols: 2
+        padding: 10,180,640,10
+        spacing: 10
+        size: 400, 400
+        Button:
+            text: "Song 1"
+            background_color: hex('#AA3333')
+        Button:
+            text: "Song 2"
+            background_color: hex('#AA3333')
+        Button:
+            text: "Song 3"
+            background_color: hex('#AA3333')
+        Button:
+            text: "Song 4"
+            background_color: hex('#AA3333')
+
+            
 
 <LayoutTestScreen>:
     name: "layout_test"
