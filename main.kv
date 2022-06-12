@@ -64,31 +64,61 @@
 
 <DebugMenuScreen>:
     name: 'debug_menu'
-    ThisScreenLabel:
-        text: 'Debug Menu'
-    NextScreenButton:
-        id: NEXT_SCREEN_BUTTON
-        text: 'Next (Layout Test)'
-        on_press:
-            root.next_screen_callback(args[0])
-    GridLayout:
-        cols: 2
-        padding: 10,180,640,10
-        spacing: 10
-        size: 400, 400
-        Button:
-            text: "Song 1"
-            background_color: hex('#AA3333')
-        Button:
-            text: "Song 2"
-            background_color: hex('#AA3333')
-        Button:
-            text: "Song 3"
-            background_color: hex('#AA3333')
-        Button:
-            text: "Song 4"
-            background_color: hex('#AA3333')
 
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            id: top_bar
+            size_hint: 1, 0.2
+            padding: 10
+            spacing: 10
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+                ThisScreenLabel:
+                    text: 'Debug Menu'
+                NextScreenButton:
+                    id: NEXT_SCREEN_BUTTON
+                    text: 'Next (Layout Test)'
+                    on_press:
+                        root.next_screen_callback(args[0])
+            BoxLayout:
+                id: mode_selection_buttons
+                size_hint: 4, 1
+                padding: 50
+                spacing: 10
+                orientation: 'horizontal'
+                Button:
+                    text: "Playlist Mode"
+                Button:
+                    text: "DJ / Autoplay Mode" 
+                Button:
+                    text: "Multiverse Setup (gods only)" 
+        BoxLayout:
+            orientation: 'horizontal'
+            GridLayout:
+                id: track_grid
+                size_hint: 2, 1
+                cols: 2
+                padding: 10
+                spacing: 10
+                size: 400, 400
+            GridLayout:
+                cols: 1
+                padding: 10
+                spacing: 10
+                Label:
+                    text: "        Track Queue\npress to stop/remove"
+                    size_hint_y: 0.05
+                Button:
+                    id: now_playing
+                    size_hint_y: None
+                    text: '??'
+                GridLayout:
+                    id: track_queue
+                    cols: 1
+                    spacing: 10
             
 
 <LayoutTestScreen>:

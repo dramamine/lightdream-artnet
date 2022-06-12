@@ -14,6 +14,14 @@ class Playlist:
     self.sp = SequencePlayer()
     self.ap = AudioPlayer()
 
+    self.updates_cb = None
+  
+  # cb: this function gets called whenever there's an update to the
+  # currently playing track or the queue. ex.:
+  # (now_playing: str, queue: [str] ) where `str` is the track id
+  def subscribe_to_playlist_updates(self, cb):
+    self.updates_cb = cb
+
   def start(self):
     random.shuffle(tracks)
     self.start_track(self.pick_track())
@@ -28,11 +36,14 @@ class Playlist:
     self.idx = (self.idx+1) % len(tracks)
     return tracks[self.idx]
     
-  def start_track(self, track_name):
-    print("starting audio:", track_name)
+  def start_track(self, track_id):
+    print("starting audio:", track_id)
 
-    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
-    self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
+    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_id)))
+    self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_id)))
+
+    if self.cb != None:
+      self.cb(track_id, self.queue)
 
   def test_metronome(self):
     self.ap.play(os.path.join('audio', 'metronome.wav'))

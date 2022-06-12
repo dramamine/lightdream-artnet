@@ -100,9 +100,40 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 class DebugMenuScreen(Screen):
+    def __init__(self):
+        super().__init__()
+        for track in track_metadata.values():
+            artist_name = track['artist_name']
+            track_name = track['track_name']
+            display_name = f'{artist_name} - {track_name}'
+            self.ids['track_grid'].add_widget(Button(
+                text=display_name,
+                font_size="15sp"
+            ))
+        
+        self.update_track_queue('asineedyou', ['dyscontrolled'])
+
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
+    
+    def update_track_queue(self, now_playing, queue):
+        # now playing
+        track_name = track_metadata[now_playing]['track_name']
+        title = f'NOW PLAYING: {track_name}'
+        self.ids['now_playing'].text = title
+
+        track_queue_layout = self.ids['track_queue']
+        track_queue_layout.clear_widgets()
+        for track_id in queue:
+            track_name = track_metadata[track_id]['track_name']
+            track_queue_layout.add_widget(Button(
+                text=track_name,
+                font_size="15sp",
+                size_hint_y = None
+            ))
+
+
 
 
 class LayoutTestScreen(TouchableScreen):
