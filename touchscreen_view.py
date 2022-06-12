@@ -133,15 +133,17 @@ class DebugMenuScreen(Screen):
             self.ids['track_grid'].add_widget(btn)
 
         # read slider values from config
-        slider_ids = ['decay_constant', 'max_energy', 'aural_effect_strength_multiplier']
+        slider_ids = [
+            'decay_constant',
+            'max_energy',
+            'aural_effect_strength_multiplier',
+            'autoplay_interval',
+            'autoplay_crossfade'
+        ]
         for slider_id in slider_ids:
             value = config.read(slider_id)
             self.ids[slider_id].value = value
             self.ids[f'{slider_id}_value'].text = str(value)
-        # self.ids['decay_constant'].value = config.read('decay_constant')
-        # self.ids['max_energy'].value = config.read('max_energy')
-        # self.ids['aural_effect_strength_multiplier'].value = config.read('aural_effect_strength_multiplier')
-
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
