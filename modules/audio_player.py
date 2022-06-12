@@ -1,4 +1,5 @@
 import pyglet
+from util.config import config
 
 player = pyglet.media.Player()
 
@@ -6,6 +7,10 @@ class AudioPlayer:
   def play(self, path):
     source = pyglet.media.load(path)
     player.queue(source)
+
+    if config.read("DISABLE_AUDIO") == True:
+      player.volume = 0
+
     player.play()
 
   def is_playing(self):
