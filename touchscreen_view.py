@@ -16,6 +16,7 @@ from touch_circles import RADIANTLINES
 from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
+from util.config import config
 
 
 LAYOUT_IMAGE_WIDTH = 1920
@@ -33,7 +34,7 @@ touchscreen_api = {
   'dequeue': lambda track_name: None,
   'skip_track': lambda x: None,
   'set_mode': lambda mode: None,
-  'config': {}
+  # 'config': {}
 }
 
 class TouchableScreen(Screen):
@@ -131,6 +132,17 @@ class DebugMenuScreen(Screen):
             btn.bind(on_press=enqueue)
             self.ids['track_grid'].add_widget(btn)
 
+        # read slider values from config
+        slider_ids = ['decay_constant', 'max_energy', 'aural_effect_strength_multiplier']
+        for slider_id in slider_ids:
+            value = config.read(slider_id)
+            self.ids[slider_id].value = value
+            self.ids[f'{slider_id}_value'].text = str(value)
+        # self.ids['decay_constant'].value = config.read('decay_constant')
+        # self.ids['max_energy'].value = config.read('max_energy')
+        # self.ids['aural_effect_strength_multiplier'].value = config.read('aural_effect_strength_multiplier')
+
+
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
@@ -156,7 +168,7 @@ class DebugMenuScreen(Screen):
             btn = Button(
                 text=track_name,
                 font_size="15sp",
-                size_hint_y = None
+                size_hint_y=None
             )
             btn.value = track_id
             btn.bind(on_press=dequeue)
@@ -190,6 +202,11 @@ class MainApp(App):
         touchscreen_api = api
         # print("on the right track?", self.debug_menu)
 
+    def update_config_value(self, slider_id, slider_value):
+        value = round(slider_value, 3)
+        print(slider_id, value)
+        config.write(slider_id, value)
+        self.debug_menu.ids[f'{slider_id}_value'].text = str(value)
 
 if __name__ == '__main__':
     MainApp().run()

@@ -94,28 +94,123 @@
                 Button:
                     text: "DJ / Autoplay Mode" 
                 Button:
-                    text: "Multiverse Setup (gods only)" 
-        BoxLayout:
-            orientation: 'horizontal'
-            GridLayout:
-                id: track_grid
-                size_hint: 2, 1
-                cols: 2
-                padding: 10
-                spacing: 10
-                size: 400, 400
-            GridLayout:
-                cols: 1
-                padding: 10
-                spacing: 10
-                Label:
-                    text: "        Track Queue\npress to stop/remove"
-                    size_hint_y: 0.05
-                GridLayout:
-                    id: track_queue
-                    cols: 1
-                    spacing: 10
-            
+                    text: "Multiverse Setup (gods only)"
+        FloatLayout:
+            FloatLayout:
+                id: playlist_controller
+                ## this might work for hiding
+                opacity: 0
+                disabled: True
+                ##
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: track_grid
+                        size_hint: 2, 1
+                        cols: 2
+                        padding: 10
+                        spacing: 10
+                        size: 400, 400
+                    GridLayout:
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        Label:
+                            text: "        Track Queue\npress to stop/remove"
+                            size_hint_y: 0.05
+                        GridLayout:
+                            id: track_queue
+                            cols: 1
+                            spacing: 10
+            FloatLayout:
+                id: autoplay_controller
+                canvas.before:
+                    Color:
+                        rgba: hex('#222222')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: autoplay_options
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#226622')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        Label:
+                            text: "Auto Controls"
+                            size_hint_y: 0.05
+
+                    GridLayout:
+                        id: audio_responsiveness
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#662222')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        
+                        Label:
+                            text: "Audio Responsiveness"
+                            size_hint_y: 0.05
+                        Label:
+                            text: "Updating these will instantly update the program,\nbut will reset when unplugged unless you click SAVE PERMANENTLY"
+                            halign: "center"
+                            size_hint_y: 0.05                            
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
+                            Label:
+                                id: decay_constant_value
+                        Slider:
+                            id: decay_constant
+                            min: -0.1
+                            max: -0.01
+                            on_touch_up: app.update_config_value('decay_constant', self.value)                            
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Max Energy"
+                            Label:
+                                id: max_energy_value    
+                        Label:
+                            text: "Max Energy"
+                            size_hint_y: 0.05
+                        Slider:
+                            id: max_energy
+                            min: 0
+                            max: 100
+                            on_touch_up: app.update_config_value('max_energy', self.value)
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Aural Effect Strength Multiplier"
+                            Label:
+                                id: aural_effect_strength_multiplier_value    
+                        Slider:
+                            id: aural_effect_strength_multiplier
+                            min: 0
+                            max: 1
+                            on_touch_up: app.update_config_value('aural_effect_strength_multiplier', self.value)
+
+
+
+
+
 
 <LayoutTestScreen>:
     name: "layout_test"
