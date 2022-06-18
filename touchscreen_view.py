@@ -120,6 +120,7 @@ class DebugMenuScreen(Screen):
     def __init__(self):
         super().__init__()
 
+        # create buttons for each track
         for id, track in track_metadata.items():
             artist_name = track['artist_name']
             track_name = track['track_name']
@@ -138,16 +139,45 @@ class DebugMenuScreen(Screen):
             'max_energy',
             'aural_effect_strength_multiplier',
             'autoplay_interval',
-            'autoplay_crossfade'
+            'autoplay_crossfade',
+            'brain_position'
         ]
         for slider_id in slider_ids:
             value = config.read(slider_id)
             self.ids[slider_id].value = value
             self.ids[f'{slider_id}_value'].text = str(value)
+        
+        self.set_mode(config.read("MODE"))
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
+    
+    # set MODE and update controls appropriately
+    def set_mode(self, mode):
+        config.write("MODE", mode)
+        touchscreen_api['set_mode'](mode)
+
+        # crappy code to show only the mode controller we want
+        controllers = ['playlist_controller', 'autoplay_controller', 'metronome_controller']
+        for controller in controllers:
+            self.update_visibility(controller, False)
+        self.update_visibility(f'{mode}_controller', True)
+        
+    # toggle visibility of Layouts
+    def update_visibility(self, id, is_visible):
+        widget = self.ids[id]
+        widget.opacity = 1 if is_visible else 0
+        widget.disabled = False if is_visible else True
+        widget.height = 1 if is_visible else '0dp'
+        widget.size_hint_y = 1 if is_visible else 0        
+
+    # update config and update the displayed value
+    def update_config_value(self, slider_id, slider_value):
+        print(slider_id, slider_value)
+        config.write(slider_id, slider_value)
+        self.ids[f'{slider_id}_value'].text = str(slider_value)
+
     
     def update_track_queue(self, now_playing, queue):
         print("OMG got my message:", now_playing, queue)
@@ -176,9 +206,6 @@ class DebugMenuScreen(Screen):
             btn.bind(on_press=dequeue)
             track_queue_layout.add_widget(btn)
 
-
-
-
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
         self.manager.current = 'lightdream'
@@ -203,12 +230,6 @@ class MainApp(App):
         global touchscreen_api
         touchscreen_api = api
         # print("on the right track?", self.debug_menu)
-
-    def update_config_value(self, slider_id, slider_value):
-        value = round(slider_value, 3)
-        print(slider_id, value)
-        config.write(slider_id, value)
-        self.debug_menu.ids[f'{slider_id}_value'].text = str(value)
 
 if __name__ == '__main__':
     MainApp().run()

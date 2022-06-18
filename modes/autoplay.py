@@ -3,7 +3,6 @@ import random
 import time
 from modules.sequence_player import SequencePlayer
 from effects.aural import aural
-import numpy as np
 from util.config import config
 from util.util import nullframe
 
@@ -20,10 +19,14 @@ class Autoplay:
     random.shuffle(files)
     self.idx = 0
 
+    # imagine you're a DJ. this is your first deck, deck A. you start out
+    # playing off one deck, but sometimes you have two decks playing so
+    # that you can crossfade between them.
     self.spa = SequencePlayer(loop=True)
     self.spa.play(os.path.join('video', 'autoclips', files[self.idx]))
     self.spa_active = True
 
+    # this is your second deck, deck B
     self.spb = SequencePlayer(loop=True)
     self.spb_active = False
 
@@ -34,15 +37,14 @@ class Autoplay:
     self.idx = (self.idx+1) % len(files)
 
     if self.idx % 2 == 1:
-      # print("need to activate b")
+      # activate spb
       self.spb.play(os.path.join('video', 'autoclips', files[self.idx]))
       self.spb_active = True
     else:
-      # print("need to activate a")
+      # activate spa
       self.spa.play(os.path.join('video', 'autoclips', files[self.idx]))
       self.spa_active = True
     
-   #  print("started playing:", files[self.idx])
     self.timer = time.time()
     aural.rotate_aural_effects()
     pass

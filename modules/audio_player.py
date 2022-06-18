@@ -20,6 +20,14 @@ class AudioPlayer:
     
     return player.playing
 
-  # @TODO needs testing
+  # @TODO needs testing, i.e. doesn't work
   def stop(self):
     player.delete()
+  
+  def skip_track(self):
+    player.next_source()
+
+  def clear(self):
+    global player
+    player.delete()
+    player = pyglet.media.Player()

@@ -57,15 +57,21 @@ def toggle_mode():
     pl.start()
 
 def set_mode(next_mode):
+  global mode
   if mode == next_mode:
     return
-  elif mode == "autoplay":
+  mode = next_mode
+  if mode == "autoplay":
     pl.stop()
     config.write("MODE", "autoplay")
     ap.start()
   elif mode == "playlist":
     config.write("MODE", "playlist")
+    pl.clear()
     pl.start()
+  elif mode == "metronome":
+    config.write("MODE", "metronome")
+    pl.test_metronome()
   
 
 start_time = time()

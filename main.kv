@@ -91,17 +91,16 @@
                 orientation: 'horizontal'
                 Button:
                     text: "Playlist Mode"
+                    on_press: root.set_mode('playlist')
                 Button:
-                    text: "DJ / Autoplay Mode" 
+                    text: "DJ / Autoplay Mode"
+                    on_press: root.set_mode('autoplay')
                 Button:
                     text: "Multiverse Setup (gods only)"
+                    on_press: root.set_mode('metronome')
         FloatLayout:
             FloatLayout:
                 id: playlist_controller
-                ## this might work for hiding
-                opacity: 0
-                disabled: True
-                ##
                 BoxLayout:
                     orientation: 'horizontal'
                     GridLayout:
@@ -159,7 +158,7 @@
                             min: 0
                             max: 60
                             step: 1
-                            on_touch_up: app.update_config_value('autoplay_interval', self.value)
+                            on_touch_up: root.update_config_value('autoplay_interval', self.value)
                         
                         BoxLayout:
                             orientation: 'horizontal'
@@ -173,7 +172,7 @@
                             min: 0
                             max: 20
                             step: 0.5
-                            on_touch_up: app.update_config_value('autoplay_crossfade', self.value)
+                            on_touch_up: root.update_config_value('autoplay_crossfade', self.value)
 
 
                     GridLayout:
@@ -192,7 +191,7 @@
                             text: "Audio Responsiveness"
                             size_hint_y: 0.05
                         Label:
-                            text: "Updating these will instantly update the program,\nbut will reset when unplugged unless you click SAVE PERMANENTLY"
+                            text: "Updating these will instantly update the program,\nbut will reset when unplugged"
                             halign: "center"
                             size_hint_y: 0.05                            
 
@@ -208,7 +207,7 @@
                             min: -0.1
                             max: -0.01
                             step: 0.001
-                            on_touch_up: app.update_config_value('decay_constant', self.value)                            
+                            on_touch_up: root.update_config_value('decay_constant', self.value)                            
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
@@ -224,7 +223,7 @@
                             min: 0
                             max: 100
                             step: 0.1
-                            on_touch_up: app.update_config_value('max_energy', self.value)
+                            on_touch_up: root.update_config_value('max_energy', self.value)
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
@@ -237,8 +236,41 @@
                             min: 0
                             max: 1
                             step: 0.01
-                            on_touch_up: app.update_config_value('aural_effect_strength_multiplier', self.value)
-
+                            on_touch_up: root.update_config_value('aural_effect_strength_multiplier', self.value)
+            FloatLayout:
+                id: metronome_controller
+                canvas.before:
+                    Color:
+                        rgba: hex('#222222')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: metronome_options
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#226622')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Brain Position\n0-4 normal cycle, 5-9 reversed"
+                            Label:
+                                id: brain_position_value    
+                        Slider:
+                            id: brain_position
+                            min: 0
+                            max: 9
+                            step: 1
+                            on_touch_up: root.update_config_value('brain_position', int(self.value))
 
 
 

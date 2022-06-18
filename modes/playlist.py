@@ -51,6 +51,8 @@ class Playlist:
 
 
   def test_metronome(self):
+    self.queue = []
+    self.ap.clear()
     self.ap.play(os.path.join('audio', 'metronome.wav'))
     self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
 
@@ -72,9 +74,13 @@ class Playlist:
     self.queue_updated()
 
   def skip_track(self):
+    self.ap.skip_track()
     self.start_track(self.pick_track())
     self.queue_updated()
 
   def queue_updated(self):
     if self.updates_cb != None:
       self.updates_cb(self.now_playing, self.queue)
+
+  def clear(self):
+    self.ap.clear()
