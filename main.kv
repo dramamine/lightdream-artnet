@@ -1,0 +1,86 @@
+#:import hex kivy.utils.get_color_from_hex
+
+<ThisScreenLabel@Label>:
+    font_size: "30sp"
+    background_color: hex('#666666')
+    color: hex('#FFFFFF')
+    size: 400, 75
+    size_hint: None, None
+    pos: 2, 1000
+    canvas.before:
+        Color:
+            rgba: hex('#000000')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<NextScreenButton@Button>:
+    font_size: "15sp"
+    background_color: hex('#666666')
+    color: hex('#FFFFFF')
+    size: 400, 75
+    size_hint: None, None
+    pos: 2, 925
+
+<TouchscreenCircle@Image>:
+    size_hint: None, None
+    allow_stretch: True
+    keep_ratio: False
+
+<LightdreamTouchScreen>:
+    name: "lightdream"
+    canvas.before:
+        Color:
+            rgba: hex('#000000')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    TouchscreenCircle:
+        id: HUESHIFT
+        size: 440, 440
+    TouchscreenCircle:
+        id: KALEIDOSCOPE
+        size: 440, 440
+    TouchscreenCircle:
+        id: TUNNEL
+        size: 440, 440
+    TouchscreenCircle:
+        id: LIGHTNING
+        size: 160, 160
+    TouchscreenCircle:
+        id: NUCLEAR
+        size: 160, 160
+    TouchscreenCircle:
+        id: SPIRAL
+        size: 160, 160
+    TouchscreenCircle:
+        id: RADIANTLINES
+        size: 160, 160
+    ThisScreenLabel:
+        text: 'Lightdream'
+    NextScreenButton:
+        id: NEXT_SCREEN_BUTTON
+        text: 'Next (Debug Menu)'
+
+<DebugMenuScreen>:
+    name: 'debug_menu'
+    ThisScreenLabel:
+        text: 'Debug Menu'
+    NextScreenButton:
+        id: NEXT_SCREEN_BUTTON
+        text: 'Next (Layout Test)'
+        on_press:
+            root.next_screen_callback(args[0])
+
+<LayoutTestScreen>:
+    name: "layout_test"
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: "images/!touchscreen layout 4.png"
+    ThisScreenLabel:
+        text: 'Layout Test'
+    NextScreenButton:
+        id: NEXT_SCREEN_BUTTON
+        text: 'Next (Lightdream)'
