@@ -7,6 +7,9 @@ defaults = {
   "MODE": "autoplay",
   "AUDIO_DEBUG": False,
 
+  # if true, set volume to 0
+  "DISABLE_AUDIO": False,
+
   # if true, only use the 3 songs committed to the repo.
   # this gets disabled in production.
   "DEBUG_TRACKLIST": True,

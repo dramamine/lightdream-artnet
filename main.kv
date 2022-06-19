@@ -64,13 +64,217 @@
 
 <DebugMenuScreen>:
     name: 'debug_menu'
-    ThisScreenLabel:
-        text: 'Debug Menu'
-    NextScreenButton:
-        id: NEXT_SCREEN_BUTTON
-        text: 'Next (Layout Test)'
-        on_press:
-            root.next_screen_callback(args[0])
+
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            id: top_bar
+            size_hint: 1, 0.2
+            padding: 10
+            spacing: 10
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 10
+                spacing: 10
+                ThisScreenLabel:
+                    text: 'Debug Menu'
+                NextScreenButton:
+                    id: NEXT_SCREEN_BUTTON
+                    text: 'Next (Layout Test)'
+                    on_press:
+                        root.next_screen_callback(args[0])
+            BoxLayout:
+                id: mode_selection_buttons
+                size_hint: 4, 1
+                padding: 50
+                spacing: 10
+                orientation: 'horizontal'
+                Button:
+                    text: "Playlist Mode"
+                    on_press: root.set_mode('playlist')
+                Button:
+                    text: "DJ / Autoplay Mode"
+                    on_press: root.set_mode('autoplay')
+                Button:
+                    text: "Multiverse Setup (gods only)"
+                    on_press: root.set_mode('metronome')
+        FloatLayout:
+            FloatLayout:
+                id: playlist_controller
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: track_grid
+                        size_hint: 2, 1
+                        cols: 2
+                        padding: 10
+                        spacing: 10
+                        size: 400, 400
+                    GridLayout:
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        Label:
+                            text: "        Track Queue\npress to stop/remove"
+                            size_hint_y: 0.05
+                        GridLayout:
+                            id: track_queue
+                            cols: 1
+                            spacing: 10
+            FloatLayout:
+                id: autoplay_controller
+                canvas.before:
+                    Color:
+                        rgba: hex('#222222')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: autoplay_options
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#226622')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        Label:
+                            text: "Auto Controls"
+                            size_hint_y: 0.05
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Autoclips clip length (in seconds)"
+                            Label:
+                                id: autoplay_interval_value    
+                        Slider:
+                            id: autoplay_interval
+                            min: 0
+                            max: 60
+                            step: 1
+                            on_touch_up: root.update_config_value('autoplay_interval', self.value)
+                        
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Crossfade Interval (in seconds)"
+                            Label:
+                                id: autoplay_crossfade_value    
+                        Slider:
+                            id: autoplay_crossfade
+                            min: 0
+                            max: 20
+                            step: 0.5
+                            on_touch_up: root.update_config_value('autoplay_crossfade', self.value)
+
+
+                    GridLayout:
+                        id: audio_responsiveness
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#662222')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        
+                        Label:
+                            text: "Audio Responsiveness"
+                            size_hint_y: 0.05
+                        Label:
+                            text: "Updating these will instantly update the program,\nbut will reset when unplugged"
+                            halign: "center"
+                            size_hint_y: 0.05                            
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
+                            Label:
+                                id: decay_constant_value
+                        Slider:
+                            id: decay_constant
+                            min: -0.1
+                            max: -0.01
+                            step: 0.001
+                            on_touch_up: root.update_config_value('decay_constant', self.value)                            
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Max Energy"
+                            Label:
+                                id: max_energy_value    
+                        Label:
+                            text: "Max Energy"
+                            size_hint_y: 0.05
+                        Slider:
+                            id: max_energy
+                            min: 0
+                            max: 100
+                            step: 0.1
+                            on_touch_up: root.update_config_value('max_energy', self.value)
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Aural Effect Strength Multiplier"
+                            Label:
+                                id: aural_effect_strength_multiplier_value    
+                        Slider:
+                            id: aural_effect_strength_multiplier
+                            min: 0
+                            max: 1
+                            step: 0.01
+                            on_touch_up: root.update_config_value('aural_effect_strength_multiplier', self.value)
+            FloatLayout:
+                id: metronome_controller
+                canvas.before:
+                    Color:
+                        rgba: hex('#222222')
+                    Rectangle:
+                        pos: self.pos
+                        size: self.size
+                BoxLayout:
+                    orientation: 'horizontal'
+                    GridLayout:
+                        id: metronome_options
+                        cols: 1
+                        padding: 10
+                        spacing: 10
+                        canvas.before:
+                            Color:
+                                rgba: hex('#226622')
+                            Rectangle:
+                                pos: self.pos
+                                size: self.size
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Brain Position\n0-4 normal cycle, 5-9 reversed"
+                            Label:
+                                id: brain_position_value    
+                        Slider:
+                            id: brain_position
+                            min: 0
+                            max: 9
+                            step: 1
+                            on_touch_up: root.update_config_value('brain_position', int(self.value))
+
+
+
+
 
 <LayoutTestScreen>:
     name: "layout_test"

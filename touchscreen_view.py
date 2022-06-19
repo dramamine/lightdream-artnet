@@ -15,6 +15,9 @@ from touch_circles import RADIANTLINES
 
 from touch_input import InputCoordinateMapper
 
+from util.track_metadata import track_metadata
+from util.config import config
+
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
@@ -26,6 +29,13 @@ Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
 
+touchscreen_api = {
+  'enqueue': lambda track_name: None,
+  'dequeue': lambda track_name: None,
+  'skip_track': lambda x: None,
+  'set_mode': lambda mode: None,
+  # 'config': {}
+}
 
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
@@ -97,11 +107,104 @@ class LightdreamTouchScreen(TouchableScreen):
         self.manager.title = 'Debug Menu'
 
 
+def enqueue(evt):
+    touchscreen_api['enqueue'](evt.value)
+
+def dequeue(evt):
+    touchscreen_api['dequeue'](evt.value)
+
+def skip_track(evt):
+    touchscreen_api['skip_track']()
+
 class DebugMenuScreen(Screen):
+    def __init__(self):
+        super().__init__()
+
+        # create buttons for each track
+        for id, track in track_metadata.items():
+            artist_name = track['artist_name']
+            track_name = track['track_name']
+            display_name = f'{artist_name} - {track_name}'
+            btn = Button(
+                text=display_name,
+                font_size="15sp"
+            )
+            btn.value = id # @TODO could we use 'name' here instead
+            btn.bind(on_press=enqueue)
+            self.ids['track_grid'].add_widget(btn)
+
+        # read slider values from config
+        slider_ids = [
+            'decay_constant',
+            'max_energy',
+            'aural_effect_strength_multiplier',
+            'autoplay_interval',
+            'autoplay_crossfade',
+            'brain_position'
+        ]
+        for slider_id in slider_ids:
+            value = config.read(slider_id)
+            self.ids[slider_id].value = value
+            self.ids[f'{slider_id}_value'].text = str(value)
+        
+        self.set_mode(config.read("MODE"))
+
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
+    
+    # set MODE and update controls appropriately
+    def set_mode(self, mode):
+        config.write("MODE", mode)
+        touchscreen_api['set_mode'](mode)
 
+        # crappy code to show only the mode controller we want
+        controllers = ['playlist_controller', 'autoplay_controller', 'metronome_controller']
+        for controller in controllers:
+            self.update_visibility(controller, False)
+        self.update_visibility(f'{mode}_controller', True)
+        
+    # toggle visibility of Layouts
+    def update_visibility(self, id, is_visible):
+        widget = self.ids[id]
+        widget.opacity = 1 if is_visible else 0
+        widget.disabled = False if is_visible else True
+        widget.height = 1 if is_visible else '0dp'
+        widget.size_hint_y = 1 if is_visible else 0        
+
+    # update config and update the displayed value
+    def update_config_value(self, slider_id, slider_value):
+        print(slider_id, slider_value)
+        config.write(slider_id, slider_value)
+        self.ids[f'{slider_id}_value'].text = str(slider_value)
+
+    
+    def update_track_queue(self, now_playing, queue):
+        print("OMG got my message:", now_playing, queue)
+        track_queue_layout = self.ids['track_queue']
+        track_queue_layout.clear_widgets()
+
+        # now playing
+        track_name = track_metadata[now_playing]['track_name']
+        btn = Button(
+            text=f'NOW PLAYING: {track_name}',
+            font_size="15sp",
+            size_hint_y = None
+        )
+        btn.bind(on_press=skip_track)
+        track_queue_layout.add_widget(btn)
+        
+        # upcoming
+        for track_id in queue:
+            track_name = track_metadata[track_id]['track_name']
+            btn = Button(
+                text=track_name,
+                font_size="15sp",
+                size_hint_y=None
+            )
+            btn.value = track_id
+            btn.bind(on_press=dequeue)
+            track_queue_layout.add_widget(btn)
 
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
@@ -111,12 +214,22 @@ class LayoutTestScreen(TouchableScreen):
 
 class MainApp(App):
     def build(self):
+        print("hello from build")
         sm = ScreenManager()
+        self.debug_menu = DebugMenuScreen()
+        sm.add_widget(self.debug_menu, name='debug_menu')
         sm.add_widget(LightdreamTouchScreen(), name='lightdream')
-        sm.add_widget(DebugMenuScreen(), name='debug_menu')
         sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 
+    def stupid_updated_queue_callback(self, now_playing, queue):
+        if self.debug_menu:
+            self.debug_menu.update_track_queue(now_playing, queue)
+
+    def add_touchscreen_api(self, api):
+        global touchscreen_api
+        touchscreen_api = api
+        # print("on the right track?", self.debug_menu)
 
 if __name__ == '__main__':
     MainApp().run()

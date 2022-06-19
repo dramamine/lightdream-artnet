@@ -14,12 +14,24 @@ class Playlist:
     self.sp = SequencePlayer()
     self.ap = AudioPlayer()
 
+    self.now_playing = None
+    self.updates_cb = None
+  
+  # cb: this function gets called whenever there's an update to the
+  # currently playing track or the queue. ex.:
+  # (now_playing: str, queue: [str] ) where `str` is the track id
+  def subscribe_to_playlist_updates(self, cb):
+    self.updates_cb = cb
+
   def start(self):
     random.shuffle(tracks)
     self.start_track(self.pick_track())
 
-  def __del__(self):
+  def stop(self):
     self.ap.stop()
+
+  def __del__(self):
+    self.stop()
 
   def pick_track(self):
     if self.queue:
@@ -34,7 +46,13 @@ class Playlist:
     self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
     self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
 
+    self.now_playing = track_name
+    self.queue_updated()
+
+
   def test_metronome(self):
+    self.queue = []
+    self.ap.clear()
     self.ap.play(os.path.join('audio', 'metronome.wav'))
     self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
 
@@ -45,8 +63,24 @@ class Playlist:
       self.start_track( self.pick_track() )
     
     return self.sp.read_frame()
-  
+
   def enqueue(self, track_name):
     # assert(track_name in tracks)
     self.queue.append(track_name)
+    self.queue_updated()
 
+  def dequeue(self, track_name):
+    self.queue.remove(track_name)
+    self.queue_updated()
+
+  def skip_track(self):
+    self.ap.skip_track()
+    self.start_track(self.pick_track())
+    self.queue_updated()
+
+  def queue_updated(self):
+    if self.updates_cb != None:
+      self.updates_cb(self.now_playing, self.queue)
+
+  def clear(self):
+    self.ap.clear()

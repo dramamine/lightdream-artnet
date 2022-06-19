@@ -47,15 +47,32 @@ def loop():
   if config.read("ENV") == "prod":
     show(frame)
   
-
+# @deprecated probably
 def toggle_mode():
   if mode == "playlist":
     config.write("MODE", "autoplay")
     ap.start()
   else:
     config.write("MODE", "playlist")
-    pl.restart()
+    pl.start()
 
+def set_mode(next_mode):
+  global mode
+  if mode == next_mode:
+    return
+  mode = next_mode
+  if mode == "autoplay":
+    pl.stop()
+    config.write("MODE", "autoplay")
+    ap.start()
+  elif mode == "playlist":
+    config.write("MODE", "playlist")
+    pl.clear()
+    pl.start()
+  elif mode == "metronome":
+    config.write("MODE", "metronome")
+    pl.test_metronome()
+  
 
 start_time = time()
 frame_counter = 0
@@ -77,6 +94,25 @@ def loop_timer():
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
 pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy=0.025)
+
+###
+# touchscreen code section
+###
+from touchscreen_view import MainApp
+
+app = MainApp()
+
+app.add_touchscreen_api({
+  'enqueue': pl.enqueue,
+  'dequeue': pl.dequeue,
+  'skip_track': pl.skip_track,
+  'set_mode': set_mode,
+  # it's a singleton, but might as well include it here
+  'config': config
+})
+pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
+
+app.run()
 
 try:
   pr.run()
