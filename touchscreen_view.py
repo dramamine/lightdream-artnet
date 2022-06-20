@@ -1,9 +1,13 @@
+import enum
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.image import Image
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
+from kivy.graphics import Rectangle, Color
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.properties import ListProperty
+from modules.debug_view import FRAMES_TO_DISPLAY
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
@@ -117,6 +121,8 @@ def skip_track(evt):
     touchscreen_api['skip_track']()
 
 class DebugMenuScreen(Screen):
+    energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
+    energy_mod_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
     def __init__(self):
         super().__init__()
 
@@ -132,7 +138,7 @@ class DebugMenuScreen(Screen):
             btn.value = id # @TODO could we use 'name' here instead
             btn.bind(on_press=enqueue)
             self.ids['track_grid'].add_widget(btn)
-
+        
         # read slider values from config
         slider_ids = [
             'decay_constant',
@@ -176,8 +182,7 @@ class DebugMenuScreen(Screen):
     def update_config_value(self, slider_id, slider_value):
         print(slider_id, slider_value)
         config.write(slider_id, slider_value)
-        self.ids[f'{slider_id}_value'].text = str(slider_value)
-
+        self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
     
     def update_track_queue(self, now_playing, queue):
         print("OMG got my message:", now_playing, queue)
@@ -206,11 +211,15 @@ class DebugMenuScreen(Screen):
             btn.bind(on_press=dequeue)
             track_queue_layout.add_widget(btn)
 
+    def update_audio_viewer(self, energy_original, energy_modified):
+        max_energy = config.read("max_energy")
+        self.energy_orig_list = list(map(lambda x: x / max_energy, energy_original))[:10]
+        self.energy_mod_list = list(map(lambda x: x / max_energy, energy_modified))[:10]
+
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
         self.manager.current = 'lightdream'
         self.manager.title = 'Lightdream'
-
 
 class MainApp(App):
     def build(self):
@@ -225,6 +234,10 @@ class MainApp(App):
     def stupid_updated_queue_callback(self, now_playing, queue):
         if self.debug_menu:
             self.debug_menu.update_track_queue(now_playing, queue)
+    
+    def update_audio_viewer(self, energy_original, energy_modified):
+        if self.debug_menu and config.read("MODE") == "autoplay":
+            self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
         global touchscreen_api

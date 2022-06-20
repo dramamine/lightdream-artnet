@@ -10,6 +10,9 @@ from modules.fingers import finger_manager
 
 from kivy.clock import Clock
 import modules.audio_input.runner as audio_listener
+from touchscreen_view import MainApp
+
+app = MainApp()
 
 fps = 40
 
@@ -42,17 +45,11 @@ def loop(dt):
 
   frame = effects_manager.apply_effects(frame, finger_manager)
 
+  # if debug menu is open, the audio viewer components need updating
+  app.update_audio_viewer(audio_listener.energy_original, audio_listener.energy_modified)
+
   if config.read("ENV") == "prod":
     show(frame)
-  
-# @deprecated probably
-def toggle_mode():
-  if mode == "playlist":
-    config.write("MODE", "autoplay")
-    ap.start()
-  else:
-    config.write("MODE", "playlist")
-    pl.start()
 
 def set_mode(next_mode):
   global mode
@@ -93,13 +90,6 @@ def loop_timer(dt):
   loop_time = time() - loop_timer
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
-
-###
-# touchscreen code section
-###
-from touchscreen_view import MainApp
-
-app = MainApp()
 
 app.add_touchscreen_api({
   'enqueue': pl.enqueue,

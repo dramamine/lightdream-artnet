@@ -123,32 +123,29 @@
                             spacing: 10
             FloatLayout:
                 id: autoplay_controller
-                canvas.before:
-                    Color:
-                        rgba: hex('#222222')
-                    Rectangle:
-                        pos: self.pos
-                        size: self.size
                 BoxLayout:
                     orientation: 'horizontal'
                     GridLayout:
                         id: autoplay_options
                         cols: 1
-                        padding: 10
-                        spacing: 10
+                        padding: (250, 10, 250, 200)
+                        spacing: 50
                         canvas.before:
                             Color:
-                                rgba: hex('#226622')
+                                rgba: hex('#000000')
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
+
                         Label:
                             text: "Auto Controls"
-                            size_hint_y: 0.05
+                            size_hint_y: None
+                            height: 200
 
                         BoxLayout:
                             orientation: 'horizontal'
-                            size_hint_y: 0.05
+                            size_hint_y: 0.15
+                            padding: 30
                             Label:
                                 text: "Autoclips clip length (in seconds)"
                             Label:
@@ -163,6 +160,7 @@
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
+                            padding: 30
                             Label:
                                 text: "Crossfade Interval (in seconds)"
                             Label:
@@ -178,22 +176,88 @@
                     GridLayout:
                         id: audio_responsiveness
                         cols: 1
-                        padding: 10
-                        spacing: 10
-                        canvas.before:
-                            Color:
-                                rgba: hex('#662222')
-                            Rectangle:
-                                pos: self.pos
-                                size: self.size
+                        padding: (250, 10, 250, 200)
+                        spacing: 50
                         
                         Label:
                             text: "Audio Responsiveness"
                             size_hint_y: 0.05
-                        Label:
-                            text: "Updating these will instantly update the program,\nbut will reset when unplugged"
-                            halign: "center"
-                            size_hint_y: 0.05                            
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Max Energy\n(not too much red plz)"
+                            Label:
+                                id: max_energy_value
+
+                        BoxLayout:
+                            id: energy_original_container
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            canvas.before:
+                                Color: 
+                                    rgba: 0,1,0,1
+                                Rectangle:
+                                    pos: 1360,740
+                                    size: 200,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[0]
+                                Rectangle:
+                                    pos: 1360,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[1]
+                                Rectangle:
+                                    pos: 1360+20,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[2]
+                                Rectangle:
+                                    pos: 1360+40,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[3]
+                                Rectangle:
+                                    pos: 1360+60,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[4]
+                                Rectangle:
+                                    pos: 1360+80,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[5]
+                                Rectangle:
+                                    pos: 1360+100,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[6]
+                                Rectangle:
+                                    pos: 1360+120,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[7]
+                                Rectangle:
+                                    pos: 1360+140,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[8]
+                                Rectangle:
+                                    pos: 1360+160,740
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_orig_list[9]
+                                Rectangle:
+                                    pos: 1360+180,740
+                                    size: 20,20
+
+                        Slider:
+                            id: max_energy
+                            min: 0.1
+                            max: 100
+                            step: 0.1
+                            on_touch_up: root.update_config_value('max_energy', self.value)
 
                         BoxLayout:
                             orientation: 'horizontal'
@@ -202,28 +266,76 @@
                                 text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
                             Label:
                                 id: decay_constant_value
+
+                        BoxLayout:
+                            id: energy_modified_container
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            canvas.before:
+                                Color: 
+                                    rgba: 0,1,0,1
+                                Rectangle:
+                                    pos: 1360,470
+                                    size: 200,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[0]
+                                Rectangle:
+                                    pos: 1360,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[1]
+                                Rectangle:
+                                    pos: 1360+20,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[2]
+                                Rectangle:
+                                    pos: 1360+40,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[3]
+                                Rectangle:
+                                    pos: 1360+60,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[4]
+                                Rectangle:
+                                    pos: 1360+80,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[5]
+                                Rectangle:
+                                    pos: 1360+100,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[6]
+                                Rectangle:
+                                    pos: 1360+120,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[7]
+                                Rectangle:
+                                    pos: 1360+140,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[8]
+                                Rectangle:
+                                    pos: 1360+160,470
+                                    size: 20,20
+                                Color: 
+                                    rgba: 1,0,0,root.energy_mod_list[9]
+                                Rectangle:
+                                    pos: 1360+180,470
+                                    size: 20,20
+
                         Slider:
                             id: decay_constant
                             min: -0.1
                             max: -0.01
                             step: 0.001
-                            on_touch_up: root.update_config_value('decay_constant', self.value)                            
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            Label:
-                                text: "Max Energy"
-                            Label:
-                                id: max_energy_value    
-                        Label:
-                            text: "Max Energy"
-                            size_hint_y: 0.05
-                        Slider:
-                            id: max_energy
-                            min: 0
-                            max: 100
-                            step: 0.1
-                            on_touch_up: root.update_config_value('max_energy', self.value)
+                            on_touch_up: root.update_config_value('decay_constant', self.value)      
+
+                        
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
