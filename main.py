@@ -48,6 +48,8 @@ def loop(dt):
   # if debug menu is open, the audio viewer components need updating
   app.update_audio_viewer(audio_listener.energy_original, audio_listener.energy_modified)
 
+  if config.read("LED_VIEWER") == True:
+    app.update_frame(frame)
   if config.read("ENV") == "prod":
     show(frame)
 

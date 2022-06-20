@@ -5,8 +5,9 @@ from kivy.core.image import Image
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle, Color
+from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ListProperty
+from kivy.properties import ListProperty, ObjectProperty
 from modules.debug_view import FRAMES_TO_DISPLAY
 
 from touch_circles import HUESHIFT
@@ -70,6 +71,7 @@ class TouchableScreen(Screen):
 
 
 class LightdreamTouchScreen(TouchableScreen):
+    texture = ObjectProperty()
     CIRCLES = {
         'HUESHIFT': HUESHIFT,
         'KALEIDOSCOPE': KALEIDOSCOPE,
@@ -85,6 +87,15 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].source = self.CIRCLES[circle].path
             self.ids[circle].center_x = self.CIRCLES[circle].center[0]
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
+
+        if config.read("LED_VIEWER") == True:
+            # dummy texture
+            self.texture = Texture.create(size=(170,30))
+            with self.canvas:
+                self.rect = Rectangle(
+                    size=(340,60),
+                    pos=(0,0),
+                    texture=self.texture)
 
     def update_active(self):
         for circle in self.CIRCLES.keys():
@@ -123,6 +134,7 @@ def skip_track(evt):
 class DebugMenuScreen(Screen):
     energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
     energy_mod_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
+    texture = ObjectProperty()
     def __init__(self):
         super().__init__()
 
@@ -154,6 +166,15 @@ class DebugMenuScreen(Screen):
             self.ids[f'{slider_id}_value'].text = str(value)
         
         self.set_mode(config.read("MODE"))
+
+        if config.read("LED_VIEWER") == True:
+            # dummy texture
+            self.texture = Texture.create(size=(170,30))
+            with self.canvas:
+                self.rect = Rectangle(
+                    size=(340,60),
+                    pos=(0,1020),
+                    texture=self.texture)
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
@@ -225,9 +246,10 @@ class MainApp(App):
     def build(self):
         print("hello from build")
         sm = ScreenManager()
+        self.touchscreen = LightdreamTouchScreen()
+        sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
-        sm.add_widget(LightdreamTouchScreen(), name='lightdream')
         sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 
@@ -243,6 +265,15 @@ class MainApp(App):
         global touchscreen_api
         touchscreen_api = api
         # print("on the right track?", self.debug_menu)
+    
+    def update_frame(self, frame):
+        # TODO probably don't need to call both of these
+        if self.touchscreen:
+            self.touchscreen.texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
+            with self.touchscreen.canvas:
+                self.touchscreen.canvas.ask_update()
+        if self.debug_menu:
+            self.debug_menu.texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
 
 if __name__ == '__main__':
     MainApp().run()
