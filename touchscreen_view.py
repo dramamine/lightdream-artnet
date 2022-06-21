@@ -1,14 +1,10 @@
-import enum
 from kivy.app import App
 from kivy.config import Config
-from kivy.core.image import Image
-from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.graphics import Rectangle, Color
+from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
-from modules.debug_view import FRAMES_TO_DISPLAY
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
