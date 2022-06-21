@@ -37,19 +37,20 @@ def loop(dt):
   
   if mode == "autoplay":
     frame = ap.tick()
-    # @TODO apply fun filters based on song energy
-    energy = audio_listener.get_energy()
-    # print(energy)
   else:
     frame = pl.tick()
 
   frame = effects_manager.apply_effects(frame, finger_manager)
 
   # if debug menu is open, the audio viewer components need updating
-  app.update_audio_viewer(audio_listener.energy_original, audio_listener.energy_modified)
+  app.update_audio_viewer(
+    audio_listener.as_texture( audio_listener.energy_original ), 
+    audio_listener.as_texture( audio_listener.energy_modified ),
+  )
 
   if config.read("LED_VIEWER") == True:
     app.update_frame(frame)
+
   if config.read("ENV") == "prod":
     show(frame)
 

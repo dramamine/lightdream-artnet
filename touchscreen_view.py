@@ -67,7 +67,7 @@ class TouchableScreen(Screen):
 
 
 class LightdreamTouchScreen(TouchableScreen):
-    texture = ObjectProperty()
+    led_output_texture = ObjectProperty()
     CIRCLES = {
         'HUESHIFT': HUESHIFT,
         'KALEIDOSCOPE': KALEIDOSCOPE,
@@ -85,13 +85,12 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
 
         if config.read("LED_VIEWER") == True:
-            # dummy texture
-            self.texture = Texture.create(size=(170,30))
+            self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
-                self.rect = Rectangle(
+                Rectangle(
                     size=(340,60),
-                    pos=(0,0),
-                    texture=self.texture)
+                    pos=(0,1020),
+                    texture=self.led_output_texture)
 
     def update_active(self):
         for circle in self.CIRCLES.keys():
@@ -128,9 +127,9 @@ def skip_track(evt):
     touchscreen_api['skip_track']()
 
 class DebugMenuScreen(Screen):
-    energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
-    energy_mod_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
-    texture = ObjectProperty()
+    led_output_texture = ObjectProperty()
+    energy_original_texture = ObjectProperty()
+    energy_modified_texture = ObjectProperty()
     def __init__(self):
         super().__init__()
 
@@ -164,13 +163,15 @@ class DebugMenuScreen(Screen):
         self.set_mode(config.read("MODE"))
 
         if config.read("LED_VIEWER") == True:
-            # dummy texture
-            self.texture = Texture.create(size=(170,30))
+            self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
-                self.rect = Rectangle(
+                Rectangle(
                     size=(340,60),
                     pos=(0,1020),
-                    texture=self.texture)
+                    texture=self.led_output_texture)
+        
+        self.energy_original_texture = Texture.create(size=(20,1))
+        self.energy_modified_texture = Texture.create(size=(20,1))
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
@@ -229,9 +230,9 @@ class DebugMenuScreen(Screen):
             track_queue_layout.add_widget(btn)
 
     def update_audio_viewer(self, energy_original, energy_modified):
-        max_energy = config.read("max_energy")
-        self.energy_orig_list = list(map(lambda x: x / max_energy, energy_original))[:10]
-        self.energy_mod_list = list(map(lambda x: x / max_energy, energy_modified))[:10]
+        self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
+        self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
+        
 
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
@@ -254,6 +255,7 @@ class MainApp(App):
             self.debug_menu.update_track_queue(now_playing, queue)
     
     def update_audio_viewer(self, energy_original, energy_modified):
+
         if self.debug_menu and config.read("MODE") == "autoplay":
             self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
@@ -265,11 +267,12 @@ class MainApp(App):
     def update_frame(self, frame):
         # TODO probably don't need to call both of these
         if self.touchscreen:
-            self.touchscreen.texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
+            self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.touchscreen.canvas:
                 self.touchscreen.canvas.ask_update()
         if self.debug_menu:
-            self.debug_menu.texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
-
+            self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
+            with self.debug_menu.canvas:
+                self.debug_menu.canvas.ask_update()
 if __name__ == '__main__':
     MainApp().run()

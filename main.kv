@@ -123,6 +123,17 @@
                             spacing: 10
             FloatLayout:
                 id: autoplay_controller
+                canvas.before:
+                    Rectangle:
+                        size: (400,20)
+                        pos: (1234,760)
+                        texture: root.energy_original_texture
+                    
+                    Rectangle:
+                        size: (400,20)
+                        pos: (1234,530)
+                        texture: root.energy_modified_texture
+                    
                 BoxLayout:
                     orientation: 'horizontal'
                     GridLayout:
@@ -191,67 +202,6 @@
                             Label:
                                 id: max_energy_value
 
-                        BoxLayout:
-                            id: energy_original_container
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            canvas.before:
-                                Color: 
-                                    rgba: 0,1,0,1
-                                Rectangle:
-                                    pos: 1360,740
-                                    size: 200,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[0]
-                                Rectangle:
-                                    pos: 1360,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[1]
-                                Rectangle:
-                                    pos: 1360+20,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[2]
-                                Rectangle:
-                                    pos: 1360+40,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[3]
-                                Rectangle:
-                                    pos: 1360+60,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[4]
-                                Rectangle:
-                                    pos: 1360+80,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[5]
-                                Rectangle:
-                                    pos: 1360+100,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[6]
-                                Rectangle:
-                                    pos: 1360+120,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[7]
-                                Rectangle:
-                                    pos: 1360+140,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[8]
-                                Rectangle:
-                                    pos: 1360+160,740
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_orig_list[9]
-                                Rectangle:
-                                    pos: 1360+180,740
-                                    size: 20,20
-
                         Slider:
                             id: max_energy
                             min: 0.1
@@ -266,67 +216,6 @@
                                 text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
                             Label:
                                 id: decay_constant_value
-
-                        BoxLayout:
-                            id: energy_modified_container
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            canvas.before:
-                                Color: 
-                                    rgba: 0,1,0,1
-                                Rectangle:
-                                    pos: 1360,470
-                                    size: 200,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[0]
-                                Rectangle:
-                                    pos: 1360,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[1]
-                                Rectangle:
-                                    pos: 1360+20,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[2]
-                                Rectangle:
-                                    pos: 1360+40,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[3]
-                                Rectangle:
-                                    pos: 1360+60,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[4]
-                                Rectangle:
-                                    pos: 1360+80,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[5]
-                                Rectangle:
-                                    pos: 1360+100,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[6]
-                                Rectangle:
-                                    pos: 1360+120,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[7]
-                                Rectangle:
-                                    pos: 1360+140,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[8]
-                                Rectangle:
-                                    pos: 1360+160,470
-                                    size: 20,20
-                                Color: 
-                                    rgba: 1,0,0,root.energy_mod_list[9]
-                                Rectangle:
-                                    pos: 1360+180,470
-                                    size: 20,20
 
                         Slider:
                             id: decay_constant
