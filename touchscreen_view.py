@@ -48,7 +48,7 @@ input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
 CURRENTLY_ENABLED_SCREENS = [
     'lightdream',
     'debug_menu',
-    'layout_test',
+    # 'layout_test',
 ]
 
 
