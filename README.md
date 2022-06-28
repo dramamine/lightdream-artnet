@@ -76,8 +76,6 @@ Milestone 4: finalize arrangement
 ## Fit N Finish
 
 - Spotlight effect on the spotlight circle
-- Remove layout test from production
-- Double click to transition screens
 
 ### Other Stuff
 

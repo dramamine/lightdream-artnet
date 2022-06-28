@@ -305,5 +305,6 @@ class MainApp(App):
             self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
+
 if __name__ == '__main__':
     MainApp().run()
