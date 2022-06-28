@@ -32,6 +32,8 @@ LAYOUT_IMAGE_HEIGHT = 1080
 
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
+Config.set('graphics', 'fullscreen', 'auto')
+Config.set('graphics', 'window_state', 'maximized')
 
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
