@@ -67,4 +67,33 @@ RADIANTLINES = TouchscreenCircle(
     center=(1751, 873),
     radius=80,
 )
-
+RINGS = TouchscreenCircle(
+    path='./images/rings.png',
+    key=FilterNames.RINGS,
+    center=(1196, 811),
+    radius=225,
+)
+SPOTLIGHT = TouchscreenCircle(
+    path='./images/spotlight.png',
+    key=FilterNames.SPOTLIGHT,
+    center=(1655, 545),
+    radius=210,
+)
+WEDGES = TouchscreenCircle(
+    path='./images/wedges.png',
+    key=FilterNames.WEDGES,
+    center=(1196, 229),
+    radius=235,
+)
+TRIFORCE = TouchscreenCircle(
+    path='./images/triforce.png',
+    key=FilterNames.TRIFORCE,
+    center=(1752, 195),
+    radius=80,
+)
+BLOBS = TouchscreenCircle(
+    path='./images/blobs.png',
+    key=FilterNames.BLOBS,
+    center=(1551, 113),
+    radius=80,
+)

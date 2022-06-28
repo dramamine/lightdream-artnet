@@ -9,6 +9,11 @@ from touch_circles import LIGHTNING
 from touch_circles import NUCLEAR
 from touch_circles import SPIRAL
 from touch_circles import RADIANTLINES
+from touch_circles import RINGS
+from touch_circles import SPOTLIGHT
+from touch_circles import WEDGES
+from touch_circles import TRIFORCE
+from touch_circles import BLOBS
 
 
 class InputCoordinateMapper:
@@ -42,8 +47,15 @@ class InputCoordinateMapper:
             NUCLEAR,
         ]
         self.RIGHT_CIRCLES = [
+            # big circles
+            RINGS,
+            SPOTLIGHT,
+            WEDGES,
+            # small circles
             SPIRAL,
             RADIANTLINES,
+            TRIFORCE,
+            BLOBS,
         ]
 
     def get_touchscreen_circle_key(self, point):

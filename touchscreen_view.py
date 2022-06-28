@@ -12,6 +12,12 @@ from touch_circles import LIGHTNING
 from touch_circles import NUCLEAR
 from touch_circles import SPIRAL
 from touch_circles import RADIANTLINES
+from touch_circles import RINGS
+from touch_circles import SPOTLIGHT
+from touch_circles import WEDGES
+from touch_circles import TRIFORCE
+from touch_circles import BLOBS
+
 
 from touch_input import InputCoordinateMapper
 
@@ -40,7 +46,7 @@ touchscreen_api = {
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
         point = (touch.x, touch.y)
-        # print("============================>point", point)
+        print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
         # Annoying: touch bindings on the TouchableScreens override all button
@@ -74,6 +80,11 @@ class LightdreamTouchScreen(TouchableScreen):
         'NUCLEAR': NUCLEAR,
         'SPIRAL': SPIRAL,
         'RADIANTLINES': RADIANTLINES,
+        'RINGS': RINGS,
+        'SPOTLIGHT': SPOTLIGHT,
+        'WEDGES': WEDGES,
+        'TRIFORCE': TRIFORCE,
+        'BLOBS': BLOBS,
     }
     def __init__(self):
         super().__init__()
@@ -146,13 +157,13 @@ class DebugMenuScreen(Screen):
             value = config.read(slider_id)
             self.ids[slider_id].value = value
             self.ids[f'{slider_id}_value'].text = str(value)
-        
+
         self.set_mode(config.read("MODE"))
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
-    
+
     # set MODE and update controls appropriately
     def set_mode(self, mode):
         config.write("MODE", mode)
@@ -163,14 +174,14 @@ class DebugMenuScreen(Screen):
         for controller in controllers:
             self.update_visibility(controller, False)
         self.update_visibility(f'{mode}_controller', True)
-        
+
     # toggle visibility of Layouts
     def update_visibility(self, id, is_visible):
         widget = self.ids[id]
         widget.opacity = 1 if is_visible else 0
         widget.disabled = False if is_visible else True
         widget.height = 1 if is_visible else '0dp'
-        widget.size_hint_y = 1 if is_visible else 0        
+        widget.size_hint_y = 1 if is_visible else 0
 
     # update config and update the displayed value
     def update_config_value(self, slider_id, slider_value):
@@ -178,7 +189,7 @@ class DebugMenuScreen(Screen):
         config.write(slider_id, slider_value)
         self.ids[f'{slider_id}_value'].text = str(slider_value)
 
-    
+
     def update_track_queue(self, now_playing, queue):
         print("OMG got my message:", now_playing, queue)
         track_queue_layout = self.ids['track_queue']
@@ -193,7 +204,7 @@ class DebugMenuScreen(Screen):
         )
         btn.bind(on_press=skip_track)
         track_queue_layout.add_widget(btn)
-        
+
         # upcoming
         for track_id in queue:
             track_name = track_metadata[track_id]['track_name']
