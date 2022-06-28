@@ -1,9 +1,9 @@
 from kivy.app import App
 from kivy.config import Config
+from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.image import Image
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
-from kivy.uix.screenmanager import ScreenManager, Screen
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
@@ -31,11 +31,30 @@ LAYOUT_IMAGE_HEIGHT = 1080
 
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
-Config.set('graphics', 'fullscreen', 'auto')
-Config.set('graphics', 'window_state', 'maximized')
+
+
+FULLSCREEN_MODE = False
+
+
+if FULLSCREEN_MODE:
+    Config.set('graphics', 'fullscreen', 'auto')
+    Config.set('graphics', 'window_state', 'maximized')
 
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
+
+
+CURRENTLY_ENABLED_SCREENS = [
+    'debug_menu',
+    'lightdream',
+    'layout_test',
+]
+
+
+def get_next_screen(this_screen):
+    screens = CURRENTLY_ENABLED_SCREENS
+    return screens[screens.index(this_screen) + 1 - len(screens)]
+
 
 touchscreen_api = {
   'enqueue': lambda track_name: None,
@@ -45,17 +64,20 @@ touchscreen_api = {
   # 'config': {}
 }
 
+
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
         point = (touch.x, touch.y)
-        print("============================>point", point)
+        # print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
         # Annoying: touch bindings on the TouchableScreens override all button
         # press bindings.  DebugMenu screen has working on_press() bindings,
         # and shouldn't need to check for button collisions in the touch handler.
         if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
-            self.next_screen_callback(touch)
+            # Only go to next screen on double tap
+            if touch.is_double_tap:
+                self.next_screen_callback(touch)
 
         return super().on_touch_down(touch)
 
@@ -69,8 +91,12 @@ class TouchableScreen(Screen):
         input_mapper.process_touch_leave(touch.id)
         return super().on_touch_up(touch)
 
-    def next_screen_callback(self):
-        pass
+    def next_screen_callback(self, touch):
+        self.manager.current = get_next_screen(self.manager.current)
+
+
+class LayoutTestScreen(TouchableScreen):
+    pass
 
 
 class LightdreamTouchScreen(TouchableScreen):
@@ -115,9 +141,6 @@ class LightdreamTouchScreen(TouchableScreen):
         self.update_active()
         return super().on_touch_up(touch)
 
-    def next_screen_callback(self, touch):
-        self.manager.current = 'debug_menu'
-        self.manager.title = 'Debug Menu'
 
 
 def enqueue(evt):
@@ -128,6 +151,7 @@ def dequeue(evt):
 
 def skip_track(evt):
     touchscreen_api['skip_track']()
+
 
 class DebugMenuScreen(Screen):
     def __init__(self):
@@ -163,8 +187,7 @@ class DebugMenuScreen(Screen):
         self.set_mode(config.read("MODE"))
 
     def next_screen_callback(self, touch):
-        self.manager.current = 'layout_test'
-        self.manager.title = 'Layout Test'
+        self.manager.current = get_next_screen(self.manager.current)
 
     # set MODE and update controls appropriately
     def set_mode(self, mode):
@@ -219,11 +242,6 @@ class DebugMenuScreen(Screen):
             btn.bind(on_press=dequeue)
             track_queue_layout.add_widget(btn)
 
-class LayoutTestScreen(TouchableScreen):
-    def next_screen_callback(self, touch):
-        self.manager.current = 'lightdream'
-        self.manager.title = 'Lightdream'
-
 
 class MainApp(App):
     def build(self):
@@ -232,7 +250,8 @@ class MainApp(App):
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
         sm.add_widget(LightdreamTouchScreen(), name='lightdream')
-        sm.add_widget(LayoutTestScreen(), name='layout_test')
+        if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
+            sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 
     def stupid_updated_queue_callback(self, now_playing, queue):
