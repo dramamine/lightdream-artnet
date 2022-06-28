@@ -32,11 +32,30 @@ LAYOUT_IMAGE_HEIGHT = 1080
 
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
-Config.set('graphics', 'fullscreen', 'auto')
-Config.set('graphics', 'window_state', 'maximized')
+
+
+FULLSCREEN_MODE = False
+
+
+if FULLSCREEN_MODE:
+    Config.set('graphics', 'fullscreen', 'auto')
+    Config.set('graphics', 'window_state', 'maximized')
 
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
+
+
+CURRENTLY_ENABLED_SCREENS = [
+    'lightdream',
+    'debug_menu',
+    'layout_test',
+]
+
+
+def get_next_screen(this_screen):
+    screens = CURRENTLY_ENABLED_SCREENS
+    return screens[screens.index(this_screen) + 1 - len(screens)]
+
 
 touchscreen_api = {
   'enqueue': lambda track_name: None,
@@ -46,17 +65,20 @@ touchscreen_api = {
   # 'config': {}
 }
 
+
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
         point = (touch.x, touch.y)
-        print("============================>point", point)
+        # print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
         # Annoying: touch bindings on the TouchableScreens override all button
         # press bindings.  DebugMenu screen has working on_press() bindings,
         # and shouldn't need to check for button collisions in the touch handler.
         if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
-            self.next_screen_callback(touch)
+            # Only go to next screen on double tap
+            if touch.is_double_tap:
+                self.next_screen_callback(touch)
 
         return super().on_touch_down(touch)
 
@@ -70,8 +92,12 @@ class TouchableScreen(Screen):
         input_mapper.process_touch_leave(touch.id)
         return super().on_touch_up(touch)
 
-    def next_screen_callback(self):
-        pass
+    def next_screen_callback(self, touch):
+        self.manager.current = get_next_screen(self.manager.current)
+
+
+class LayoutTestScreen(TouchableScreen):
+    pass
 
 
 class LightdreamTouchScreen(TouchableScreen):
@@ -125,9 +151,6 @@ class LightdreamTouchScreen(TouchableScreen):
         self.update_active()
         return super().on_touch_up(touch)
 
-    def next_screen_callback(self, touch):
-        self.manager.current = 'debug_menu'
-        self.manager.title = 'Debug Menu'
 
 
 def enqueue(evt):
@@ -138,6 +161,7 @@ def dequeue(evt):
 
 def skip_track(evt):
     touchscreen_api['skip_track']()
+
 
 class DebugMenuScreen(Screen):
     led_output_texture = ObjectProperty()
@@ -187,8 +211,7 @@ class DebugMenuScreen(Screen):
         self.energy_modified_texture = Texture.create(size=(20,1))
 
     def next_screen_callback(self, touch):
-        self.manager.current = 'layout_test'
-        self.manager.title = 'Layout Test'
+        self.manager.current = get_next_screen(self.manager.current)
 
     # set MODE and update controls appropriately
     def set_mode(self, mode):
@@ -246,12 +269,6 @@ class DebugMenuScreen(Screen):
         self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
         self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
 
-
-class LayoutTestScreen(TouchableScreen):
-    def next_screen_callback(self, touch):
-        self.manager.current = 'lightdream'
-        self.manager.title = 'Lightdream'
-
 class MainApp(App):
     def build(self):
         print("hello from build")
@@ -260,7 +277,8 @@ class MainApp(App):
         sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
-        sm.add_widget(LayoutTestScreen(), name='layout_test')
+        if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
+            sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 
     def stupid_updated_queue_callback(self, now_playing, queue):
