@@ -13,6 +13,12 @@ from touch_circles import LIGHTNING
 from touch_circles import NUCLEAR
 from touch_circles import SPIRAL
 from touch_circles import RADIANTLINES
+from touch_circles import RINGS
+from touch_circles import SPOTLIGHT
+from touch_circles import WEDGES
+from touch_circles import TRIFORCE
+from touch_circles import BLOBS
+
 
 from touch_input import InputCoordinateMapper
 
@@ -41,7 +47,7 @@ touchscreen_api = {
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
         point = (touch.x, touch.y)
-        # print("============================>point", point)
+        print("============================>point", point)
         input_mapper.process_touch_enter(touch.id, point)
 
         # Annoying: touch bindings on the TouchableScreens override all button
@@ -76,6 +82,11 @@ class LightdreamTouchScreen(TouchableScreen):
         'NUCLEAR': NUCLEAR,
         'SPIRAL': SPIRAL,
         'RADIANTLINES': RADIANTLINES,
+        'RINGS': RINGS,
+        'SPOTLIGHT': SPOTLIGHT,
+        'WEDGES': WEDGES,
+        'TRIFORCE': TRIFORCE,
+        'BLOBS': BLOBS,
     }
     def __init__(self):
         super().__init__()
@@ -145,7 +156,7 @@ class DebugMenuScreen(Screen):
             btn.value = id # @TODO could we use 'name' here instead
             btn.bind(on_press=enqueue)
             self.ids['track_grid'].add_widget(btn)
-        
+
         # read slider values from config
         slider_ids = [
             'decay_constant',
@@ -159,7 +170,7 @@ class DebugMenuScreen(Screen):
             value = config.read(slider_id)
             self.ids[slider_id].value = value
             self.ids[f'{slider_id}_value'].text = str(value)
-        
+
         self.set_mode(config.read("MODE"))
 
         if config.read("LED_VIEWER") == True:
@@ -169,14 +180,14 @@ class DebugMenuScreen(Screen):
                     size=(340,60),
                     pos=(0,1020),
                     texture=self.led_output_texture)
-        
+
         self.energy_original_texture = Texture.create(size=(20,1))
         self.energy_modified_texture = Texture.create(size=(20,1))
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
         self.manager.title = 'Layout Test'
-    
+
     # set MODE and update controls appropriately
     def set_mode(self, mode):
         config.write("MODE", mode)
@@ -187,21 +198,21 @@ class DebugMenuScreen(Screen):
         for controller in controllers:
             self.update_visibility(controller, False)
         self.update_visibility(f'{mode}_controller', True)
-        
+
     # toggle visibility of Layouts
     def update_visibility(self, id, is_visible):
         widget = self.ids[id]
         widget.opacity = 1 if is_visible else 0
         widget.disabled = False if is_visible else True
         widget.height = 1 if is_visible else '0dp'
-        widget.size_hint_y = 1 if is_visible else 0        
+        widget.size_hint_y = 1 if is_visible else 0
 
     # update config and update the displayed value
     def update_config_value(self, slider_id, slider_value):
         print(slider_id, slider_value)
         config.write(slider_id, slider_value)
         self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
-    
+
     def update_track_queue(self, now_playing, queue):
         print("OMG got my message:", now_playing, queue)
         track_queue_layout = self.ids['track_queue']
@@ -216,7 +227,7 @@ class DebugMenuScreen(Screen):
         )
         btn.bind(on_press=skip_track)
         track_queue_layout.add_widget(btn)
-        
+
         # upcoming
         for track_id in queue:
             track_name = track_metadata[track_id]['track_name']
@@ -232,7 +243,7 @@ class DebugMenuScreen(Screen):
     def update_audio_viewer(self, energy_original, energy_modified):
         self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
         self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
-        
+
 
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
@@ -253,7 +264,7 @@ class MainApp(App):
     def stupid_updated_queue_callback(self, now_playing, queue):
         if self.debug_menu:
             self.debug_menu.update_track_queue(now_playing, queue)
-    
+
     def update_audio_viewer(self, energy_original, energy_modified):
 
         if self.debug_menu and config.read("MODE") == "autoplay":
@@ -263,7 +274,7 @@ class MainApp(App):
         global touchscreen_api
         touchscreen_api = api
         # print("on the right track?", self.debug_menu)
-    
+
     def update_frame(self, frame):
         # TODO probably don't need to call both of these
         if self.touchscreen:

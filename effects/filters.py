@@ -17,6 +17,11 @@ class FilterNames:
   NUCLEAR = 'nuclear'
   SPIRAL = 'spiral'
 
+  RINGS = 'rings'
+  SPOTLIGHT = 'spotlight'
+  WEDGES = 'wedges'
+  TRIFORCE = 'triforce'
+  BLOBS = 'blobs'
 
 # these straight-up replace the input frame
 class BrightnessFilter:
@@ -94,7 +99,7 @@ class ImageFilter:
     assert(idx >= 0)
     assert(idx <= self.count)
     idx_str = '{:03d}'.format(idx)
-    frame = cv2.imread(os.path.join('video', 'overlays', key, 
+    frame = cv2.imread(os.path.join('video', 'overlays', key,
       '{}{}.png'.format(key, idx_str)))
     return remove_unused_pixels_from_frame(frame)
 
@@ -107,7 +112,7 @@ class ImageFilter:
     if not fingers:
       return frame
 
-    frames = list(map(lambda x: self.read_frame( 
+    frames = list(map(lambda x: self.read_frame(
       self.key, self.value_to_frame_idx(x)
     ), fingers))
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
@@ -136,17 +141,17 @@ class RainbowFilter(ImageFilter):
     if not fingers:
       return frame
 
-    verticals = list(map(lambda x: self.read_frame( 
+    verticals = list(map(lambda x: self.read_frame(
       'vertical-stripe', self.value_to_frame_idx(x[0])
     ), fingers))
 
-    horizontals = list(map(lambda x: self.read_frame( 
+    horizontals = list(map(lambda x: self.read_frame(
       'horizontal-stripe', self.value_to_frame_idx(x[1])
     ), fingers))
 
     cwframe = self.sp.read_frame()
 
-    frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe, 
+    frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe,
       range(len(fingers))))
 
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
