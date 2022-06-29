@@ -39,15 +39,18 @@ elif mode == "playlist":
 frame = nullframe
 frame_condition = Condition()
 
-def show():
+def get_frame():
   global frame
-  if config.read("LED_VIEWER") == True:
-    app.update_frame(frame)
+  return frame
+
+def show_frame():
+  global frame
 
   if config.read("ENV") == "prod":
     show(frame)
 
 def queue_next_frame():
+  global frame
   mode = config.read("MODE")
   
   if mode == "autoplay":
@@ -56,6 +59,7 @@ def queue_next_frame():
     frame = pl.tick()
 
   frame = effects_manager.apply_effects(frame, finger_manager)
+  # print("queued frame:", frame)
 
   # if debug menu is open, the audio viewer components need updating
   # TODO cancelling for async
@@ -64,18 +68,18 @@ def queue_next_frame():
   #   audio_listener.as_texture( audio_listener.energy_modified ),
   # )
 
-def loop(dt):
-  mode = config.read("MODE")
+# def loop(dt):
+#   mode = config.read("MODE")
   
-  if mode == "autoplay":
-    frame = ap.tick()
-  else:
-    frame = pl.tick()
+#   if mode == "autoplay":
+#     frame = ap.tick()
+#   else:
+#     frame = pl.tick()
 
-  frame = effects_manager.apply_effects(frame, finger_manager)
+#   frame = effects_manager.apply_effects(frame, finger_manager)
 
-  if config.read("ENV") == "prod":
-    show(frame)
+#   if config.read("ENV") == "prod":
+#     show(frame)
 
 def set_mode(next_mode):
   global mode
@@ -119,7 +123,7 @@ def loop_timer(dt=0):
 
   
   # loop(dt)
-  show()
+  show_frame()
 
   with frame_condition:
     queue_next_frame()
@@ -152,7 +156,8 @@ app.add_touchscreen_api({
   'skip_track': pl.skip_track,
   'set_mode': set_mode,
   'frame_condition': frame_condition,
-  'frame': frame,
+  'get_frame': get_frame,
+  'audio_listener': audio_listener,
   # it's a singleton, but might as well include it here
   'config': config
 })

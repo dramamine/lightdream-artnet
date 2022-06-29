@@ -63,7 +63,10 @@ touchscreen_api = {
   'dequeue': lambda track_name: None,
   'skip_track': lambda x: None,
   'set_mode': lambda mode: None,
-  'frame': nullframe
+  'get_frame': lambda x: nullframe,
+  'audio_listener': {
+
+  }
   # 'config': {}
 }
 
@@ -319,7 +322,12 @@ class MainApp(App):
         global touchscreen_api
         if not self.has_built:
             return
-        self.update_frame(touchscreen_api['frame'])
+        self.update_frame(touchscreen_api['get_frame']())
+        al = touchscreen_api['audio_listener']
+        self.update_audio_viewer(
+            al.as_texture(al.energy_original),
+            al.as_texture(al.energy_modified),
+        )
         pass
 
 
