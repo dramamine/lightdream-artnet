@@ -13,6 +13,9 @@ defaults = {
   # if true, only use the 3 songs committed to the repo.
   # this gets disabled in production.
   "DEBUG_TRACKLIST": True,
+
+  "LED_VIEWER": False,
+
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)
   "decay_constant": -0.05,

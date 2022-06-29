@@ -3,10 +3,11 @@ from math import e
 from util.config import config
 import subprocess, threading
 from itertools import repeat
+import numpy as np
 
 # i.e. length of the array; this should be high enough so that 'decay' works,
 # and long enough so that the debug display works.
-ENERGY_TAIL_LENGTH = 200
+ENERGY_TAIL_LENGTH = 20
 
 energy_original = deque(maxlen=ENERGY_TAIL_LENGTH)
 energy_original.extend(list(repeat(0,ENERGY_TAIL_LENGTH)))
@@ -21,8 +22,6 @@ def update_energy(value):
   decayed = energy_modified[0] * e ** config.read("decay_constant")
   energy_modified.appendleft( max(value, decayed) )
 
-
-
 def output_reader(proc):
     global freq, energy
     for line in iter(proc.stdout.readline, b''):
@@ -30,7 +29,6 @@ def output_reader(proc):
         values = line.decode('utf-8').strip().split()
         # freq = values[0]
         update_energy( float(values[1]) )
-
 
 is_mock = "" if config.read("PLATFORM") == "rpi" else "_mock"
 
@@ -55,8 +53,20 @@ def thread_ender():
 def get_energy():
   return energy_modified[0]
 
-
-
 # returns a float 0-1 for how strong we want the audio visualization effect to be
 def get_visual_strength():
-  return min( 1, get_energy() / config.read("max_energy") )
+  return as_float(get_energy())
+
+def as_float(energy):
+  return min( 1, energy / config.read("max_energy") )
+
+def float_to_color(val):
+  val = min(1, max(val, 0))
+  return [
+    255 * val,
+    255 * (1 - val),
+    0
+  ]
+
+def as_texture(energies):
+  return np.array( list(map(lambda x: float_to_color(as_float(x)), energies)), dtype=np.uint8 )

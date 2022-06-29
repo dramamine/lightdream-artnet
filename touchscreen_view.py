@@ -1,9 +1,10 @@
 from kivy.app import App
 from kivy.config import Config
-from kivy.core.image import Image
-from kivy.uix.widget import Widget
 from kivy.uix.button import Button
+from kivy.graphics import Rectangle
+from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.properties import ListProperty, ObjectProperty
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
@@ -66,6 +67,7 @@ class TouchableScreen(Screen):
 
 
 class LightdreamTouchScreen(TouchableScreen):
+    led_output_texture = ObjectProperty()
     CIRCLES = {
         'HUESHIFT': HUESHIFT,
         'KALEIDOSCOPE': KALEIDOSCOPE,
@@ -81,6 +83,14 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].source = self.CIRCLES[circle].path
             self.ids[circle].center_x = self.CIRCLES[circle].center[0]
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
+
+        if config.read("LED_VIEWER") == True:
+            self.led_output_texture = Texture.create(size=(170,30))
+            with self.canvas:
+                Rectangle(
+                    size=(340,60),
+                    pos=(0,1020),
+                    texture=self.led_output_texture)
 
     def update_active(self):
         for circle in self.CIRCLES.keys():
@@ -117,6 +127,9 @@ def skip_track(evt):
     touchscreen_api['skip_track']()
 
 class DebugMenuScreen(Screen):
+    led_output_texture = ObjectProperty()
+    energy_original_texture = ObjectProperty()
+    energy_modified_texture = ObjectProperty()
     def __init__(self):
         super().__init__()
 
@@ -132,7 +145,7 @@ class DebugMenuScreen(Screen):
             btn.value = id # @TODO could we use 'name' here instead
             btn.bind(on_press=enqueue)
             self.ids['track_grid'].add_widget(btn)
-
+        
         # read slider values from config
         slider_ids = [
             'decay_constant',
@@ -148,6 +161,17 @@ class DebugMenuScreen(Screen):
             self.ids[f'{slider_id}_value'].text = str(value)
         
         self.set_mode(config.read("MODE"))
+
+        if config.read("LED_VIEWER") == True:
+            self.led_output_texture = Texture.create(size=(170,30))
+            with self.canvas:
+                Rectangle(
+                    size=(340,60),
+                    pos=(0,1020),
+                    texture=self.led_output_texture)
+        
+        self.energy_original_texture = Texture.create(size=(20,1))
+        self.energy_modified_texture = Texture.create(size=(20,1))
 
     def next_screen_callback(self, touch):
         self.manager.current = 'layout_test'
@@ -176,8 +200,7 @@ class DebugMenuScreen(Screen):
     def update_config_value(self, slider_id, slider_value):
         print(slider_id, slider_value)
         config.write(slider_id, slider_value)
-        self.ids[f'{slider_id}_value'].text = str(slider_value)
-
+        self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
     
     def update_track_queue(self, now_playing, queue):
         print("OMG got my message:", now_playing, queue)
@@ -206,30 +229,50 @@ class DebugMenuScreen(Screen):
             btn.bind(on_press=dequeue)
             track_queue_layout.add_widget(btn)
 
+    def update_audio_viewer(self, energy_original, energy_modified):
+        self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
+        self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
+        
+
 class LayoutTestScreen(TouchableScreen):
     def next_screen_callback(self, touch):
         self.manager.current = 'lightdream'
         self.manager.title = 'Lightdream'
 
-
 class MainApp(App):
     def build(self):
         print("hello from build")
         sm = ScreenManager()
+        self.touchscreen = LightdreamTouchScreen()
+        sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
-        sm.add_widget(LightdreamTouchScreen(), name='lightdream')
         sm.add_widget(LayoutTestScreen(), name='layout_test')
         return sm
 
     def stupid_updated_queue_callback(self, now_playing, queue):
         if self.debug_menu:
             self.debug_menu.update_track_queue(now_playing, queue)
+    
+    def update_audio_viewer(self, energy_original, energy_modified):
+
+        if self.debug_menu and config.read("MODE") == "autoplay":
+            self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
         global touchscreen_api
         touchscreen_api = api
         # print("on the right track?", self.debug_menu)
-
+    
+    def update_frame(self, frame):
+        # TODO probably don't need to call both of these
+        if self.touchscreen:
+            self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
+            with self.touchscreen.canvas:
+                self.touchscreen.canvas.ask_update()
+        if self.debug_menu:
+            self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
+            with self.debug_menu.canvas:
+                self.debug_menu.canvas.ask_update()
 if __name__ == '__main__':
     MainApp().run()

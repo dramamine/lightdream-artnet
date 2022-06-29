@@ -124,31 +124,39 @@
             FloatLayout:
                 id: autoplay_controller
                 canvas.before:
-                    Color:
-                        rgba: hex('#222222')
                     Rectangle:
-                        pos: self.pos
-                        size: self.size
+                        size: (400,20)
+                        pos: (1234,760)
+                        texture: root.energy_original_texture
+                    
+                    Rectangle:
+                        size: (400,20)
+                        pos: (1234,530)
+                        texture: root.energy_modified_texture
+                    
                 BoxLayout:
                     orientation: 'horizontal'
                     GridLayout:
                         id: autoplay_options
                         cols: 1
-                        padding: 10
-                        spacing: 10
+                        padding: (250, 10, 250, 200)
+                        spacing: 50
                         canvas.before:
                             Color:
-                                rgba: hex('#226622')
+                                rgba: hex('#000000')
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
+
                         Label:
                             text: "Auto Controls"
-                            size_hint_y: 0.05
+                            size_hint_y: None
+                            height: 200
 
                         BoxLayout:
                             orientation: 'horizontal'
-                            size_hint_y: 0.05
+                            size_hint_y: 0.15
+                            padding: 30
                             Label:
                                 text: "Autoclips clip length (in seconds)"
                             Label:
@@ -163,6 +171,7 @@
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
+                            padding: 30
                             Label:
                                 text: "Crossfade Interval (in seconds)"
                             Label:
@@ -178,22 +187,27 @@
                     GridLayout:
                         id: audio_responsiveness
                         cols: 1
-                        padding: 10
-                        spacing: 10
-                        canvas.before:
-                            Color:
-                                rgba: hex('#662222')
-                            Rectangle:
-                                pos: self.pos
-                                size: self.size
+                        padding: (250, 10, 250, 200)
+                        spacing: 50
                         
                         Label:
                             text: "Audio Responsiveness"
                             size_hint_y: 0.05
-                        Label:
-                            text: "Updating these will instantly update the program,\nbut will reset when unplugged"
-                            halign: "center"
-                            size_hint_y: 0.05                            
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Max Energy\n(not too much red plz)"
+                            Label:
+                                id: max_energy_value
+
+                        Slider:
+                            id: max_energy
+                            min: 0.1
+                            max: 100
+                            step: 0.1
+                            on_touch_up: root.update_config_value('max_energy', self.value)
 
                         BoxLayout:
                             orientation: 'horizontal'
@@ -202,28 +216,15 @@
                                 text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
                             Label:
                                 id: decay_constant_value
+
                         Slider:
                             id: decay_constant
                             min: -0.1
                             max: -0.01
                             step: 0.001
-                            on_touch_up: root.update_config_value('decay_constant', self.value)                            
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            Label:
-                                text: "Max Energy"
-                            Label:
-                                id: max_energy_value    
-                        Label:
-                            text: "Max Energy"
-                            size_hint_y: 0.05
-                        Slider:
-                            id: max_energy
-                            min: 0
-                            max: 100
-                            step: 0.1
-                            on_touch_up: root.update_config_value('max_energy', self.value)
+                            on_touch_up: root.update_config_value('decay_constant', self.value)      
+
+                        
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
