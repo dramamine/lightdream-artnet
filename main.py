@@ -81,6 +81,11 @@ def queue_next_frame():
 #   if config.read("ENV") == "prod":
 #     show(frame)
 
+should_update_mode = False
+def queue_set_mode(next_mode):
+  global should_update_mode
+  should_update_mode = next_mode
+
 def set_mode(next_mode):
   global mode
   if mode == next_mode:
@@ -105,7 +110,7 @@ frame_counter = 0
 
 # for debugging. can swap out for 'loop' for final build
 def loop_timer(dt=0):
-  global frame_counter, start_time, last_time
+  global frame_counter, start_time, last_time, should_update_mode
   frame_counter = frame_counter + 1
   loop_start_time = time()
 
@@ -126,6 +131,14 @@ def loop_timer(dt=0):
   show_frame()
 
   with frame_condition:
+    if should_update_mode:
+      set_mode(should_update_mode)
+      should_update_mode = False
+
+    if shared_data["skip_track"]:
+      pl.skip_track()
+      shared_data["skip_track"] = False
+
     queue_next_frame()
     frame_condition.notify()
 
@@ -150,18 +163,26 @@ def loop_timer(dt=0):
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
+shared_data = {
+  'skip_track': False
+}
+
+def pl_skip_track():
+  shared_data['skip_track'] = True
+
 app.add_touchscreen_api({
   'enqueue': pl.enqueue,
   'dequeue': pl.dequeue,
-  'skip_track': pl.skip_track,
-  'set_mode': set_mode,
+  'skip_track': pl_skip_track,
+  'set_mode': queue_set_mode,
   'frame_condition': frame_condition,
   'get_frame': get_frame,
   'audio_listener': audio_listener,
+  'playlist': pl,
   # it's a singleton, but might as well include it here
   'config': config
 })
-pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
+# pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
 
 pr = periodicrun(1/fps, loop_timer, list(), 0, 0.025)
 try:

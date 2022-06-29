@@ -16,6 +16,8 @@ class Playlist:
 
     self.now_playing = None
     self.updates_cb = None
+
+    self.dirty = False
   
   # cb: this function gets called whenever there's an update to the
   # currently playing track or the queue. ex.:
@@ -79,8 +81,7 @@ class Playlist:
     self.queue_updated()
 
   def queue_updated(self):
-    if self.updates_cb != None:
-      self.updates_cb(self.now_playing, self.queue)
+    self.dirty = True
 
   def clear(self):
     self.ap.clear()

@@ -64,8 +64,10 @@ touchscreen_api = {
   'skip_track': lambda x: None,
   'set_mode': lambda mode: None,
   'get_frame': lambda x: nullframe,
-  'audio_listener': {
-
+  'audio_listener': {},
+  'playlist': {
+    'now_playing': '',
+    'queue': []
   }
   # 'config': {}
 }
@@ -245,7 +247,10 @@ class DebugMenuScreen(Screen):
         self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
 
     def update_track_queue(self, now_playing, queue):
+        if now_playing == None:
+            return
         print("OMG got my message:", now_playing, queue)
+
         track_queue_layout = self.ids['track_queue']
         track_queue_layout.clear_widgets()
 
@@ -294,9 +299,10 @@ class MainApp(App):
         Clock.schedule_interval(self.reload_my_data, 1/40)
         return sm
 
-    def stupid_updated_queue_callback(self, now_playing, queue):
-        if self.has_built:
-            self.debug_menu.update_track_queue(now_playing, queue)
+    def stupid_updated_queue_callback(self, playlist):
+        if self.has_built and playlist.dirty:
+            self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
+            playlist.dirty = False
 
     def update_audio_viewer(self, energy_original, energy_modified):
         pass
@@ -322,14 +328,22 @@ class MainApp(App):
         global touchscreen_api
         if not self.has_built:
             return
-        if config.read("LED_VIEWER") == True:
-            self.update_frame(touchscreen_api['get_frame']())
-        al = touchscreen_api['audio_listener']
-        self.update_audio_viewer(
-            al.as_texture(al.energy_original),
-            al.as_texture(al.energy_modified),
-        )
-        pass
+        try:
+            with touchscreen_api['frame_condition']:
+                if config.read("LED_VIEWER") == True:
+                    self.update_frame(touchscreen_api['get_frame']())
+                al = touchscreen_api['audio_listener']
+                self.update_audio_viewer(
+                    al.as_texture(al.energy_original),
+                    al.as_texture(al.energy_modified),
+                )
+
+                self.stupid_updated_queue_callback(
+                    touchscreen_api['playlist']
+                )
+        except AttributeError:
+            print("missing attribute when reloading data.")
+            pass
 
 
 if __name__ == '__main__':
