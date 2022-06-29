@@ -33,7 +33,7 @@ def output_reader(proc):
 is_mock = "" if config.read("PLATFORM") == "rpi" else "_mock"
 
 proc = subprocess.Popen(['python', '-u', 
-  'modules/audio_input/subprocess{}.py'.format(is_mock)],
+  'modules/audio_input/audio_listener_subprocess{}.py'.format(is_mock)],
   stdout=subprocess.PIPE,
   stderr=subprocess.STDOUT)
 
