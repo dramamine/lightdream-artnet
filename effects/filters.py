@@ -1,7 +1,7 @@
 from modules.sequence_player import SequencePlayer
 import numpy as np
 from util.hsv2rgb import hsv2rgb
-from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame
+from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame, to_polar
 from time import time
 import os
 import cv2
@@ -70,6 +70,9 @@ class HueshiftFilter:
         self.active = False
       return frame
 
+    finger_values = [to_polar(point)[1] for point in fingers]
+    print("hueshift: using finger values", finger_values)
+
     if not self.active:
       self.active = time()
 
@@ -77,8 +80,8 @@ class HueshiftFilter:
     mix_amount = min(time() - self.active, 0.15) + 0.15
 
     # float in 0-1 range
-    val = self.reduce_fingers(fingers)
-    print(fingers, "got mixed val:", val)
+    val = self.reduce_fingers(finger_values)
+    print(finger_values, "got mixed val:", val)
 
     # convert to hue. red is up
     # ex. [255,0,0]
@@ -103,7 +106,8 @@ class ImageFilter:
       '{}{}.png'.format(key, idx_str)))
     return remove_unused_pixels_from_frame(frame)
 
-  def value_to_frame_idx(self, value):
+  def value_to_frame_idx(self, point):
+    value = to_polar(point)[0]
     return round(self.count * value)
 
   # frame: the frame to which we apply this effect
