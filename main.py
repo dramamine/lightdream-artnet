@@ -163,7 +163,7 @@ app.add_touchscreen_api({
 })
 pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
 
-pr = periodicrun(1/fps, loop_timer)
+pr = periodicrun(1/fps, loop_timer, list(), 0, 0.025)
 try:
   pr.run_thread()
   app.run()

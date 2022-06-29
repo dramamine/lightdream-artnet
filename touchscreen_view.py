@@ -322,7 +322,8 @@ class MainApp(App):
         global touchscreen_api
         if not self.has_built:
             return
-        self.update_frame(touchscreen_api['get_frame']())
+        if config.read("LED_VIEWER") == True:
+            self.update_frame(touchscreen_api['get_frame']())
         al = touchscreen_api['audio_listener']
         self.update_audio_viewer(
             al.as_texture(al.energy_original),
