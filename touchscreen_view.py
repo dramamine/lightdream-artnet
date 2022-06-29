@@ -5,6 +5,7 @@ from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
+from kivy.clock import Clock
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
@@ -24,7 +25,7 @@ from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
-
+from util.util import nullframe
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
@@ -62,6 +63,7 @@ touchscreen_api = {
   'dequeue': lambda track_name: None,
   'skip_track': lambda x: None,
   'set_mode': lambda mode: None,
+  'frame': nullframe
   # 'config': {}
 }
 
@@ -124,6 +126,7 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
 
         if config.read("LED_VIEWER") == True:
+            print("creating led output texture.")
             self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
@@ -270,6 +273,10 @@ class DebugMenuScreen(Screen):
         self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
 
 class MainApp(App):
+    def __init__(self):
+        super().__init__()
+        self.has_built = False
+
     def build(self):
         print("hello from build")
         sm = ScreenManager()
@@ -279,15 +286,18 @@ class MainApp(App):
         sm.add_widget(self.debug_menu, name='debug_menu')
         if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
             sm.add_widget(LayoutTestScreen(), name='layout_test')
+
+        self.has_built = True
+        Clock.schedule_interval(self.reload_my_data, 1/40)
         return sm
 
     def stupid_updated_queue_callback(self, now_playing, queue):
-        if self.debug_menu:
+        if self.has_built:
             self.debug_menu.update_track_queue(now_playing, queue)
 
     def update_audio_viewer(self, energy_original, energy_modified):
-
-        if self.debug_menu and config.read("MODE") == "autoplay":
+        pass
+        if self.has_built and config.read("MODE") == "autoplay":
             self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
@@ -296,7 +306,6 @@ class MainApp(App):
         # print("on the right track?", self.debug_menu)
 
     def update_frame(self, frame):
-        # TODO probably don't need to call both of these
         if self.touchscreen:
             self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.touchscreen.canvas:
@@ -305,6 +314,14 @@ class MainApp(App):
             self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
+
+    def reload_my_data(self, dt):
+        global touchscreen_api
+        if not self.has_built:
+            return
+        self.update_frame(touchscreen_api['frame'])
+        pass
+
 
 if __name__ == '__main__':
     MainApp().run()

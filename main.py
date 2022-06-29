@@ -1,3 +1,4 @@
+import sys
 from modes.playlist import Playlist
 from modes.autoplay import Autoplay
 from modules.artnet import show
@@ -12,6 +13,8 @@ from modules.fingers import finger_manager
 from kivy.clock import Clock
 import modules.audio_input.runner as audio_listener
 from touchscreen_view import MainApp
+from util.periodicrun import periodicrun
+from threading import Condition
 
 app = MainApp()
 
@@ -34,6 +37,7 @@ elif mode == "playlist":
   pl.start()
 
 frame = nullframe
+frame_condition = Condition()
 
 def show():
   global frame
@@ -54,10 +58,11 @@ def queue_next_frame():
   frame = effects_manager.apply_effects(frame, finger_manager)
 
   # if debug menu is open, the audio viewer components need updating
-  app.update_audio_viewer(
-    audio_listener.as_texture( audio_listener.energy_original ), 
-    audio_listener.as_texture( audio_listener.energy_modified ),
-  )
+  # TODO cancelling for async
+  # app.update_audio_viewer(
+  #   audio_listener.as_texture( audio_listener.energy_original ), 
+  #   audio_listener.as_texture( audio_listener.energy_modified ),
+  # )
 
 def loop(dt):
   mode = config.read("MODE")
@@ -68,15 +73,6 @@ def loop(dt):
     frame = pl.tick()
 
   frame = effects_manager.apply_effects(frame, finger_manager)
-
-  # if debug menu is open, the audio viewer components need updating
-  app.update_audio_viewer(
-    audio_listener.as_texture( audio_listener.energy_original ), 
-    audio_listener.as_texture( audio_listener.energy_modified ),
-  )
-
-  if config.read("LED_VIEWER") == True:
-    app.update_frame(frame)
 
   if config.read("ENV") == "prod":
     show(frame)
@@ -104,7 +100,7 @@ last_time = time()
 frame_counter = 0
 
 # for debugging. can swap out for 'loop' for final build
-def loop_timer(dt):
+def loop_timer(dt=0):
   global frame_counter, start_time, last_time
   frame_counter = frame_counter + 1
   loop_start_time = time()
@@ -124,7 +120,20 @@ def loop_timer(dt):
   
   # loop(dt)
   show()
-  queue_next_frame()
+
+  with frame_condition:
+    queue_next_frame()
+    frame_condition.notify()
+
+  # if debug menu is open, the audio viewer components need updating
+  # TODO cancelling for async
+  # app.update_audio_viewer(
+  #   audio_listener.as_texture( audio_listener.energy_original ), 
+  #   audio_listener.as_texture( audio_listener.energy_modified ),
+  # )
+  # # TODO cancelling for async
+  # if config.read("LED_VIEWER") == True:
+  #   app.update_frame(frame)
 
 
   # this should look pretty consistently as a multiple of 1
@@ -142,13 +151,17 @@ app.add_touchscreen_api({
   'dequeue': pl.dequeue,
   'skip_track': pl.skip_track,
   'set_mode': set_mode,
+  'frame_condition': frame_condition,
+  'frame': frame,
   # it's a singleton, but might as well include it here
   'config': config
 })
 pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
 
-Clock.schedule_interval(loop_timer, 1/fps)
+pr = periodicrun(1/fps, loop_timer)
 try:
+  pr.run_thread()
   app.run()
 finally:
   audio_listener.thread_ender()
+  pr.interrupt()
