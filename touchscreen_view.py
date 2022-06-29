@@ -172,9 +172,9 @@ def skip_track(evt):
 
 
 class DebugMenuScreen(Screen):
+    energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
+    energy_mod_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
     led_output_texture = ObjectProperty()
-    energy_original_texture = ObjectProperty()
-    energy_modified_texture = ObjectProperty()
     def __init__(self):
         super().__init__()
 
@@ -214,9 +214,6 @@ class DebugMenuScreen(Screen):
                     size=(340,60),
                     pos=(0,1020),
                     texture=self.led_output_texture)
-
-        self.energy_original_texture = Texture.create(size=(20,1))
-        self.energy_modified_texture = Texture.create(size=(20,1))
 
     def next_screen_callback(self, touch):
         self.manager.current = get_next_screen(self.manager.current)
@@ -277,8 +274,9 @@ class DebugMenuScreen(Screen):
             track_queue_layout.add_widget(btn)
 
     def update_audio_viewer(self, energy_original, energy_modified):
-        self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
-        self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
+        max_energy = config.read("max_energy")
+        self.energy_orig_list = list(map(lambda x: x / max_energy, energy_original))[:10]
+        self.energy_mod_list = list(map(lambda x: x / max_energy, energy_modified))[:10]
 
 class MainApp(App):
     def __init__(self):
@@ -334,8 +332,8 @@ class MainApp(App):
                     self.update_frame(touchscreen_api['get_frame']())
                 al = touchscreen_api['audio_listener']
                 self.update_audio_viewer(
-                    al.as_texture(al.energy_original),
-                    al.as_texture(al.energy_modified),
+                    al.energy_original,
+                    al.energy_modified,
                 )
 
                 self.stupid_updated_queue_callback(
