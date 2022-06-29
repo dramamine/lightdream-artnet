@@ -75,10 +75,7 @@ Milestone 4: finalize arrangement
 
 ## Fit N Finish
 
-- Fullscreen mode
-- Configure the rest of the circles
 - Spotlight effect on the spotlight circle
-- Remove layout test from production
 
 ### Other Stuff
 
