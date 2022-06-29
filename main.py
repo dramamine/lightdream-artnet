@@ -4,7 +4,8 @@ from modules.artnet import show
 from effects.effects import effects_manager
 
 from util.config import config
-from time import time
+from util.util import nullframe
+from time import sleep, time
 
 from modules.fingers import finger_manager
 
@@ -31,6 +32,32 @@ elif mode == "autoplay":
   ap.start()
 elif mode == "playlist":
   pl.start()
+
+frame = nullframe
+
+def show():
+  global frame
+  if config.read("LED_VIEWER") == True:
+    app.update_frame(frame)
+
+  if config.read("ENV") == "prod":
+    show(frame)
+
+def queue_next_frame():
+  mode = config.read("MODE")
+  
+  if mode == "autoplay":
+    frame = ap.tick()
+  else:
+    frame = pl.tick()
+
+  frame = effects_manager.apply_effects(frame, finger_manager)
+
+  # if debug menu is open, the audio viewer components need updating
+  app.update_audio_viewer(
+    audio_listener.as_texture( audio_listener.energy_original ), 
+    audio_listener.as_texture( audio_listener.energy_modified ),
+  )
 
 def loop(dt):
   mode = config.read("MODE")
@@ -73,16 +100,32 @@ def set_mode(next_mode):
   
 
 start_time = time()
-last_time = 0
+last_time = time()
 frame_counter = 0
 
 # for debugging. can swap out for 'loop' for final build
 def loop_timer(dt):
   global frame_counter, start_time, last_time
   frame_counter = frame_counter + 1
-  loop_timer = time()
+  loop_start_time = time()
 
-  loop(dt)
+  # consider waiting
+  time_since = loop_start_time - last_time
+  time_to_wait = 0.025 - time_since
+  if (time_to_wait > 0):
+    print("sleeping for:", time_to_wait)
+    sleep(time_to_wait)
+    loop_start_time = time()
+  # if (time_to_wait < -0.025 and config.read("MODE") == "playlist"):
+  #   # need to skip a frame
+  #   print("falling behind so im skipping a frame")
+  #   queue_next_frame()
+
+  
+  # loop(dt)
+  show()
+  queue_next_frame()
+
 
   # this should look pretty consistently as a multiple of 1
   if frame_counter % 40 == 0:
@@ -90,7 +133,7 @@ def loop_timer(dt):
     print(f'{diff:.3f} ({40 / (diff - last_time):.3f}) fps')
     last_time = diff
 
-  loop_time = time() - loop_timer
+  loop_time = time() - loop_start_time
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
