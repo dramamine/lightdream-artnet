@@ -5,6 +5,7 @@ from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
+from kivy.clock import Clock
 
 from touch_circles import HUESHIFT
 from touch_circles import KALEIDOSCOPE
@@ -24,7 +25,7 @@ from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
-
+from util.util import nullframe
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
@@ -33,9 +34,7 @@ LAYOUT_IMAGE_HEIGHT = 1080
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
-
-FULLSCREEN_MODE = False
-
+FULLSCREEN_MODE = config.read("FULLSCREEN_MODE")
 
 if FULLSCREEN_MODE:
     Config.set('graphics', 'fullscreen', 'auto')
@@ -57,14 +56,7 @@ def get_next_screen(this_screen):
     return screens[screens.index(this_screen) + 1 - len(screens)]
 
 
-touchscreen_api = {
-  'enqueue': lambda track_name: None,
-  'dequeue': lambda track_name: None,
-  'skip_track': lambda x: None,
-  'set_mode': lambda mode: None,
-  # 'config': {}
-}
-
+touchscreen_api = {}
 
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
@@ -124,6 +116,7 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
 
         if config.read("LED_VIEWER") == True:
+            print("creating led output texture.")
             self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
@@ -154,19 +147,19 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 def enqueue(evt):
-    touchscreen_api['enqueue'](evt.value)
+    touchscreen_api['playlist'].enqueue(evt.value)
 
 def dequeue(evt):
-    touchscreen_api['dequeue'](evt.value)
+    touchscreen_api['playlist'].dequeue(evt.value)
 
 def skip_track(evt):
     touchscreen_api['skip_track']()
 
 
 class DebugMenuScreen(Screen):
+    energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
+    energy_mod_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
     led_output_texture = ObjectProperty()
-    energy_original_texture = ObjectProperty()
-    energy_modified_texture = ObjectProperty()
     def __init__(self):
         super().__init__()
 
@@ -207,9 +200,6 @@ class DebugMenuScreen(Screen):
                     pos=(0,1020),
                     texture=self.led_output_texture)
 
-        self.energy_original_texture = Texture.create(size=(20,1))
-        self.energy_modified_texture = Texture.create(size=(20,1))
-
     def next_screen_callback(self, touch):
         self.manager.current = get_next_screen(self.manager.current)
 
@@ -236,10 +226,17 @@ class DebugMenuScreen(Screen):
     def update_config_value(self, slider_id, slider_value):
         print(slider_id, slider_value)
         config.write(slider_id, slider_value)
-        self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
+        if slider_id == 'decay_constant':
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
+        elif slider_id == 'aural_effect_strength_multiplier':
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.2f}'
+        else:
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.0f}'
 
     def update_track_queue(self, now_playing, queue):
-        print("OMG got my message:", now_playing, queue)
+        if now_playing == None:
+            return
+
         track_queue_layout = self.ids['track_queue']
         track_queue_layout.clear_widgets()
 
@@ -266,12 +263,16 @@ class DebugMenuScreen(Screen):
             track_queue_layout.add_widget(btn)
 
     def update_audio_viewer(self, energy_original, energy_modified):
-        self.energy_original_texture.blit_buffer(bytes(energy_original), colorfmt='rgb', bufferfmt='ubyte')
-        self.energy_modified_texture.blit_buffer(bytes(energy_modified), colorfmt='rgb', bufferfmt='ubyte')
+        max_energy = config.read("max_energy")
+        self.energy_orig_list = list(map(lambda x: x / max_energy, energy_original))[:10]
+        self.energy_mod_list = list(map(lambda x: x / max_energy, energy_modified))[:10]
 
 class MainApp(App):
+    def __init__(self, fps):
+        super().__init__()
+        self.fps = fps
+
     def build(self):
-        print("hello from build")
         sm = ScreenManager()
         self.touchscreen = LightdreamTouchScreen()
         sm.add_widget(self.touchscreen, name='lightdream')
@@ -279,24 +280,25 @@ class MainApp(App):
         sm.add_widget(self.debug_menu, name='debug_menu')
         if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
             sm.add_widget(LayoutTestScreen(), name='layout_test')
+
+        Clock.schedule_interval(self.update_data_from_main_thread, 1/self.fps)
         return sm
 
-    def stupid_updated_queue_callback(self, now_playing, queue):
-        if self.debug_menu:
-            self.debug_menu.update_track_queue(now_playing, queue)
+    def update_playlist_status(self, playlist):
+        if playlist.dirty:
+            self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
+            playlist.dirty = False
 
     def update_audio_viewer(self, energy_original, energy_modified):
-
-        if self.debug_menu and config.read("MODE") == "autoplay":
+        pass
+        if config.read("MODE") == "autoplay":
             self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
         global touchscreen_api
         touchscreen_api = api
-        # print("on the right track?", self.debug_menu)
 
     def update_frame(self, frame):
-        # TODO probably don't need to call both of these
         if self.touchscreen:
             self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.touchscreen.canvas:
@@ -305,6 +307,27 @@ class MainApp(App):
             self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
+
+    def update_data_from_main_thread(self, dt):
+        global touchscreen_api
+        try:
+            with touchscreen_api['frame_condition']:
+                if config.read("LED_VIEWER") == True:
+                    self.update_frame(touchscreen_api['get_frame']())
+
+                al = touchscreen_api['audio_listener']
+                self.update_audio_viewer(
+                    al.energy_original,
+                    al.energy_modified,
+                )
+
+                self.update_playlist_status(
+                    touchscreen_api['playlist']
+                )
+        except AttributeError:
+            print("missing attribute when reloading data.")
+            pass
+
 
 if __name__ == '__main__':
     MainApp().run()

@@ -1,88 +1,67 @@
-from modes.playlist import Playlist
-from modes.autoplay import Autoplay
+
 from modules.artnet import show
-from effects.effects import effects_manager
 
 from util.config import config
-from time import time
+from time import  time
 
-from modules.fingers import finger_manager
-
-from kivy.clock import Clock
 import modules.audio_input.runner as audio_listener
 from touchscreen_view import MainApp
+from util.periodicrun import periodicrun
+from threading import Condition
 
-app = MainApp()
+from modules.controller import Controller
 
 fps = 40
 
-# "playlist" | "autoplay" | "metronome"
-mode = config.read("MODE")
+app = MainApp(fps)
 
-pl = Playlist()
-ap = Autoplay()
-# pl.test_metronome()
-# audio_input.init()
-# audio_input.open_stream()
 
-if mode == "metronome":
-  pl.test_metronome()
-elif mode == "autoplay":
-  ap.start()
-elif mode == "playlist":
-  pl.start()
+frame_condition = Condition()
 
-def loop(dt):
-  mode = config.read("MODE")
-  
-  if mode == "autoplay":
-    frame = ap.tick()
-  else:
-    frame = pl.tick()
+controller = Controller(
+  config.read("MODE")
+)
 
-  frame = effects_manager.apply_effects(frame, finger_manager)
+should_update_mode = False
+def queue_set_mode(next_mode):
+  global should_update_mode
+  should_update_mode = next_mode
 
-  # if debug menu is open, the audio viewer components need updating
-  app.update_audio_viewer(
-    audio_listener.as_texture( audio_listener.energy_original ), 
-    audio_listener.as_texture( audio_listener.energy_modified ),
-  )
+should_skip_track = False
+def queue_skip_track():
+  global should_skip_track
+  should_skip_track = True
 
-  if config.read("LED_VIEWER") == True:
-    app.update_frame(frame)
+def loop():
+  global should_update_mode, should_skip_track, frame_condition
+  with frame_condition:
+    if config.read("SEND_LED_DATA"):
+      show(controller.get_frame())
+    
+    if should_update_mode:
+      controller.set_mode(should_update_mode)
+      should_update_mode = False
 
-  if config.read("ENV") == "prod":
-    show(frame)
+    if should_skip_track:
+      controller.pl.skip_track()
+      should_skip_track = False
 
-def set_mode(next_mode):
-  global mode
-  if mode == next_mode:
-    return
-  mode = next_mode
-  if mode == "autoplay":
-    pl.stop()
-    config.write("MODE", "autoplay")
-    ap.start()
-  elif mode == "playlist":
-    config.write("MODE", "playlist")
-    pl.clear()
-    pl.start()
-  elif mode == "metronome":
-    config.write("MODE", "metronome")
-    pl.test_metronome()
-  
+    controller.update_frame()
+
+    frame_condition.notify()
+
 
 start_time = time()
-last_time = 0
+last_time = time()
 frame_counter = 0
 
 # for debugging. can swap out for 'loop' for final build
-def loop_timer(dt):
+def loop_timer(dt=0):
   global frame_counter, start_time, last_time
   frame_counter = frame_counter + 1
-  loop_timer = time()
-
-  loop(dt)
+  loop_start_time = time()
+  
+  loop()
 
   # this should look pretty consistently as a multiple of 1
   if frame_counter % 40 == 0:
@@ -90,22 +69,30 @@ def loop_timer(dt):
     print(f'{diff:.3f} ({40 / (diff - last_time):.3f}) fps')
     last_time = diff
 
-  loop_time = time() - loop_timer
+  loop_time = time() - loop_start_time
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
 
 app.add_touchscreen_api({
-  'enqueue': pl.enqueue,
-  'dequeue': pl.dequeue,
-  'skip_track': pl.skip_track,
-  'set_mode': set_mode,
-  # it's a singleton, but might as well include it here
-  'config': config
+  'playlist': controller.pl,
+  'get_frame': controller.get_frame,
+  'skip_track': queue_skip_track,
+  'set_mode': queue_set_mode,
+  'audio_listener': audio_listener,
+  'frame_condition': frame_condition,
 })
-pl.subscribe_to_playlist_updates(app.stupid_updated_queue_callback)
 
-Clock.schedule_interval(loop_timer, 1/fps)
+# TODO try lower values on rpi
+accuracy = 0.025 
+
+if config.read("USE_PERFORMANCE_TIMING"):
+  pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
+else:
+  pr = periodicrun(1/fps, loop, list(), 0, accuracy)
+
 try:
+  pr.run_thread()
   app.run()
 finally:
   audio_listener.thread_ender()
+  pr.interrupt()
