@@ -37,8 +37,12 @@ Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 FULLSCREEN_MODE = config.read("FULLSCREEN_MODE")
 
 if FULLSCREEN_MODE:
-    Config.set('graphics', 'fullscreen', 'auto')
-    Config.set('graphics', 'window_state', 'maximized')
+    Config.set('graphics', 'borderless', 1)
+    Config.set('graphics', 'top', 0)
+    Config.set('graphics', 'left', 0)
+    Config.set('graphics', 'width', 1920)
+    Config.set('graphics', 'height', 1080)
+    pass
 
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
