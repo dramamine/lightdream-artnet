@@ -11,9 +11,10 @@ from threading import Condition
 
 from modules.controller import Controller
 
-app = MainApp()
-
 fps = 40
+
+app = MainApp(fps)
+
 
 frame_condition = Condition()
 

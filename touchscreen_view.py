@@ -268,11 +268,11 @@ class DebugMenuScreen(Screen):
         self.energy_mod_list = list(map(lambda x: x / max_energy, energy_modified))[:10]
 
 class MainApp(App):
-    def __init__(self):
+    def __init__(self, fps):
         super().__init__()
+        self.fps = fps
 
     def build(self):
-        print("hello from build")
         sm = ScreenManager()
         self.touchscreen = LightdreamTouchScreen()
         sm.add_widget(self.touchscreen, name='lightdream')
@@ -281,10 +281,10 @@ class MainApp(App):
         if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
             sm.add_widget(LayoutTestScreen(), name='layout_test')
 
-        Clock.schedule_interval(self.reload_my_data, 1/40)
+        Clock.schedule_interval(self.update_data_from_main_thread, 1/self.fps)
         return sm
 
-    def stupid_updated_queue_callback(self, playlist):
+    def update_playlist_status(self, playlist):
         if playlist.dirty:
             self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
             playlist.dirty = False
@@ -308,7 +308,7 @@ class MainApp(App):
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
 
-    def reload_my_data(self, dt):
+    def update_data_from_main_thread(self, dt):
         global touchscreen_api
         try:
             with touchscreen_api['frame_condition']:
@@ -321,7 +321,7 @@ class MainApp(App):
                     al.energy_modified,
                 )
 
-                self.stupid_updated_queue_callback(
+                self.update_playlist_status(
                     touchscreen_api['playlist']
                 )
         except AttributeError:
