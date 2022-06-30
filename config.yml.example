@@ -6,6 +6,7 @@ SEND_LED_DATA: true
 USE_PERFORMANCE_TIMING: false
 FULLSCREEN_MODE: true
 LED_VIEWER: false
+TOUCHSCREEN_DATA_REFRESH_RATE: 10
 MODE: playlist
 PLATFORM: rpi
 aural_effect_strength_multiplier: 0.25

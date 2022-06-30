@@ -13,7 +13,7 @@ from modules.controller import Controller
 
 fps = 40
 
-app = MainApp(fps)
+app = MainApp(config.read("TOUCHSCREEN_DATA_REFRESH_RATE"))
 
 
 frame_condition = Condition()
@@ -80,6 +80,7 @@ app.add_touchscreen_api({
   'set_mode': queue_set_mode,
   'audio_listener': audio_listener,
   'frame_condition': frame_condition,
+  'audio_condition': audio_listener.audio_condition
 })
 
 # TODO try lower values on rpi

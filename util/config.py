@@ -25,6 +25,9 @@ defaults = {
   # if true, use a timer around the loop function
   "USE_PERFORMANCE_TIMING": True,
 
+  # fps for how often we should update LED screen, audio inputs, playlist etc.
+  "TOUCHSCREEN_DATA_REFRESH_RATE": 40,
+
 
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)

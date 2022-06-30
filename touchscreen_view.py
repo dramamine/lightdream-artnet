@@ -271,9 +271,10 @@ class MainApp(App):
     def __init__(self, fps):
         super().__init__()
         self.fps = fps
+        self.sm = ScreenManager()
 
     def build(self):
-        sm = ScreenManager()
+        sm = self.sm
         self.touchscreen = LightdreamTouchScreen()
         sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
@@ -299,11 +300,11 @@ class MainApp(App):
         touchscreen_api = api
 
     def update_frame(self, frame):
-        if self.touchscreen:
+        if self.touchscreen and self.sm.current == "lightdream":
             self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.touchscreen.canvas:
                 self.touchscreen.canvas.ask_update()
-        if self.debug_menu:
+        if self.debug_menu and self.sm.current == "debug_menu":
             self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
@@ -312,18 +313,20 @@ class MainApp(App):
         global touchscreen_api
         try:
             with touchscreen_api['frame_condition']:
-                if config.read("LED_VIEWER") == True:
+                if config.read("LED_VIEWER"):
                     self.update_frame(touchscreen_api['get_frame']())
 
-                al = touchscreen_api['audio_listener']
-                self.update_audio_viewer(
-                    al.energy_original,
-                    al.energy_modified,
-                )
+                if (self.sm.current == "debug_menu"):
+                    with touchscreen_api['audio_condition']:
+                        al = touchscreen_api['audio_listener']
+                        self.update_audio_viewer(
+                            al.energy_original,
+                            al.energy_modified,
+                        )
 
-                self.update_playlist_status(
-                    touchscreen_api['playlist']
-                )
+                    self.update_playlist_status(
+                        touchscreen_api['playlist']
+                    )
         except AttributeError:
             print("missing attribute when reloading data.")
             pass
