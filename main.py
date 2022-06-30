@@ -34,7 +34,7 @@ def queue_skip_track():
 def loop():
   global should_update_mode, should_skip_track, frame_condition
   with frame_condition:
-    if config.read("ENV") == "prod":
+    if config.read("SEND_LED_DATA"):
       show(controller.get_frame())
     
     if should_update_mode:
@@ -74,8 +74,6 @@ def loop_timer(dt=0):
 
 app.add_touchscreen_api({
   'playlist': controller.pl,
-  'enqueue': controller.pl.enqueue,
-  'dequeue': controller.pl.dequeue,
   'get_frame': controller.get_frame,
   'skip_track': queue_skip_track,
   'set_mode': queue_set_mode,
@@ -83,11 +81,13 @@ app.add_touchscreen_api({
   'frame_condition': frame_condition,
 })
 
-# don't use timer in production mode
-if config.read("ENV") == "prod":
-  pr = periodicrun(1/fps, loop, list(), 0, 0.025)
+# TODO try lower values on rpi
+accuracy = 0.025 
+
+if config.read("USE_PERFORMANCE_TIMING"):
+  pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
 else:
-  pr = periodicrun(1/fps, loop_timer, list(), 0, 0.025)
+  pr = periodicrun(1/fps, loop, list(), 0, accuracy)
 
 try:
   pr.run_thread()

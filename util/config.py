@@ -2,7 +2,7 @@ import yaml
 
 config_file = 'config.yml'
 defaults = {
-  "ENV": "dev",
+  # mac | win | rpi
   "PLATFORM": "mac",
   "MODE": "autoplay",
   "AUDIO_DEBUG": False,
@@ -15,6 +15,16 @@ defaults = {
   "DEBUG_TRACKLIST": True,
 
   "LED_VIEWER": False,
+
+  # if true, fullscreen touchscreen
+  "FULLSCREEN_MODE": False,
+
+  # if true, send LED data over the network
+  "SEND_LED_DATA": False,
+
+  # if true, use a timer around the loop function
+  "USE_PERFORMANCE_TIMING": True,
+
 
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)

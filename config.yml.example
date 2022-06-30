@@ -1,3 +1,17 @@
-ENV: prod | dev
-PLATFORM: rpi | mac | win
-MODE: playlist | autoplay | metronome
+# this example represents what we want for Real Events
+AUDIO_DEBUG: false
+DEBUG_TRACKLIST: false
+DISABLE_AUDIO: false
+SEND_LED_DATA: true
+USE_PERFORMANCE_TIMING: false
+FULLSCREEN_MODE: true
+LED_VIEWER: false
+MODE: playlist
+PLATFORM: rpi
+aural_effect_strength_multiplier: 0.25
+autoplay_crossfade: 5
+autoplay_interval: 50
+brain_position: 3
+brightness: 1.0
+decay_constant: -0.05
+max_energy: 10

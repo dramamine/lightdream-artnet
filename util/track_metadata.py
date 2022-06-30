@@ -7,7 +7,7 @@ with open(os.path.join("util", "track_metadata.yml"), 'r') as file:
 
 track_metadata = track_metadata_yaml
 
-if config.read("DEBUG_TRACKLIST") and config.read("ENV") != "prod":
+if config.read("DEBUG_TRACKLIST"):
   track_metadata = {
     'asineedyou': track_metadata_yaml['asineedyou'],
     'misty': track_metadata_yaml['misty'],

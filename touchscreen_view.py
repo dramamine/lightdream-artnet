@@ -34,9 +34,7 @@ LAYOUT_IMAGE_HEIGHT = 1080
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
-
-FULLSCREEN_MODE = False
-
+FULLSCREEN_MODE = config.read("FULLSCREEN_MODE")
 
 if FULLSCREEN_MODE:
     Config.set('graphics', 'fullscreen', 'auto')
@@ -58,20 +56,7 @@ def get_next_screen(this_screen):
     return screens[screens.index(this_screen) + 1 - len(screens)]
 
 
-touchscreen_api = {
-  'enqueue': lambda track_name: None,
-  'dequeue': lambda track_name: None,
-  'skip_track': lambda x: None,
-  'set_mode': lambda mode: None,
-  'get_frame': lambda x: nullframe,
-  'audio_listener': {},
-  'playlist': {
-    'now_playing': '',
-    'queue': []
-  }
-  # 'config': {}
-}
-
+touchscreen_api = {}
 
 class TouchableScreen(Screen):
     def on_touch_down(self, touch):
@@ -162,10 +147,10 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 def enqueue(evt):
-    touchscreen_api['enqueue'](evt.value)
+    touchscreen_api['playlist'].enqueue(evt.value)
 
 def dequeue(evt):
-    touchscreen_api['dequeue'](evt.value)
+    touchscreen_api['playlist'].dequeue(evt.value)
 
 def skip_track(evt):
     touchscreen_api['skip_track']()
@@ -285,7 +270,6 @@ class DebugMenuScreen(Screen):
 class MainApp(App):
     def __init__(self):
         super().__init__()
-        self.has_built = False
 
     def build(self):
         print("hello from build")
@@ -297,24 +281,22 @@ class MainApp(App):
         if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
             sm.add_widget(LayoutTestScreen(), name='layout_test')
 
-        self.has_built = True
         Clock.schedule_interval(self.reload_my_data, 1/40)
         return sm
 
     def stupid_updated_queue_callback(self, playlist):
-        if self.has_built and playlist.dirty:
+        if playlist.dirty:
             self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
             playlist.dirty = False
 
     def update_audio_viewer(self, energy_original, energy_modified):
         pass
-        if self.has_built and config.read("MODE") == "autoplay":
+        if config.read("MODE") == "autoplay":
             self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
         global touchscreen_api
         touchscreen_api = api
-        # print("on the right track?", self.debug_menu)
 
     def update_frame(self, frame):
         if self.touchscreen:
@@ -328,12 +310,11 @@ class MainApp(App):
 
     def reload_my_data(self, dt):
         global touchscreen_api
-        if not self.has_built:
-            return
         try:
             with touchscreen_api['frame_condition']:
                 if config.read("LED_VIEWER") == True:
                     self.update_frame(touchscreen_api['get_frame']())
+
                 al = touchscreen_api['audio_listener']
                 self.update_audio_viewer(
                     al.energy_original,
