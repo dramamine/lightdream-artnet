@@ -241,12 +241,16 @@ class DebugMenuScreen(Screen):
     def update_config_value(self, slider_id, slider_value):
         print(slider_id, slider_value)
         config.write(slider_id, slider_value)
-        self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
+        if slider_id == 'decay_constant':
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
+        elif slider_id == 'aural_effect_strength_multiplier':
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.2f}'
+        else:
+            self.ids[f'{slider_id}_value'].text = f'{slider_value:.0f}'
 
     def update_track_queue(self, now_playing, queue):
         if now_playing == None:
             return
-        print("OMG got my message:", now_playing, queue)
 
         track_queue_layout = self.ids['track_queue']
         track_queue_layout.clear_widgets()
