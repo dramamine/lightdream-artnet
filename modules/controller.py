@@ -43,9 +43,6 @@ class Controller:
     return self.frame
 
   def update_frame(self):
-    # might've been updated from touchscreen
-    self.mode = config.read("MODE")
-
     if self.mode == "autoplay":
       frame = self.ap.tick()
     else:
