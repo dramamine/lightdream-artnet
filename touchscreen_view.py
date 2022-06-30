@@ -271,10 +271,10 @@ class MainApp(App):
     def __init__(self, fps):
         super().__init__()
         self.fps = fps
-        self.sm = ScreenManager()
+        self.sm = None
 
     def build(self):
-        sm = self.sm
+        sm = ScreenManager()
         self.touchscreen = LightdreamTouchScreen()
         sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
@@ -283,6 +283,7 @@ class MainApp(App):
             sm.add_widget(LayoutTestScreen(), name='layout_test')
 
         Clock.schedule_interval(self.update_data_from_main_thread, 1/self.fps)
+        self.sm = sm
         return sm
 
     def update_playlist_status(self, playlist):
