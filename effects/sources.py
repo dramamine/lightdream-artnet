@@ -56,6 +56,39 @@ class SourceEffectCached:
     source = self.read_frame(self.frame_idx)
     return source
 
-radiant = SourceEffect("radiant")
-triforce = SourceEffect("triforce")
-lightning = SourceEffectCached("lightning", 80)
+
+class SourceEffectCachedVideo:
+  def __init__(self, key):
+    self.key = key
+
+    self.sp = SequencePlayer(loop=False)
+    self.sp.play(os.path.join('video', 'sources', "{}.mp4".format(key)))
+
+    self.frames_cache = []
+    self.frame_idx = 0
+
+    frame = self.sp.read_frame()
+    while not self.sp.ended:
+      self.frames_cache.append(frame)
+      frame = self.sp.read_frame()
+    
+    self.count = len(self.frames_cache)
+    print(f"loaded {self.count} frames from source effect video: {key}")
+
+  def read_frame(self, idx):
+    assert(idx >= 0)
+    assert(idx <= self.count)
+    return self.frames_cache[idx]
+
+  def apply(self, frame, fingers):
+    if not fingers:
+      return frame
+
+    self.frame_idx = (self.frame_idx + 1) % self.count
+    source = self.read_frame(self.frame_idx)
+    return source
+
+radiant = SourceEffectCachedVideo("radiant")
+triforce = SourceEffectCachedVideo("triforce2")
+#lightning = SourceEffectCached("lightning", 80)
+lightning = SourceEffectCachedVideo("lightning")

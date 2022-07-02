@@ -163,4 +163,48 @@ class RainbowFilter(ImageFilter):
     # return (combined/255) * frame
 
 
-rainbow = RainbowFilter('rainbow', 389)
+
+class RainbowFilterCached(ImageFilter):
+  def __init__(self, key, count):
+    self.key = key
+    self.count = count
+
+    self.sp = SequencePlayer(loop=False)
+    self.sp.play(os.path.join('video', 'sources', 'colorwheels.mp4'))
+
+    self.frames_cache = []
+    self.frame_idx = 0
+
+    frame = self.sp.read_frame()
+    while not self.sp.ended:
+      self.frames_cache.append(frame)
+      frame = self.sp.read_frame()
+    
+    self.count = len(self.frames_cache)
+    print(f"loaded {self.count} frames from source effect video: {key}")
+
+  # frame: the frame to which we apply this effect
+  # fingers: a list of parameters, which are, pairs of x,y values 0-1
+  def apply(self, frame, fingers):
+    if not fingers:
+      return frame
+
+    verticals = list(map(lambda x: self.read_frame(
+      'vertical-stripe', self.value_to_frame_idx(x[0])
+    ), fingers))
+
+    horizontals = list(map(lambda x: self.read_frame(
+      'horizontal-stripe', self.value_to_frame_idx(x[1])
+    ), fingers))
+
+    self.frame_idx = (self.frame_idx + 1) % self.count
+    cwframe = self.read_frame(self.frame_idx)
+
+    frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe,
+      range(len(fingers))))
+
+    combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
+    return combined
+    # return (combined/255) * frame
+
+rainbow = RainbowFilterCached('rainbow', 389)
