@@ -54,14 +54,23 @@ def loop():
 start_time = time()
 last_time = time()
 frame_counter = 0
+avg_loop_time = 0
+is_warmup = True
 
 # for debugging. can swap out for 'loop' for final build
 def loop_timer(dt=0):
-  global frame_counter, start_time, last_time
+  global frame_counter, start_time, last_time, avg_loop_time, is_warmup
   frame_counter = frame_counter + 1
   loop_start_time = time()
   
   loop()
+  
+  if is_warmup:
+    if frame_counter == 200:
+      print("done warming up")
+      frame_counter = 0
+      is_warmup = False
+    return
 
   # this should look pretty consistently as a multiple of 1
   if frame_counter % 40 == 0:
@@ -72,6 +81,8 @@ def loop_timer(dt=0):
   loop_time = time() - loop_start_time
   if loop_time > 0.020:
     print("warning: loop took too long (needs to be < 0.025):", loop_time)
+    
+  avg_loop_time = avg_loop_time + (loop_time - avg_loop_time) / frame_counter
 
 app.add_touchscreen_api({
   'playlist': controller.pl,
@@ -97,3 +108,4 @@ try:
 finally:
   audio_listener.thread_ender()
   pr.interrupt()
+  print(f"avg loop time (ms): {1000*avg_loop_time:.1f}") 

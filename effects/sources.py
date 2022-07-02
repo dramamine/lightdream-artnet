@@ -26,35 +26,15 @@ class SourceEffect:
     source = self.sp.read_frame()
     return prefer_a_vectorized(source, frame)
 
-class SourceEffect2:
-  def __init__(self, key, count):
-    self.key = key
-    self.count = count
-    self.frame_idx = 0
 
-  def read_frame(self, key, idx):
-    assert(idx >= 0)
-    assert(idx <= self.count)
-    idx_str = '{:02d}'.format(idx)
-    frame = cv2.imread(os.path.join('video', 'sources', key,
-      '{}{}.png'.format(key, idx_str)))
-    return remove_unused_pixels_from_frame(frame)
-
-  def apply(self, frame, fingers):
-    if not fingers:
-      return frame
-
-    self.frame_idx = (self.frame_idx + 1) % self.count
-    source = self.read_frame(self.key, self.frame_idx)
-    return prefer_a_vectorized(source, frame)
-
-class SourceEffect3:
+class SourceEffectCached:
   def __init__(self, key, count):
     self.key = key
     self.count = count
     self.frame_idx = 0
 
     # frame cache
+    format_str = '{:02d}' if count < 100 else '{:03d}'
     self.frames_cache = list(map(
       lambda x: remove_unused_pixels_from_frame( cv2.imread(os.path.join(
         'video', 'sources', key, # folder
@@ -74,8 +54,8 @@ class SourceEffect3:
 
     self.frame_idx = (self.frame_idx + 1) % self.count
     source = self.read_frame(self.frame_idx)
-    return prefer_a_vectorized(source, frame)
+    return source
 
 radiant = SourceEffect("radiant")
 triforce = SourceEffect("triforce")
-lightning = SourceEffect3("lightning", 80)
+lightning = SourceEffectCached("lightning", 80)
