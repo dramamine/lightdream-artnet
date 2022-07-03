@@ -21,14 +21,17 @@ class Tunnel:
     # TODO adjust numbers based on touchscreen
     clone_sections = min( math.floor(r * 6), 2)
     clones = [10, 5, 2][clone_sections]
+
     
     start = math.floor( theta * 169 / 360 )
     
     def universe_remapper_lambda(universe):
       # should be 17, 34, 85
       clone_length = int(170 / clones)
-
-      subsection = universe[3*start:3*(start+clone_length)]
+      
+      double_universe = np.append(universe, universe)
+    
+      subsection = double_universe[3*start:3*(start+clone_length)]
       return np.tile(subsection, clones)
 
     return np.apply_along_axis(universe_remapper_lambda, 1, frame)
@@ -51,9 +54,9 @@ class Kaleidoscope:
     
     # TODO adjust these numbers based on touchscreen - just need 3 sections
     # and the right equation
-    clone_sections = min( math.floor(r * 5.7), 3)
+    clone_sections = min( math.floor(r * 6), 2)
     # pixels_to_clone = [17, 34, 85][clone_sections]
-    clones = [5,5,3,2][clone_sections]
+    clones = [5,3,2][clone_sections]
     
     # grab some set of the first 30 struts. 26 should be the max
     start = math.floor( 27 * theta / 360 )

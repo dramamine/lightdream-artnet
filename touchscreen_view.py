@@ -45,7 +45,7 @@ if FULLSCREEN_MODE:
     pass
 
 
-input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
+input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
 
 CURRENTLY_ENABLED_SCREENS = [
@@ -119,34 +119,69 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].center_x = self.CIRCLES[circle].center[0]
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
 
+        self.spotlight_image.source = SPOTLIGHT.active_path
+        self.spotlight_image.pos = (
+            SPOTLIGHT.center[0] - SPOTLIGHT.radius,
+            SPOTLIGHT.center[1] - SPOTLIGHT.radius
+        )
+        self.spotlight_mask.pos = (-500, -500)
+
         if config.read("LED_VIEWER") == True:
             print("creating led output texture.")
-            self.led_output_texture = Texture.create(size=(170,30))
+            self.led_output_texture = Texture.create(size=(170, 30))
             with self.canvas:
                 Rectangle(
                     size=(340,60),
                     pos=(0,1020),
                     texture=self.led_output_texture)
 
-    def update_active(self):
+    @property
+    def spotlight_image(self):
+        return self.canvas.after.get_group('spotlight-image')[0]
+
+    @property
+    def spotlight_mask(self):
+        return self.canvas.after.get_group('spotlight-mask')[0]
+
+    def activate_circle(self, circle, touch):
+        if circle == 'SPOTLIGHT':
+            # show the spotlight (positioned from bottom left)
+            self.spotlight_mask.pos = (touch.x - 50, touch.y - 50)
+        else:
+            # set the image path to the brighter, 'active' image
+            self.ids[circle].source = self.CIRCLES[circle].active_path
+
+    def deactivate_circle(self, circle, touch):
+        if circle == 'SPOTLIGHT':
+            # hide the spotlight by dumping it offscreen
+            self.spotlight_mask.pos = (-500, -500)
+        else:
+            # set the image path to the dim / regular image
+            self.ids[circle].source = self.CIRCLES[circle].path
+
+    def update_active(self, touch):
+        # loop through all circles, check active, and update display
         for circle in self.CIRCLES.keys():
             circle_config = self.CIRCLES[circle]
             if input_mapper.is_active(circle_config.key):
-                self.ids[circle].source = circle_config.active_path
+                self.activate_circle(circle, touch)
             else:
-                self.ids[circle].source = circle_config.path
+                self.deactivate_circle(circle, touch)
 
     def on_touch_down(self, touch):
-        self.update_active()
-        return super().on_touch_down(touch)
+        super().on_touch_down(touch)
+        self.update_active(touch)
+        return
 
     def on_touch_move(self, touch):
-        self.update_active()
-        return super().on_touch_move(touch)
+        super().on_touch_move(touch)
+        self.update_active(touch)
+        return
 
     def on_touch_up(self, touch):
-        self.update_active()
-        return super().on_touch_up(touch)
+        super().on_touch_up(touch)
+        self.update_active(touch)
+        return
 
 
 
