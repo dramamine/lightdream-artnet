@@ -35,6 +35,21 @@
         Rectangle:
             pos: self.pos
             size: self.size
+    canvas.after:
+        StencilPush
+
+        Ellipse:
+            group: 'spotlight-mask'
+            size: 100, 100
+
+        StencilUse
+
+        Rectangle:
+            group: 'spotlight-image'
+            size: 398, 398
+
+        StencilPop
+
     TouchscreenCircle:
         id: HUESHIFT
         size: 398, 398
