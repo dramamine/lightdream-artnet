@@ -35,6 +35,11 @@
         Rectangle:
             pos: self.pos
             size: self.size
+    canvas.after:
+        Ellipse:
+            group: 'spotlight'
+            size: 100, 100
+
     TouchscreenCircle:
         id: HUESHIFT
         size: 398, 398
