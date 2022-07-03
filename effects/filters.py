@@ -1,3 +1,4 @@
+import math
 from modules.sequence_player import SequencePlayer
 import numpy as np
 from util.hsv2rgb import hsv2rgb
@@ -139,6 +140,9 @@ class RainbowFilter(ImageFilter):
     self.sp = SequencePlayer(loop=True)
     self.sp.play(os.path.join('video', 'sources', 'colorwheels.mp4'))
 
+  def value_to_frame_idx(self, value):
+    return math.floor(self.count * value)
+
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters, which are, pairs of x,y values 0-1
   def apply(self, frame, fingers):
@@ -214,4 +218,4 @@ class RainbowFilterCached(ImageFilter):
     return combined
     # return (combined/255) * frame
 
-rainbow = RainbowFilterCached(FilterNames.SPOTLIGHT)
+rainbow = RainbowFilter(FilterNames.SPOTLIGHT, 390)

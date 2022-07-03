@@ -80,8 +80,8 @@ class InputCoordinateMapper:
 
     # convert x,y from touchscreen layout coords to unit circle point within the circle
     def unit_circle_point(self, circle, x, y):
-        unit_x = (x - circle.center[0]) / circle.radius
-        unit_y = (y - circle.center[1]) / circle.radius
+        unit_x = (1 + (x - circle.center[0]) / circle.radius) / 2
+        unit_y = (1 + (y - circle.center[1]) / circle.radius) / 2
         return (round(unit_x, 4), round(unit_y, 4))
 
     def update_fingers(self):

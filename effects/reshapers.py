@@ -21,14 +21,17 @@ class Tunnel:
     # TODO adjust numbers based on touchscreen
     clone_sections = min( math.floor(r * 6), 2)
     clones = [10, 5, 2][clone_sections]
+
     
     start = math.floor( theta * 169 / 360 )
     
     def universe_remapper_lambda(universe):
       # should be 17, 34, 85
       clone_length = int(170 / clones)
-
-      subsection = universe[3*start:3*(start+clone_length)]
+      
+      double_universe = np.append(universe, universe)
+    
+      subsection = double_universe[3*start:3*(start+clone_length)]
       return np.tile(subsection, clones)
 
     return np.apply_along_axis(universe_remapper_lambda, 1, frame)
