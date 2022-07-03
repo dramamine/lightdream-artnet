@@ -54,9 +54,9 @@ class Kaleidoscope:
     
     # TODO adjust these numbers based on touchscreen - just need 3 sections
     # and the right equation
-    clone_sections = min( math.floor(r * 5.7), 3)
+    clone_sections = min( math.floor(r * 6), 2)
     # pixels_to_clone = [17, 34, 85][clone_sections]
-    clones = [5,5,3,2][clone_sections]
+    clones = [5,3,2][clone_sections]
     
     # grab some set of the first 30 struts. 26 should be the max
     start = math.floor( 27 * theta / 360 )
