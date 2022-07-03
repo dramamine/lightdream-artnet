@@ -1,4 +1,5 @@
 import math
+from effects.filters import FilterNames
 from util.util import to_polar
 import numpy as np
 
@@ -32,7 +33,7 @@ class Tunnel:
 
     return np.apply_along_axis(universe_remapper_lambda, 1, frame)
 
-tunnel = Tunnel('tunnel')
+tunnel = Tunnel(FilterNames.TUNNEL)
 
 class Kaleidoscope:
   def __init__(self, key):
@@ -61,4 +62,4 @@ class Kaleidoscope:
     subsection = one_brain_of_leds[0][3*start:3*(start+(clones*34))]
     return np.tile(subsection, int(150/clones) ).reshape((30,510))
 
-kaleidoscope = Kaleidoscope('kaleidoscope')
+kaleidoscope = Kaleidoscope(FilterNames.KALEIDOSCOPE)

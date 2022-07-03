@@ -49,6 +49,6 @@ class SequencePlayer:
       if (self.loop):
         self.play(self.path)
         return self.read_frame()
-      print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
+      # print("that was all the frames. end of song probably? framecount={}".format(self.framecount))
       self.ended = True
       return nullframe
