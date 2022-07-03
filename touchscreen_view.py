@@ -137,16 +137,19 @@ class LightdreamTouchScreen(TouchableScreen):
                 self.ids[circle].source = circle_config.path
 
     def on_touch_down(self, touch):
+        super().on_touch_down(touch)
         self.update_active()
-        return super().on_touch_down(touch)
+        return
 
     def on_touch_move(self, touch):
+        super().on_touch_move(touch)
         self.update_active()
-        return super().on_touch_move(touch)
+        return
 
     def on_touch_up(self, touch):
+        super().on_touch_up(touch)
         self.update_active()
-        return super().on_touch_up(touch)
+        return
 
 
 
