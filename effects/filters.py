@@ -13,7 +13,7 @@ class FilterNames:
   TUNNEL = 'tunnel'
 
   LIGHTNING = 'lightning'
-  RADIANTLINES = 'radiant-lines'
+  RADIANTLINES = 'radiant'
   NUCLEAR = 'nuclear'
   SPIRAL = 'spiral'
 
@@ -125,11 +125,11 @@ class ImageFilter:
 # each finger = one ring of visibility
 # rings000.png = outer edges / base of dome
 # rings178.png = dead center of dome
-rings = ImageFilter('rings', 178)
+rings = ImageFilter(FilterNames.RINGS, 178)
 
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
-wedges = ImageFilter('wedges', 202)
+wedges = ImageFilter(FilterNames.WEDGES, 202)
 
 class RainbowFilter(ImageFilter):
   def __init__(self, key, count):
@@ -165,24 +165,31 @@ class RainbowFilter(ImageFilter):
 
 
 class RainbowFilterCached(ImageFilter):
-  def __init__(self, key, count):
+  def __init__(self, key):
     self.key = key
-    self.count = count
 
-    self.sp = SequencePlayer(loop=False)
-    self.sp.play(os.path.join('video', 'sources', 'colorwheels.mp4'))
+    self.cache_video(os.path.join('video', 'sources', 'colorwheels.mp4'))
 
-    self.frames_cache = []
-    self.frame_idx = 0
+  # @TODO could inherit this from SourceEffectCachedVideo, or somehow share code
+  def cache_video(self, path):
+      sp = SequencePlayer(loop=False)
+      sp.play(path)
 
-    frame = self.sp.read_frame()
-    while not self.sp.ended:
-      self.frames_cache.append(frame)
-      frame = self.sp.read_frame()
-    
-    self.count = len(self.frames_cache)
-    print(f"loaded {self.count} frames from source effect video: {key}")
+      self.frames_cache = []
+      self.frame_idx = 0
 
+      frame = sp.read_frame()
+      while not sp.ended:
+        self.frames_cache.append(frame)
+        frame = sp.read_frame()
+
+      self.count = len(self.frames_cache)
+
+  def read_frame(self):
+    self.frame_idx = (self.frame_idx + 1) % self.count
+    assert(self.frame_idx >= 0)
+    assert(self.frame_idx <= self.count)
+    return self.frames_cache[self.frame_idx]
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters, which are, pairs of x,y values 0-1
   def apply(self, frame, fingers):
@@ -207,4 +214,4 @@ class RainbowFilterCached(ImageFilter):
     return combined
     # return (combined/255) * frame
 
-rainbow = RainbowFilterCached('rainbow', 389)
+rainbow = RainbowFilterCached(FilterNames.SPOTLIGHT)

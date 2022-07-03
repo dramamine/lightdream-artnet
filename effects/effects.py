@@ -13,7 +13,7 @@ class EffectsManager:
     self.source_effects = [
       sources.lightning,
       sources.radiant,
-      sources.lightning
+      sources.triforce
     ]
     self.mask_effects = [
       masks.nuclear,
@@ -35,6 +35,8 @@ class EffectsManager:
     self.audio_based_effects = [
       aural.aural
     ]
+
+    print("effects: done cacheing")
 
   
   def apply_brightness(self, frame):

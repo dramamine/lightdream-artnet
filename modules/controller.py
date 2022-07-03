@@ -2,8 +2,9 @@ from util.util import nullframe
 from modes.playlist import Playlist
 from modes.autoplay import Autoplay
 from util.config import config
-from effects.effects import effects_manager
 from modules.fingers import finger_manager
+print("effects: cacheing video files, this may take some seconds")
+from effects.effects import effects_manager
 
 class Controller:
   def __init__(self, mode):
