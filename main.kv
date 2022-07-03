@@ -73,9 +73,12 @@
         size: 160, 160
     ThisScreenLabel:
         text: 'Lightdream'
+        size: 300, 75
     NextScreenButton:
         id: NEXT_SCREEN_BUTTON
         text: 'Next (Debug)'
+        background_color: hex('#000000')
+        color: hex('#000000')
 
 <DebugMenuScreen>:
     name: 'debug_menu'
@@ -211,61 +214,61 @@
                             orientation: 'horizontal'
                             size_hint_y: 0.05
                             canvas.before:
-                                Color: 
+                                Color:
                                     rgba: 0,1,0,1
                                 Rectangle:
                                     pos: 1360,740
                                     size: 200,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[0]
                                 Rectangle:
                                     pos: 1360,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[1]
                                 Rectangle:
                                     pos: 1360+20,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[2]
                                 Rectangle:
                                     pos: 1360+40,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[3]
                                 Rectangle:
                                     pos: 1360+60,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[4]
                                 Rectangle:
                                     pos: 1360+80,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[5]
                                 Rectangle:
                                     pos: 1360+100,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[6]
                                 Rectangle:
                                     pos: 1360+120,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[7]
                                 Rectangle:
                                     pos: 1360+140,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[8]
                                 Rectangle:
                                     pos: 1360+160,740
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_orig_list[9]
                                 Rectangle:
                                     pos: 1360+180,740
-                                    size: 20,20                                
+                                    size: 20,20
 
                         Slider:
                             id: max_energy
@@ -281,63 +284,63 @@
                                 text: "Decay Constant\nReally sharp decay (10% per frame) <--> Weak decay (1% per frame)"
                             Label:
                                 id: decay_constant_value
-                        
+
                         BoxLayout:
                             id: energy_modified_container
                             orientation: 'horizontal'
                             size_hint_y: 0.05
                             canvas.before:
-                                Color: 
+                                Color:
                                     rgba: 0,1,0,1
                                 Rectangle:
                                     pos: 1360,470
                                     size: 200,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[0]
                                 Rectangle:
                                     pos: 1360,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[1]
                                 Rectangle:
                                     pos: 1360+20,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[2]
                                 Rectangle:
                                     pos: 1360+40,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[3]
                                 Rectangle:
                                     pos: 1360+60,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[4]
                                 Rectangle:
                                     pos: 1360+80,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[5]
                                 Rectangle:
                                     pos: 1360+100,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[6]
                                 Rectangle:
                                     pos: 1360+120,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[7]
                                 Rectangle:
                                     pos: 1360+140,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[8]
                                 Rectangle:
                                     pos: 1360+160,470
                                     size: 20,20
-                                Color: 
+                                Color:
                                     rgba: 1,0,0,root.energy_mod_list[9]
                                 Rectangle:
                                     pos: 1360+180,470
