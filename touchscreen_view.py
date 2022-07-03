@@ -20,7 +20,6 @@ from touch_circles import WEDGES
 from touch_circles import TRIFORCE
 from touch_circles import BLOBS
 
-
 from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
@@ -44,9 +43,7 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'height', 1080)
     pass
 
-
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
-
 
 CURRENTLY_ENABLED_SCREENS = [
     'lightdream',
@@ -54,11 +51,9 @@ CURRENTLY_ENABLED_SCREENS = [
     # 'layout_test',
 ]
 
-
 def get_next_screen(this_screen):
     screens = CURRENTLY_ENABLED_SCREENS
     return screens[screens.index(this_screen) + 1 - len(screens)]
-
 
 touchscreen_api = {}
 
@@ -222,7 +217,8 @@ class DebugMenuScreen(Screen):
             'aural_effect_strength_multiplier',
             'autoplay_interval',
             'autoplay_crossfade',
-            'brain_position'
+            'brain_position',
+            'brightness'
         ]
         for slider_id in slider_ids:
             value = config.read(slider_id)
@@ -267,7 +263,7 @@ class DebugMenuScreen(Screen):
         config.write(slider_id, slider_value)
         if slider_id == 'decay_constant':
             self.ids[f'{slider_id}_value'].text = f'{slider_value:.3f}'
-        elif slider_id == 'aural_effect_strength_multiplier':
+        elif slider_id == 'aural_effect_strength_multiplier' or slider_id == "brightness":
             self.ids[f'{slider_id}_value'].text = f'{slider_value:.2f}'
         else:
             self.ids[f'{slider_id}_value'].text = f'{slider_value:.0f}'

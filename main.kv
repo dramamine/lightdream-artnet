@@ -403,6 +403,7 @@
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
+
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
@@ -416,6 +417,20 @@
                             max: 9
                             step: 1
                             on_touch_up: root.update_config_value('brain_position', int(self.value))
+                        
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: 0.05
+                            Label:
+                                text: "Brightness"
+                            Label:
+                                id: brightness_value
+                        Slider:
+                            id: brightness
+                            min: 0
+                            max: 1.5
+                            step: 0.01
+                            on_touch_up: root.update_config_value('brightness', self.value)
 
 
 

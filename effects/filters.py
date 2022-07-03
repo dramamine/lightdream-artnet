@@ -1,6 +1,7 @@
 import math
 from modules.sequence_player import SequencePlayer
 import numpy as np
+from util.config import config
 from util.hsv2rgb import hsv2rgb
 from util.util import make_rgb_frame, numpy_mixer, remove_unused_pixels_from_frame, to_polar
 from time import time
@@ -26,19 +27,14 @@ class FilterNames:
 
 # these straight-up replace the input frame
 class BrightnessFilter:
-  def __init__(self, brightness):
+  def __init__(self):
     self.key = 'brightness'
-    self.brightness = brightness
-
-  def set_brightness(self, brightness):
-    assert(brightness >= 0.0)
-    assert(brightness <= 1.0)
-    self.brightness = brightness
 
   def apply(self, frame, _unused):
-    return np.multiply(frame, self.brightness)
+    brightness = config.read("brightness")
+    return np.multiply(frame, brightness)
 
-brightness = BrightnessFilter(0.5)
+brightness = BrightnessFilter()
 
 class ValidateFilter:
   def __init__(self):

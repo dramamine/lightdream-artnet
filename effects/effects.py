@@ -37,10 +37,6 @@ class EffectsManager:
     ]
 
     print("effects: done cacheing")
-
-  
-  def apply_brightness(self, frame):
-    return np.multiply(frame, config.read("brightness"))
     
   # note that 'frame' could be dtype uint8 or float64 at this point.
   # but output has gotta be uint8 so we can convert to bytearray later.
