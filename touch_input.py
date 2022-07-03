@@ -33,8 +33,9 @@ class InputCoordinateMapper:
     """
     open_cursors = {}
 
-    def __init__(self, image_width):
+    def __init__(self, image_width, image_height):
         self.IMAGE_WIDTH = image_width
+        self.IMAGE_HEIGHT = image_height
 
         # order by radius, to check the biggest circles first
         self.LEFT_CIRCLES = [
@@ -58,16 +59,16 @@ class InputCoordinateMapper:
             BLOBS,
         ]
 
-    def get_touchscreen_circle_key(self, point):
+    def get_touchscreen_circle(self, point):
         # divide circles into LEFT and RIGHT for half as many compares
         if point[0] < self.IMAGE_WIDTH / 2:
             for circle in self.LEFT_CIRCLES:
                 if self.circle_contains_point(circle, point):
-                    return circle.key
+                    return circle
         else:
             for circle in self.RIGHT_CIRCLES:
                 if self.circle_contains_point(circle, point):
-                    return circle.key
+                    return circle
         return None
 
     # triangles!
@@ -77,17 +78,25 @@ class InputCoordinateMapper:
         side_c = math.sqrt(side_a**2 + side_b**2)
         return side_c < circle.radius
 
+    # convert x,y from touchscreen layout coords to unit circle point within the circle
+    def unit_circle_point(self, circle, x, y):
+        unit_x = (x - circle.center[0]) / circle.radius
+        unit_y = (y - circle.center[1]) / circle.radius
+        return (round(unit_x, 2), round(unit_y, 2))
+
     def update_fingers(self):
         # clear everything
         finger_manager.clear_all_values()
         # for each cursor
         for _, cursor_key in enumerate(self.open_cursors):
-            cursor = self.open_cursors[cursor_key]
-            circle_key = self.get_touchscreen_circle_key(cursor)
+            cursor_point = self.open_cursors[cursor_key]
+            circle = self.get_touchscreen_circle(cursor_point)
             # if it is in a circle, update that circle
-            if circle_key:
-                # TODO - probably we'll want radians instead of scaled x,y coords here
-                finger_manager.append(circle_key, cursor)
+            if circle:
+                finger_manager.append(
+                    circle.key,
+                    self.unit_circle_point(circle, cursor_point[0], cursor_point[1])
+                )
 
     # Mouse Bindings
 

@@ -45,7 +45,7 @@ if FULLSCREEN_MODE:
     pass
 
 
-input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH)
+input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
 
 CURRENTLY_ENABLED_SCREENS = [
@@ -121,7 +121,7 @@ class LightdreamTouchScreen(TouchableScreen):
 
         if config.read("LED_VIEWER") == True:
             print("creating led output texture.")
-            self.led_output_texture = Texture.create(size=(170,30))
+            self.led_output_texture = Texture.create(size=(170, 30))
             with self.canvas:
                 Rectangle(
                     size=(340,60),

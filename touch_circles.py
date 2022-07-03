@@ -29,19 +29,19 @@ HUESHIFT = TouchscreenCircle(
     path='./images/colorwheel-dithered.png',
     key=FilterNames.HUESHIFT,
     center=(250, 545),
-    radius=210,
+    radius=205,
 )
 KALEIDOSCOPE = TouchscreenCircle(
     path='./images/kaleidoscope.png',
     key=FilterNames.KALEIDOSCOPE,
     center=(681, 812),
-    radius=210,
+    radius=205,
 )
 TUNNEL = TouchscreenCircle(
     path='./images/tunnel.png',
     key=FilterNames.TUNNEL,
     center=(677, 228),
-    radius=210,
+    radius=205,
 )
 LIGHTNING = TouchscreenCircle(
     path='./images/lightning.png',
@@ -77,13 +77,13 @@ SPOTLIGHT = TouchscreenCircle(
     path='./images/spotlight.png',
     key=FilterNames.SPOTLIGHT,
     center=(1655, 545),
-    radius=210,
+    radius=205,
 )
 WEDGES = TouchscreenCircle(
     path='./images/wedges.png',
     key=FilterNames.WEDGES,
     center=(1196, 229),
-    radius=235,
+    radius=225,
 )
 TRIFORCE = TouchscreenCircle(
     path='./images/triforce.png',
