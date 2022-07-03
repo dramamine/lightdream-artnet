@@ -77,7 +77,7 @@ SPOTLIGHT = TouchscreenCircle(
     path='./images/spotlight.png',
     key=FilterNames.SPOTLIGHT,
     center=(1655, 545),
-    radius=205,
+    radius=200,
 )
 WEDGES = TouchscreenCircle(
     path='./images/wedges.png',

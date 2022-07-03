@@ -2,7 +2,11 @@ from kivy.app import App
 from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle
+from kivy.graphics import Ellipse
 from kivy.graphics.texture import Texture
+from kivy.graphics.stencil_instructions import StencilPush
+from kivy.graphics.stencil_instructions import StencilUse
+from kivy.graphics.stencil_instructions import StencilPop
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
 from kivy.clock import Clock
@@ -119,8 +123,12 @@ class LightdreamTouchScreen(TouchableScreen):
             self.ids[circle].center_x = self.CIRCLES[circle].center[0]
             self.ids[circle].center_y = self.CIRCLES[circle].center[1]
 
-        self.spotlight.source = SPOTLIGHT.active_path
-        self.spotlight.pos = (-500, -500)
+        self.spotlight_image.source = SPOTLIGHT.active_path
+        self.spotlight_image.pos = (
+            SPOTLIGHT.center[0] - SPOTLIGHT.radius, # + 5,
+            SPOTLIGHT.center[1] - SPOTLIGHT.radius  # + 7
+        )
+        self.spotlight_mask.pos = (-500, -500)
 
         if config.read("LED_VIEWER") == True:
             print("creating led output texture.")
@@ -132,13 +140,17 @@ class LightdreamTouchScreen(TouchableScreen):
                     texture=self.led_output_texture)
 
     @property
-    def spotlight(self):
-        return self.canvas.after.get_group('spotlight')[0]
+    def spotlight_image(self):
+        return self.canvas.after.get_group('spotlight-image')[0]
+
+    @property
+    def spotlight_mask(self):
+        return self.canvas.after.get_group('spotlight-mask')[0]
 
     def activate_circle(self, circle, touch):
         if circle == 'SPOTLIGHT':
             # show the spotlight (positioned from bottom left)
-            self.spotlight.pos = (touch.x - 50, touch.y - 50)
+            self.spotlight_mask.pos = (touch.x - 50, touch.y - 50)
         else:
             # set the image path to the brighter, 'active' image
             self.ids[circle].source = self.CIRCLES[circle].active_path
@@ -146,7 +158,7 @@ class LightdreamTouchScreen(TouchableScreen):
     def deactivate_circle(self, circle, touch):
         if circle == 'SPOTLIGHT':
             # hide the spotlight by dumping it offscreen
-            self.spotlight.pos = (-500, -500)
+            self.spotlight_mask.pos = (-500, -500)
         else:
             # set the image path to the dim / regular image
             self.ids[circle].source = self.CIRCLES[circle].path
