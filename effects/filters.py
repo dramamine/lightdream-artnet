@@ -63,7 +63,7 @@ class HueshiftFilter:
   def reduce_fingers(self, fingersArray):
     return np.average(
       np.add(fingersArray, range(len(fingersArray)))
-    ) % 1
+    ) % 360
 
   def apply(self, frame, fingers):
     if not fingers:
@@ -72,7 +72,6 @@ class HueshiftFilter:
       return frame
 
     finger_values = [to_polar(point)[1] for point in fingers]
-    print("hueshift: using finger values", finger_values)
 
     if not self.active:
       self.active = time()
@@ -82,11 +81,10 @@ class HueshiftFilter:
 
     # float in 0-1 range
     val = self.reduce_fingers(finger_values)
-    print(finger_values, "got mixed val:", val)
 
     # convert to hue. red is up
     # ex. [255,0,0]
-    rgb = np.array(hsv2rgb(val*360, 1, 1))
+    rgb = np.array(hsv2rgb(val, 1, 1))
     mixed = numpy_mixer(frame, make_rgb_frame(rgb), mix_amount)
 
     # exponent & divide should fix contrast, i.e. blacks stay black
@@ -123,6 +121,12 @@ class ImageFilter:
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
     return (combined/255) * frame
 
+class WedgeFilter(ImageFilter):
+  wedge_offset = 270
+  def value_to_frame_idx(self, point):
+    value = ((to_polar(point)[1] / 360 ) + self.wedge_offset) % 360
+    return round(self.count * value)
+
 # each finger = one ring of visibility
 # rings000.png = outer edges / base of dome
 # rings178.png = dead center of dome
@@ -130,7 +134,7 @@ rings = ImageFilter(FilterNames.RINGS, 178)
 
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
-wedges = ImageFilter(FilterNames.WEDGES, 202)
+wedges = WedgeFilter(FilterNames.WEDGES, 202)
 
 class RainbowFilter(ImageFilter):
   def __init__(self, key, count):
