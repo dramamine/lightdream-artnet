@@ -125,7 +125,7 @@ class WedgeFilter(ImageFilter):
   # try to move top wedge to the top
   wedge_offset = 270
   def value_to_frame_idx(self, point):
-    value = ((self.wedge_offset + to_polar(point)[1]) / 360) % 1
+    value = ((self.wedge_offset + (360 - to_polar(point)[1])) / 360) % 1
     return round(self.count * value)
 
 # each finger = one ring of visibility

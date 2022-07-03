@@ -2,8 +2,8 @@
 from modules.artnet import show
 
 from util.config import config
-from time import  time
-
+from time import time
+import keyboard
 import modules.audio_input.runner as audio_listener
 from touchscreen_view import MainApp
 from util.periodicrun import periodicrun
@@ -27,6 +27,15 @@ def queue_set_mode(next_mode):
   global should_update_mode
   should_update_mode = next_mode
 
+def handle_1_press(_):
+  if config.read("MODE") == "playlist":
+    return queue_skip_track()
+  return queue_set_mode("playlist")
+
+keyboard.on_press_key("1", handle_1_press)
+keyboard.on_press_key("2", lambda _: queue_set_mode("autoplay"))
+keyboard.on_press_key("3", lambda _: queue_set_mode("metronome"))
+
 should_skip_track = False
 def queue_skip_track():
   global should_skip_track
@@ -37,7 +46,7 @@ def loop():
   with frame_condition:
     if config.read("SEND_LED_DATA"):
       show(controller.get_frame())
-    
+
     if should_update_mode:
       controller.set_mode(should_update_mode)
       should_update_mode = False
@@ -96,6 +105,7 @@ app.add_touchscreen_api({
 
 # TODO try lower values on rpi
 accuracy = 0.025 
+
 
 if config.read("USE_PERFORMANCE_TIMING"):
   pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
