@@ -2,11 +2,7 @@ from kivy.app import App
 from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle
-from kivy.graphics import Ellipse
 from kivy.graphics.texture import Texture
-from kivy.graphics.stencil_instructions import StencilPush
-from kivy.graphics.stencil_instructions import StencilUse
-from kivy.graphics.stencil_instructions import StencilPop
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
 from kivy.clock import Clock
@@ -125,8 +121,8 @@ class LightdreamTouchScreen(TouchableScreen):
 
         self.spotlight_image.source = SPOTLIGHT.active_path
         self.spotlight_image.pos = (
-            SPOTLIGHT.center[0] - SPOTLIGHT.radius, # + 5,
-            SPOTLIGHT.center[1] - SPOTLIGHT.radius  # + 7
+            SPOTLIGHT.center[0] - SPOTLIGHT.radius,
+            SPOTLIGHT.center[1] - SPOTLIGHT.radius
         )
         self.spotlight_mask.pos = (-500, -500)
 
