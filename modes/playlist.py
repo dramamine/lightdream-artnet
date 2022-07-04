@@ -73,8 +73,12 @@ class Playlist:
     self.queue_updated()
 
   def dequeue(self, track_name):
-    self.queue.remove(track_name)
-    self.queue_updated()
+    try:
+      self.queue.remove(track_name)
+      self.queue_updated()
+    except ValueError:
+      # track wasn't in list, but lets just ignore it
+      pass
 
   def skip_track(self):
     self.ap.skip_track()
