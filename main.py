@@ -22,38 +22,26 @@ controller = Controller(
   config.read("MODE")
 )
 
-should_update_mode = False
+update_mode_queue = Queue()
 def queue_set_mode(next_mode):
-  global should_update_mode
-  should_update_mode = next_mode
+  update_mode_queue.put(next_mode, block=True, timeout=5)
 
-should_skip_track = False
+skip_track_queue = Queue()
 def queue_skip_track():
-  global should_skip_track
-  should_skip_track = True
-
-should_skip_track_queue = Queue()
-def queue_skip_track_safe():
-  should_skip_track_queue.put(1, block=True, timeout=0.5)
-
-
+  skip_track_queue.put(1, block=True, timeout=5)
 
 def loop():
-  global should_update_mode, should_skip_track, frame_condition
+  global frame_condition
   with frame_condition:
     if config.read("SEND_LED_DATA"):
       show(controller.get_frame())
 
-    if should_update_mode:
-      controller.set_mode(should_update_mode)
-      should_update_mode = False
-
-    if should_skip_track:
-      controller.pl.skip_track()
-      should_skip_track = False
+    if not update_mode_queue.empty():
+      next_mode = update_mode_queue.get(block=True, timeout=0.5)
+      controller.set_mode(next_mode)
     
-    if not should_skip_track_queue.empty():
-      should_skip_track_queue.get(block=True, timeout=0.5)
+    if not skip_track_queue.empty():
+      skip_track_queue.get(block=True, timeout=0.5)
       controller.pl.skip_track()
 
     controller.update_frame()
@@ -97,7 +85,7 @@ def loop_timer(dt=0):
 app.add_touchscreen_api({
   'playlist': controller.pl,
   'get_frame': controller.get_frame,
-  'skip_track': queue_skip_track_safe,
+  'skip_track': queue_skip_track,
   'set_mode': queue_set_mode,
   'audio_listener': audio_listener,
   'frame_condition': frame_condition,
