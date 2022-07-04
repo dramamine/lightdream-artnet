@@ -36,4 +36,4 @@ def to_polar(point):
   return r, theta
 
 # all blacks
-nullframe = np.zeros((30,512))
+nullframe = np.zeros((30,512), dtype=np.uint8)
