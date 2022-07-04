@@ -183,16 +183,15 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 def enqueue(evt):
-    with touchscreen_api['frame_condition']:
+    with touchscreen_api['frame_lock']:
         touchscreen_api['playlist'].enqueue(evt.value)
 
 def dequeue(evt):
-    with touchscreen_api['frame_condition']:
+    with touchscreen_api['frame_lock']:
         touchscreen_api['playlist'].dequeue(evt.value)
 
 def skip_track(evt):
-    with touchscreen_api['frame_condition']:
-        touchscreen_api['skip_track']()
+    touchscreen_api['skip_track']()
 
 
 class DebugMenuScreen(Screen):
@@ -354,10 +353,10 @@ class MainApp(App):
     def update_audio_data_from_main_thread(self, dt):
         global touchscreen_api
         if config.read("LED_VIEWER"):
-            with touchscreen_api['frame_condition']:
+            with touchscreen_api['frame_lock']:
                 self.update_frame(touchscreen_api['get_frame']())
         if (self.sm.current == "debug_menu") and config.read("MODE") == "autoplay":
-            with touchscreen_api['frame_condition']:
+            with touchscreen_api['frame_lock']:
                 with touchscreen_api['audio_condition']:
                     al = touchscreen_api['audio_listener']
                     self.update_audio_viewer(
@@ -369,7 +368,7 @@ class MainApp(App):
     def update_playlist_data_from_main_thread(self, dt):
         global touchscreen_api
         if (self.sm.current == "debug_menu") and config.read("MODE") == "playlist":
-            with touchscreen_api['frame_condition']:
+            with touchscreen_api['frame_lock']:
                 self.update_playlist_status(
                     touchscreen_api['playlist']
                 )
