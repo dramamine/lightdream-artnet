@@ -11,8 +11,8 @@ class FingerManager:
 
   def set_values(self, key, values):
     self.object_tracker[key] = values
-    if (values):
-      print(f'{key} => {values}')
+    # if (values):
+    #   print(f'{key} => {values}')
     return
 
   def append(self, key, value):
