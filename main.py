@@ -1,4 +1,5 @@
 
+from queue import Queue
 from modules.artnet import show
 
 from util.config import config
@@ -31,6 +32,12 @@ def queue_skip_track():
   global should_skip_track
   should_skip_track = True
 
+should_skip_track_queue = Queue()
+def queue_skip_track_safe():
+  should_skip_track_queue.put(1, block=True, timeout=0.5)
+
+
+
 def loop():
   global should_update_mode, should_skip_track, frame_condition
   with frame_condition:
@@ -44,6 +51,10 @@ def loop():
     if should_skip_track:
       controller.pl.skip_track()
       should_skip_track = False
+    
+    if not should_skip_track_queue.empty():
+      should_skip_track_queue.get(block=True, timeout=0.5)
+      controller.pl.skip_track()
 
     controller.update_frame()
 
@@ -86,7 +97,7 @@ def loop_timer(dt=0):
 app.add_touchscreen_api({
   'playlist': controller.pl,
   'get_frame': controller.get_frame,
-  'skip_track': queue_skip_track,
+  'skip_track': queue_skip_track_safe,
   'set_mode': queue_set_mode,
   'audio_listener': audio_listener,
   'frame_condition': frame_condition,
