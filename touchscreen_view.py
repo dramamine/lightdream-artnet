@@ -344,8 +344,9 @@ class MainApp(App):
             with touchscreen_api['frame_condition']:
                 if keycode[0] == 49:
                     if config.read("MODE") == "playlist":
-                        return touchscreen_api['skip_track']()
-                    return touchscreen_api['set_mode']("playlist")
+                        touchscreen_api['skip_track']()
+                    else:
+                        touchscreen_api['set_mode']("playlist")
                 elif keycode[0] == 50:
                     touchscreen_api['set_mode']("autoplay")
                 elif keycode[0] == 51:
