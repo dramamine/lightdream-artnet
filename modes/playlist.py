@@ -12,7 +12,7 @@ class Playlist:
   def __init__(self):
     self.queue = []
     self.idx = 0
-    self.sp = SequencePlayer(False, config.read("FRAME_DELAY"))
+    self.sp = SequencePlayer()
     self.ap = AudioPlayer()
 
     self.now_playing = None
