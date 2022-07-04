@@ -1,4 +1,5 @@
 from kivy.app import App
+
 from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle
@@ -24,11 +25,9 @@ from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
-from util.util import nullframe
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
-
 
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
@@ -42,6 +41,9 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'width', 1920)
     Config.set('graphics', 'height', 1080)
     pass
+
+# this needs to be imported after configuration
+from kivy.core.window import Window
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
@@ -307,6 +309,13 @@ class MainApp(App):
         super().__init__()
         self.fps = fps
         self.sm = None
+        self._keyboard = Window.request_keyboard(
+            self._keyboard_closed, self, 'text')
+        if self._keyboard.widget:
+            # If it exists, this widget is a VKeyboard object which you can use
+            # to change the keyboard layout.
+            pass
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)        
 
     def build(self):
         sm = ScreenManager()
@@ -320,6 +329,35 @@ class MainApp(App):
         Clock.schedule_interval(self.update_data_from_main_thread, 1/self.fps)
         self.sm = sm
         return sm
+
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    #     print('The key', keycode, 'have been pressed')
+    #     print(' - text is %r' % text)
+    #     print(' - modifiers are %r' % modifiers)
+
+        try:
+            if keycode[0] == 49:
+                if config.read("MODE") == "playlist":
+                    return touchscreen_api['skip_track']()
+                return touchscreen_api['set_mode']("playlist")
+            elif keycode[0] == 50:
+                touchscreen_api['set_mode']("autoplay")
+            elif keycode[0] == 51:
+                touchscreen_api['set_mode']("metronome")
+        except:
+            print("ERROR: some error with _on_keyboard_down that we're ignoring")
+        # Keycode is composed of an integer + a string
+        # If we hit escape, release the keyboard
+        if keycode[1] == 'escape':
+            keyboard.release()
+
+        # Return True to accept the key. Otherwise, it will be used by
+        # the system.
+        return True
 
     def update_playlist_status(self, playlist):
         if playlist.dirty:

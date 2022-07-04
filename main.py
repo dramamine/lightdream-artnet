@@ -9,9 +9,6 @@ from util.periodicrun import periodicrun
 from threading import Condition
 
 from modules.controller import Controller
-from pynput import keyboard
-
-
 
 fps = 40
 
@@ -33,29 +30,6 @@ should_skip_track = False
 def queue_skip_track():
   global should_skip_track
   should_skip_track = True
-
-def on_press(key):
-  try:
-    if key.char == '1':
-      if config.read("MODE") == "playlist":
-        return queue_skip_track()
-      return queue_set_mode("playlist")
-    elif key.char == '2':
-      queue_set_mode("autoplay")
-    elif key.char == '3':
-      queue_set_mode("metronome")
-  except:
-    pass
-
-def on_release(key):
-    if key == keyboard.Key.esc:
-        # Stop listener
-        return False
-
-listener = keyboard.Listener(
-    on_press=on_press,
-    on_release=on_release)
-listener.start()
 
 def loop():
   global should_update_mode, should_skip_track, frame_condition
