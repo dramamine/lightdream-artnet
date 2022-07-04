@@ -1,4 +1,5 @@
 import os
+from util.config import config
 from util.track_metadata import tracks
 
 from modules.audio_player import AudioPlayer
@@ -11,7 +12,7 @@ class Playlist:
   def __init__(self):
     self.queue = []
     self.idx = 0
-    self.sp = SequencePlayer()
+    self.sp = SequencePlayer(False, config.read("FRAME_DELAY"))
     self.ap = AudioPlayer()
 
     self.now_playing = None
@@ -45,8 +46,8 @@ class Playlist:
   def start_track(self, track_name):
     print("starting audio:", track_name)
 
-    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
     self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
+    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
 
     self.now_playing = track_name
     self.queue_updated()
@@ -54,9 +55,9 @@ class Playlist:
 
   def test_metronome(self):
     self.queue = []
+    self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
     self.ap.clear()
     self.ap.play(os.path.join('audio', 'metronome.wav'))
-    self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
 
   # check status of audio; return next LED frame from the sequence
   def tick(self):

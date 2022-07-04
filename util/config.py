@@ -28,6 +28,10 @@ defaults = {
   # fps for how often we should update LED screen, audio inputs, playlist etc.
   "TOUCHSCREEN_DATA_REFRESH_RATE": 40,
 
+  # frame delay for playlist songs i.e. show this many blank frames before
+  # playing frames from video file. this helps with audio sync
+  "FRAME_DELAY": 5,
+
 
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)

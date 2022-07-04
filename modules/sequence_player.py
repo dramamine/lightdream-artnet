@@ -7,11 +7,13 @@ from time import time
 from util.util import remove_unused_pixels_from_frame, nullframe
 
 class SequencePlayer:
-  def __init__(self, loop=False):
+  def __init__(self, loop=False, delay_frames=0):
     self.vid = None
     self.path = ""
     self.loop = loop
     self.framecount = 0
+    self.delay_frames = delay_frames
+    self.delay_frames_left = 0
 
   def play(self, path):
     self.path = path
@@ -29,8 +31,14 @@ class SequencePlayer:
     print("starting sequence: track={} frames={} ({}m{}s)".format(
       path, frames, math.floor(frames/(40*60)), math.floor(frames/40) % 60
     ))
+
+    self.delay_frames_left = self.delay_frames
   
   def read_frame(self):
+    if self.delay_frames_left > 0:
+      self.delay_frames_left -= 1
+      return nullframe
+
     if self.ended:
       return nullframe
       
