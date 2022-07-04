@@ -1,4 +1,4 @@
-from kivy.app import App
+
 
 from kivy.config import Config
 from kivy.uix.button import Button
@@ -43,6 +43,7 @@ if FULLSCREEN_MODE:
     pass
 
 # this needs to be imported after configuration
+from kivy.app import App
 from kivy.core.window import Window
 
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
@@ -340,14 +341,15 @@ class MainApp(App):
     #     print(' - modifiers are %r' % modifiers)
 
         try:
-            if keycode[0] == 49:
-                if config.read("MODE") == "playlist":
-                    return touchscreen_api['skip_track']()
-                return touchscreen_api['set_mode']("playlist")
-            elif keycode[0] == 50:
-                touchscreen_api['set_mode']("autoplay")
-            elif keycode[0] == 51:
-                touchscreen_api['set_mode']("metronome")
+            with touchscreen_api['frame_condition']:
+                if keycode[0] == 49:
+                    if config.read("MODE") == "playlist":
+                        return touchscreen_api['skip_track']()
+                    return touchscreen_api['set_mode']("playlist")
+                elif keycode[0] == 50:
+                    touchscreen_api['set_mode']("autoplay")
+                elif keycode[0] == 51:
+                    touchscreen_api['set_mode']("metronome")
         except:
             print("ERROR: some error with _on_keyboard_down that we're ignoring")
         # Keycode is composed of an integer + a string
