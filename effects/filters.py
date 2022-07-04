@@ -56,9 +56,12 @@ class HueshiftFilter:
   # static method
   # do multiple fingers touch the huewheel? if so,
   # find a nice in-between value
-  def reduce_fingers(self, fingersArray):
+  def reduce_fingers(self, finger_values):
+    if len(finger_values) == 2:
+      if abs(finger_values[1] - finger_values[0]) > 180:
+        return (finger_values[0] + finger_values[1] + 360) / 2
     return np.average(
-      np.add(fingersArray, range(len(fingersArray)))
+      np.add(finger_values, range(len(finger_values)))
     ) % 360
 
   def apply(self, frame, fingers):
@@ -77,6 +80,9 @@ class HueshiftFilter:
 
     # float in 0-1 range
     val = self.reduce_fingers(finger_values)
+
+    # flip and rotate
+    val = (360 + 90 - val) % 360
 
     # convert to hue. red is up
     # ex. [255,0,0]
