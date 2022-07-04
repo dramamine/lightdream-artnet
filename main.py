@@ -3,13 +3,15 @@ from modules.artnet import show
 
 from util.config import config
 from time import time
-import keyboard
 import modules.audio_input.runner as audio_listener
 from touchscreen_view import MainApp
 from util.periodicrun import periodicrun
 from threading import Condition
 
 from modules.controller import Controller
+from pynput import keyboard
+
+
 
 fps = 40
 
@@ -27,19 +29,33 @@ def queue_set_mode(next_mode):
   global should_update_mode
   should_update_mode = next_mode
 
-def handle_1_press(_):
-  if config.read("MODE") == "playlist":
-    return queue_skip_track()
-  return queue_set_mode("playlist")
-
-keyboard.on_press_key("1", handle_1_press)
-keyboard.on_press_key("2", lambda _: queue_set_mode("autoplay"))
-keyboard.on_press_key("3", lambda _: queue_set_mode("metronome"))
-
 should_skip_track = False
 def queue_skip_track():
   global should_skip_track
   should_skip_track = True
+
+def on_press(key):
+  try:
+    if key.char == '1':
+      if config.read("MODE") == "playlist":
+        return queue_skip_track()
+      return queue_set_mode("playlist")
+    elif key.char == '2':
+      queue_set_mode("autoplay")
+    elif key.char == '3':
+      queue_set_mode("metronome")
+  except:
+    pass
+
+def on_release(key):
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+listener = keyboard.Listener(
+    on_press=on_press,
+    on_release=on_release)
+listener.start()
 
 def loop():
   global should_update_mode, should_skip_track, frame_condition
