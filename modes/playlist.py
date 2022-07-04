@@ -68,6 +68,9 @@ class Playlist:
     return self.sp.read_frame()
 
   def enqueue(self, track_name):
+    # no duplicates; could just be too many presses from kivy
+    if track_name in self.queue:
+      return
     # assert(track_name in tracks)
     self.queue.append(track_name)
     self.queue_updated()
