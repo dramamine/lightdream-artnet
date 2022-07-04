@@ -22,7 +22,7 @@ def remove_unused_pixels_from_frame(frame):
 
   frame = np.delete(frame, (510, 511), axis=1)
 
-  # should be 30, 512
+  # should be 30, 510
   assert(len(frame) == 30)
   assert(len(frame[0]) == 510)
   return frame
@@ -36,4 +36,4 @@ def to_polar(point):
   return r, theta
 
 # all blacks
-nullframe = np.zeros((30,512), dtype=np.uint8)
+nullframe = np.zeros((30,510), dtype=np.uint8)

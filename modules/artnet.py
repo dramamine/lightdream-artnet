@@ -19,7 +19,7 @@ ips = [
 # ISBROADCAST = DEFAULT FALSE
 
 
-universe_lists = list(map( lambda ip: [StupidArtnet(ip, uni, 512, 40) for uni in range(6)], ips ))
+universe_lists = list(map( lambda ip: [StupidArtnet(ip, uni, 510, 40) for uni in range(6)], ips ))
 
 # how are the brains arranged? how is the touchscreen oriented to the dome?
 # configs let us rearrange what data is sent to what ip
