@@ -42,7 +42,7 @@ class Playlist:
     print("starting audio:", track_name)
 
     self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
-    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
+    self.ap.play(track_name)
 
     self.now_playing = track_name
     self.deque_updated()

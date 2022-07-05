@@ -1,33 +1,48 @@
-import pyglet
+import os
 from util.config import config
+from kivy.core.audio import SoundLoader
+from util.track_metadata import tracks
 
-player = pyglet.media.Player()
+from time import time
+
+start_time = time()
+print("cacheing music files")
+sounds = dict()
+for track_name in tracks:
+  sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.ogg'.format(track_name)))
+print("they is cached", time() - start_time)
 
 class AudioPlayer:
-  def play(self, path):
-    source = pyglet.media.load(path)
-    player.queue(source)
+  sound = None
+  def play(self, track_name):
+    print("loading...")
+    start_time = time()
+    self.sound = sounds[track_name]
+    print("loaded.", time() - start_time)
+    # player.queue(source)
 
     if config.read("DISABLE_AUDIO") == True:
-      player.volume = 0
+      self.sound.volume = 0
 
-    player.play()
+    print("calling sound.play:")
+    self.sound.play()
+    print("its played")
+    
 
   def is_playing(self):
-    # lol side effects - necessary since we're not in a pyglet app
-    pyglet.clock.tick()
-    pyglet.app.platform_event_loop.dispatch_posted_events()
-    
-    return player.playing
+    if self.sound:
+      return self.sound.state == "play"
+    return False
 
   # @TODO needs testing, i.e. doesn't work
   def stop(self):
-    player.delete()
+    if self.sound:
+      self.sound.stop()
   
   def skip_track(self):
-    player.next_source()
+    if self.sound:
+      self.sound.stop()
 
   def clear(self):
-    global player
-    player.delete()
-    player = pyglet.media.Player()
+    if self.sound:
+      self.sound.stop()
