@@ -364,9 +364,10 @@ class MainApp(App):
         return sm
 
     def update_playlist_status(self, playlist):
-        if playlist.dirty:
-            self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
-            playlist.dirty = False
+        if not playlist.dirty.empty():
+            print("playlist was dirty, updating:")
+            self.debug_menu.update_track_queue(playlist.now_playing, playlist.deque.copy())
+            playlist.dirty.get(block=True, timeout=0.5)
 
     def update_audio_viewer(self, energy_original, energy_modified):
         pass
