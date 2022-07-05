@@ -1,4 +1,5 @@
 
+from queue import Queue
 from modules.artnet import show
 
 from util.config import config
@@ -9,9 +10,6 @@ from util.periodicrun import periodicrun
 from threading import Condition
 
 from modules.controller import Controller
-from pynput import keyboard
-
-
 
 fps = 40
 
@@ -24,52 +22,27 @@ controller = Controller(
   config.read("MODE")
 )
 
-should_update_mode = False
+update_mode_queue = Queue()
 def queue_set_mode(next_mode):
-  global should_update_mode
-  should_update_mode = next_mode
+  update_mode_queue.put(next_mode, block=True, timeout=5)
 
-should_skip_track = False
+skip_track_queue = Queue()
 def queue_skip_track():
-  global should_skip_track
-  should_skip_track = True
-
-def on_press(key):
-  try:
-    if key.char == '1':
-      if config.read("MODE") == "playlist":
-        return queue_skip_track()
-      return queue_set_mode("playlist")
-    elif key.char == '2':
-      queue_set_mode("autoplay")
-    elif key.char == '3':
-      queue_set_mode("metronome")
-  except:
-    pass
-
-def on_release(key):
-    if key == keyboard.Key.esc:
-        # Stop listener
-        return False
-
-listener = keyboard.Listener(
-    on_press=on_press,
-    on_release=on_release)
-listener.start()
+  skip_track_queue.put(1, block=True, timeout=5)
 
 def loop():
-  global should_update_mode, should_skip_track, frame_condition
+  global frame_condition
   with frame_condition:
     if config.read("SEND_LED_DATA"):
       show(controller.get_frame())
 
-    if should_update_mode:
-      controller.set_mode(should_update_mode)
-      should_update_mode = False
-
-    if should_skip_track:
+    if not update_mode_queue.empty():
+      next_mode = update_mode_queue.get(block=True, timeout=0.5)
+      controller.set_mode(next_mode)
+    
+    if not skip_track_queue.empty():
+      skip_track_queue.get(block=True, timeout=0.5)
       controller.pl.skip_track()
-      should_skip_track = False
 
     controller.update_frame()
 

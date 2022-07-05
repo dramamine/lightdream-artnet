@@ -1,8 +1,6 @@
 import cv2
-import os
-import numpy as np
 import math
-from time import time
+from util.config import config
 
 from util.util import remove_unused_pixels_from_frame, nullframe
 
@@ -12,6 +10,8 @@ class SequencePlayer:
     self.path = ""
     self.loop = loop
     self.framecount = 0
+    self.delay_frames = config.read("FRAME_DELAY")
+    self.delay_frames_left = 0
 
   def play(self, path):
     self.path = path
@@ -29,8 +29,14 @@ class SequencePlayer:
     print("starting sequence: track={} frames={} ({}m{}s)".format(
       path, frames, math.floor(frames/(40*60)), math.floor(frames/40) % 60
     ))
+
+    self.delay_frames_left = 0 if "metronome" in self.path else self.delay_frames
   
   def read_frame(self):
+    if self.delay_frames_left > 0:
+      self.delay_frames_left -= 1
+      return nullframe
+
     if self.ended:
       return nullframe
       

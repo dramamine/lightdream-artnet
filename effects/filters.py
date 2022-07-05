@@ -56,9 +56,12 @@ class HueshiftFilter:
   # static method
   # do multiple fingers touch the huewheel? if so,
   # find a nice in-between value
-  def reduce_fingers(self, fingersArray):
+  def reduce_fingers(self, finger_values):
+    if len(finger_values) == 2:
+      if abs(finger_values[1] - finger_values[0]) > 180:
+        return (finger_values[0] + finger_values[1] + 360) / 2
     return np.average(
-      np.add(fingersArray, range(len(fingersArray)))
+      np.add(finger_values, range(len(finger_values)))
     ) % 360
 
   def apply(self, frame, fingers):
@@ -77,6 +80,9 @@ class HueshiftFilter:
 
     # float in 0-1 range
     val = self.reduce_fingers(finger_values)
+
+    # flip and rotate
+    val = (360 + 90 - val) % 360
 
     # convert to hue. red is up
     # ex. [255,0,0]
@@ -133,13 +139,32 @@ rings = ImageFilter(FilterNames.RINGS, 178)
 # wedges000.png = top, going clockwise
 wedges = WedgeFilter(FilterNames.WEDGES, 202)
 
-class RainbowFilter(ImageFilter):
+class RainbowFilterCached(ImageFilter):
   def __init__(self, key, count):
     self.key = key
     self.count = count
+    self.cache_video(os.path.join('video', 'sources', "colorwheels.mp4"))
 
-    self.sp = SequencePlayer(loop=True)
-    self.sp.play(os.path.join('video', 'sources', 'colorwheels.mp4'))
+  def cache_video(self, path):
+    sp = SequencePlayer(loop=False)
+    sp.play(path)
+
+    self.frames_cache = []
+    self.frame_idx = 0
+
+    frame = sp.read_frame()
+    while not sp.ended:
+      self.frames_cache.append(frame)
+      frame = sp.read_frame()
+
+    self.frame_count = len(self.frames_cache)
+
+  def read_video_frame(self):
+    self.frame_idx = (self.frame_idx + 1) % self.frame_count
+    assert(self.frame_idx >= 0)
+    assert(self.frame_idx <= self.frame_count)
+    return self.frames_cache[self.frame_idx]
+
 
   def value_to_frame_idx(self, value):
     return math.floor(self.count * value)
@@ -158,65 +183,12 @@ class RainbowFilter(ImageFilter):
       'horizontal-stripe', self.value_to_frame_idx(x[1])
     ), fingers))
 
-    cwframe = self.sp.read_frame()
+    cwframe = self.read_video_frame()
 
     frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe,
       range(len(fingers))))
 
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
     return combined
-    # return (combined/255) * frame
 
-
-
-class RainbowFilterCached(ImageFilter):
-  def __init__(self, key):
-    self.key = key
-
-    self.cache_video(os.path.join('video', 'sources', 'colorwheels.mp4'))
-
-  # @TODO could inherit this from SourceEffectCachedVideo, or somehow share code
-  def cache_video(self, path):
-      sp = SequencePlayer(loop=False)
-      sp.play(path)
-
-      self.frames_cache = []
-      self.frame_idx = 0
-
-      frame = sp.read_frame()
-      while not sp.ended:
-        self.frames_cache.append(frame)
-        frame = sp.read_frame()
-
-      self.count = len(self.frames_cache)
-
-  def read_frame(self):
-    self.frame_idx = (self.frame_idx + 1) % self.count
-    assert(self.frame_idx >= 0)
-    assert(self.frame_idx <= self.count)
-    return self.frames_cache[self.frame_idx]
-  # frame: the frame to which we apply this effect
-  # fingers: a list of parameters, which are, pairs of x,y values 0-1
-  def apply(self, frame, fingers):
-    if not fingers:
-      return frame
-
-    verticals = list(map(lambda x: self.read_frame(
-      'vertical-stripe', self.value_to_frame_idx(x[0])
-    ), fingers))
-
-    horizontals = list(map(lambda x: self.read_frame(
-      'horizontal-stripe', self.value_to_frame_idx(x[1])
-    ), fingers))
-
-    self.frame_idx = (self.frame_idx + 1) % self.count
-    cwframe = self.read_frame(self.frame_idx)
-
-    frames = list(map(lambda x: verticals[x] * horizontals[x] * cwframe,
-      range(len(fingers))))
-
-    combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
-    return combined
-    # return (combined/255) * frame
-
-rainbow = RainbowFilter(FilterNames.SPOTLIGHT, 390)
+rainbow = RainbowFilterCached(FilterNames.SPOTLIGHT, 390)

@@ -1,4 +1,6 @@
 import os
+from collections import deque
+from queue import Queue
 from util.track_metadata import tracks
 
 from modules.audio_player import AudioPlayer
@@ -9,7 +11,7 @@ import random
 
 class Playlist:
   def __init__(self):
-    self.queue = []
+    self.deque = deque()
     self.idx = 0
     self.sp = SequencePlayer()
     self.ap = AudioPlayer()
@@ -17,13 +19,7 @@ class Playlist:
     self.now_playing = None
     self.updates_cb = None
 
-    self.dirty = False
-  
-  # cb: this function gets called whenever there's an update to the
-  # currently playing track or the queue. ex.:
-  # (now_playing: str, queue: [str] ) where `str` is the track id
-  def subscribe_to_playlist_updates(self, cb):
-    self.updates_cb = cb
+    self.dirty = Queue()
 
   def start(self):
     random.shuffle(tracks)
@@ -36,8 +32,8 @@ class Playlist:
     self.stop()
 
   def pick_track(self):
-    if self.queue:
-      return self.queue.pop(0)
+    if len(self.deque) > 0:
+      return self.deque.popleft()
     
     self.idx = (self.idx+1) % len(tracks)
     return tracks[self.idx]
@@ -45,18 +41,18 @@ class Playlist:
   def start_track(self, track_name):
     print("starting audio:", track_name)
 
-    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
     self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
+    self.ap.play(os.path.join('audio', '{}.ogg'.format(track_name)))
 
     self.now_playing = track_name
-    self.queue_updated()
+    self.deque_updated()
 
 
   def test_metronome(self):
-    self.queue = []
+    self.deque.clear()
+    self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
     self.ap.clear()
     self.ap.play(os.path.join('audio', 'metronome.wav'))
-    self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
 
   # check status of audio; return next LED frame from the sequence
   def tick(self):
@@ -67,21 +63,29 @@ class Playlist:
     return self.sp.read_frame()
 
   def enqueue(self, track_name):
-    # assert(track_name in tracks)
-    self.queue.append(track_name)
-    self.queue_updated()
+    # no duplicates; could just be too many presses from kivy
+    try:
+      x = self.deque.index(track_name)
+    except ValueError:
+      self.deque.append(track_name)
+      self.deque_updated()
+
 
   def dequeue(self, track_name):
-    self.queue.remove(track_name)
-    self.queue_updated()
+    try:
+      self.deque.remove(track_name)
+      self.deque_updated()
+    except ValueError:
+      # track wasn't in list, but lets just ignore it
+      pass
 
   def skip_track(self):
     self.ap.skip_track()
     self.start_track(self.pick_track())
-    self.queue_updated()
+    self.deque_updated()
 
-  def queue_updated(self):
-    self.dirty = True
+  def deque_updated(self):
+    self.dirty.put(1, block=True, timeout=5)
 
   def clear(self):
     self.ap.clear()

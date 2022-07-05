@@ -1,4 +1,5 @@
-from kivy.app import App
+
+
 from kivy.config import Config
 from kivy.uix.button import Button
 from kivy.graphics import Rectangle
@@ -24,11 +25,9 @@ from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
-from util.util import nullframe
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
-
 
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
@@ -43,6 +42,8 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'height', 1080)
     pass
 
+# this needs to be imported after configuration
+from kivy.app import App
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
 CURRENTLY_ENABLED_SCREENS = [
@@ -181,13 +182,16 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 def enqueue(evt):
-    touchscreen_api['playlist'].enqueue(evt.value)
+    with touchscreen_api['frame_condition']:
+        touchscreen_api['playlist'].enqueue(evt.value)
 
 def dequeue(evt):
-    touchscreen_api['playlist'].dequeue(evt.value)
+    with touchscreen_api['frame_condition']:
+        touchscreen_api['playlist'].dequeue(evt.value)
 
 def skip_track(evt):
-    touchscreen_api['skip_track']()
+    with touchscreen_api['frame_condition']:
+        touchscreen_api['skip_track']()
 
 
 class DebugMenuScreen(Screen):
@@ -306,7 +310,44 @@ class MainApp(App):
     def __init__(self, fps):
         super().__init__()
         self.fps = fps
-        self.sm = None
+        self.sm = None      
+        if config.read("FULLSCREEN_MODE"):
+            from kivy.core.window import Window
+            self._keyboard = Window.request_keyboard(
+                self._keyboard_closed, self, 'text')
+            if self._keyboard.widget:
+                # If it exists, this widget is a VKeyboard object which you can use
+                # to change the keyboard layout.
+                pass
+            self._keyboard.bind(on_key_down=self._on_keyboard_down)            
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    #     print('The key', keycode, 'have been pressed')
+    #     print(' - text is %r' % text)
+    #     print(' - modifiers are %r' % modifiers)
+
+        try:
+            if keycode[0] == 49:
+                if config.read("MODE") == "playlist":
+                    return touchscreen_api['skip_track']()
+                return touchscreen_api['set_mode']("playlist")
+            elif keycode[0] == 50:
+                touchscreen_api['set_mode']("autoplay")
+            elif keycode[0] == 51:
+                touchscreen_api['set_mode']("metronome")
+        except:
+            print("ERROR: some error with _on_keyboard_down that we're ignoring")
+        # Keycode is composed of an integer + a string
+        # If we hit escape, release the keyboard
+        if keycode[1] == 'escape':
+            keyboard.release()
+
+        # Return True to accept the key. Otherwise, it will be used by
+        # the system.
+        return True              
 
     def build(self):
         sm = ScreenManager()
@@ -317,14 +358,16 @@ class MainApp(App):
         if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
             sm.add_widget(LayoutTestScreen(), name='layout_test')
 
-        Clock.schedule_interval(self.update_data_from_main_thread, 1/self.fps)
+        Clock.schedule_interval(self.update_audio_data_from_main_thread, 1/self.fps)
+        Clock.schedule_interval(self.update_playlist_data_from_main_thread, 2/self.fps)
         self.sm = sm
         return sm
 
     def update_playlist_status(self, playlist):
-        if playlist.dirty:
-            self.debug_menu.update_track_queue(playlist.now_playing, playlist.queue)
-            playlist.dirty = False
+        if not playlist.dirty.empty():
+            print("playlist was dirty, updating:")
+            self.debug_menu.update_track_queue(playlist.now_playing, playlist.deque.copy())
+            playlist.dirty.get(block=True, timeout=0.5)
 
     def update_audio_viewer(self, energy_original, energy_modified):
         pass
@@ -345,27 +388,28 @@ class MainApp(App):
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
 
-    def update_data_from_main_thread(self, dt):
+    def update_audio_data_from_main_thread(self, dt):
         global touchscreen_api
-        try:
+        if config.read("LED_VIEWER"):
             with touchscreen_api['frame_condition']:
-                if config.read("LED_VIEWER"):
-                    self.update_frame(touchscreen_api['get_frame']())
-
-                if (self.sm.current == "debug_menu"):
-                    with touchscreen_api['audio_condition']:
-                        al = touchscreen_api['audio_listener']
-                        self.update_audio_viewer(
-                            al.energy_original,
-                            al.energy_modified,
-                        )
-
-                    self.update_playlist_status(
-                        touchscreen_api['playlist']
+                self.update_frame(touchscreen_api['get_frame']())
+        if (self.sm.current == "debug_menu") and config.read("MODE") == "autoplay":
+            with touchscreen_api['frame_condition']:
+                with touchscreen_api['audio_condition']:
+                    al = touchscreen_api['audio_listener']
+                    self.update_audio_viewer(
+                        al.energy_original,
+                        al.energy_modified,
                     )
-        except AttributeError:
-            print("missing attribute when reloading data.")
-            pass
+
+                    
+    def update_playlist_data_from_main_thread(self, dt):
+        global touchscreen_api
+        if (self.sm.current == "debug_menu") and config.read("MODE") == "playlist":
+            with touchscreen_api['frame_condition']:
+                self.update_playlist_status(
+                    touchscreen_api['playlist']
+                )
 
 
 if __name__ == '__main__':
