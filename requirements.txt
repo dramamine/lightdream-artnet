@@ -1,5 +1,5 @@
 opencv-python==4.5.5.62
-stupidArtnet==1.1.2
+pyartnet==0.8.3
 numpy==1.22.2
 aubio==0.4.9
 pyyaml==6.0
