@@ -6,27 +6,23 @@ from util.track_metadata import tracks
 from time import time
 
 start_time = time()
-print("cacheing music files")
+print("audio: music files loading")
 sounds = dict()
 for track_name in tracks:
   sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.ogg'.format(track_name)))
-print("they is cached", time() - start_time)
+print("audio: music files cached", time() - start_time)
 
 class AudioPlayer:
   sound = None
   def play(self, track_name):
-    print("loading...")
     start_time = time()
     self.sound = sounds[track_name]
-    print("loaded.", time() - start_time)
     # player.queue(source)
 
     if config.read("DISABLE_AUDIO") == True:
       self.sound.volume = 0
 
-    print("calling sound.play:")
     self.sound.play()
-    print("its played")
     
 
   def is_playing(self):
