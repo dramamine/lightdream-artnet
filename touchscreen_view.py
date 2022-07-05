@@ -25,7 +25,6 @@ from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
-import traceback
 
 LAYOUT_IMAGE_WIDTH = 1920
 LAYOUT_IMAGE_HEIGHT = 1080
@@ -312,6 +311,43 @@ class MainApp(App):
         super().__init__()
         self.fps = fps
         self.sm = None      
+        if config.read("FULLSCREEN_MODE"):
+            from kivy.core.window import Window
+            self._keyboard = Window.request_keyboard(
+                self._keyboard_closed, self, 'text')
+            if self._keyboard.widget:
+                # If it exists, this widget is a VKeyboard object which you can use
+                # to change the keyboard layout.
+                pass
+            self._keyboard.bind(on_key_down=self._on_keyboard_down)            
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    #     print('The key', keycode, 'have been pressed')
+    #     print(' - text is %r' % text)
+    #     print(' - modifiers are %r' % modifiers)
+
+        try:
+            if keycode[0] == 49:
+                if config.read("MODE") == "playlist":
+                    return touchscreen_api['skip_track']()
+                return touchscreen_api['set_mode']("playlist")
+            elif keycode[0] == 50:
+                touchscreen_api['set_mode']("autoplay")
+            elif keycode[0] == 51:
+                touchscreen_api['set_mode']("metronome")
+        except:
+            print("ERROR: some error with _on_keyboard_down that we're ignoring")
+        # Keycode is composed of an integer + a string
+        # If we hit escape, release the keyboard
+        if keycode[1] == 'escape':
+            keyboard.release()
+
+        # Return True to accept the key. Otherwise, it will be used by
+        # the system.
+        return True              
 
     def build(self):
         sm = ScreenManager()
