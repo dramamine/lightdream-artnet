@@ -1,9 +1,6 @@
 from stupidArtnet import StupidArtnet
 from util.config import config
 
-def flatten(list_of_lists):
-  return [val for sublist in list_of_lists for val in sublist]
-
 ips = [
   '169.254.18.32', 
   '169.254.18.33',
@@ -39,16 +36,11 @@ brain_positions = [
 # universes: list of 6 Artnet instances
 # channels: list of 6 sets of channel data
 def _send_to_brain(universes, channels):
-  assert len(universes) == 6
-  assert len(channels) == 6
-
   for i in range(6):
-    universes[i].send(bytearray(list(channels[i])))
+    universes[i].send(bytearray(channels[i]))
 
 
 def show(frame):
-  assert len(frame) == 30
+  positions = brain_positions[config.read("brain_position")]
   for i in range(5):
-    positions = brain_positions[config.read("brain_position")]
-    universe_lists_idx = positions[i]
-    _send_to_brain(universe_lists[universe_lists_idx], frame[6*i:6*i+6])
+    _send_to_brain(universe_lists[positions[i]], frame[6*i:6*i+6])
