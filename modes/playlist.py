@@ -52,7 +52,7 @@ class Playlist:
     self.deque.clear()
     self.sp.play(os.path.join('video', 'metronome_clockwise_x264.mp4'))
     self.ap.clear()
-    self.ap.play(os.path.join('audio', 'metronome.wav'))
+    self.ap.play('metronome')
 
   # check status of audio; return next LED frame from the sequence
   def tick(self):
