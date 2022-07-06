@@ -46,8 +46,6 @@ def loop():
 
     controller.update_frame()
 
-    frame_condition.notify()
-
 
 start_time = time()
 last_time = time()
