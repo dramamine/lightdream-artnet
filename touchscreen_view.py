@@ -32,6 +32,7 @@ LAYOUT_IMAGE_HEIGHT = 1080
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
+
 FULLSCREEN_MODE = config.read("FULLSCREEN_MODE")
 
 if FULLSCREEN_MODE:
@@ -40,6 +41,8 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'left', 0)
     Config.set('graphics', 'width', 1920)
     Config.set('graphics', 'height', 1080)
+    # hide cursor
+    Config.set('graphics','show_cursor','0')
     pass
 
 # this needs to be imported after configuration
@@ -123,12 +126,11 @@ class LightdreamTouchScreen(TouchableScreen):
         self.spotlight_mask.pos = (-500, -500)
 
         if config.read("LED_VIEWER") == True:
-            print("creating led output texture.")
-            self.led_output_texture = Texture.create(size=(170, 30))
+            self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
-                    size=(340,60),
-                    pos=(0,1020),
+                    size=(170*2.5,30*6),
+                    pos=(0,1080-30*6),
                     texture=self.led_output_texture)
 
     @property
@@ -182,16 +184,16 @@ class LightdreamTouchScreen(TouchableScreen):
 
 
 def enqueue(evt):
-    with touchscreen_api['frame_condition']:
-        touchscreen_api['playlist'].enqueue(evt.value)
+    touchscreen_api['playlist'].enqueue(evt.value)
+        
 
 def dequeue(evt):
-    with touchscreen_api['frame_condition']:
-        touchscreen_api['playlist'].dequeue(evt.value)
+    touchscreen_api['playlist'].dequeue(evt.value)
+        
 
 def skip_track(evt):
-    with touchscreen_api['frame_condition']:
-        touchscreen_api['skip_track']()
+    touchscreen_api['skip_track']()
+        
 
 
 class DebugMenuScreen(Screen):
@@ -219,8 +221,6 @@ class DebugMenuScreen(Screen):
             'decay_constant',
             'max_energy',
             'aural_effect_strength_multiplier',
-            'autoplay_interval',
-            'autoplay_crossfade',
             'brain_position',
             'brightness'
         ]
@@ -235,8 +235,8 @@ class DebugMenuScreen(Screen):
             self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
-                    size=(340,60),
-                    pos=(0,1020),
+                    size=(170*2.5,30*6),
+                    pos=(0,1080-30*6),
                     texture=self.led_output_texture)
 
     def next_screen_callback(self, touch):
@@ -391,26 +391,23 @@ class MainApp(App):
     def update_audio_data_from_main_thread(self, dt):
         global touchscreen_api
         if config.read("LED_VIEWER"):
-            with touchscreen_api['frame_condition']:
-                self.update_frame(touchscreen_api['get_frame']())
+            self.update_frame(touchscreen_api['get_frame']())
+                
         if (self.sm.current == "debug_menu") and config.read("MODE") == "autoplay":
-            with touchscreen_api['frame_condition']:
-                with touchscreen_api['audio_condition']:
-                    al = touchscreen_api['audio_listener']
-                    self.update_audio_viewer(
-                        al.energy_original,
-                        al.energy_modified,
-                    )
+            with touchscreen_api['audio_condition']:
+                al = touchscreen_api['audio_listener']
+                self.update_audio_viewer(
+                    al.energy_original,
+                    al.energy_modified,
+                )
 
                     
     def update_playlist_data_from_main_thread(self, dt):
         global touchscreen_api
         if (self.sm.current == "debug_menu") and config.read("MODE") == "playlist":
-            with touchscreen_api['frame_condition']:
-                self.update_playlist_status(
-                    touchscreen_api['playlist']
-                )
-
+            self.update_playlist_status(
+                touchscreen_api['playlist']
+            )
 
 if __name__ == '__main__':
     MainApp().run()

@@ -7,16 +7,12 @@ from time import time
 import modules.audio_input.runner as audio_listener
 from touchscreen_view import MainApp
 from util.periodicrun import periodicrun
-from threading import Condition
 
 from modules.controller import Controller
 
 fps = 40
 
 app = MainApp(config.read("TOUCHSCREEN_DATA_REFRESH_RATE"))
-
-
-frame_condition = Condition()
 
 controller = Controller(
   config.read("MODE")
@@ -31,8 +27,7 @@ def queue_skip_track():
   skip_track_queue.put(1, block=True, timeout=5)
 
 def loop():
-  global frame_condition
-  with frame_condition:
+
     if config.read("SEND_LED_DATA"):
       show(controller.get_frame())
 
@@ -45,8 +40,6 @@ def loop():
       controller.pl.skip_track()
 
     controller.update_frame()
-
-    frame_condition.notify()
 
 
 start_time = time()
@@ -88,7 +81,6 @@ app.add_touchscreen_api({
   'skip_track': queue_skip_track,
   'set_mode': queue_set_mode,
   'audio_listener': audio_listener,
-  'frame_condition': frame_condition,
   'audio_condition': audio_listener.audio_condition
 })
 
