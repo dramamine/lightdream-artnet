@@ -123,12 +123,11 @@ class LightdreamTouchScreen(TouchableScreen):
         self.spotlight_mask.pos = (-500, -500)
 
         if config.read("LED_VIEWER") == True:
-            print("creating led output texture.")
-            self.led_output_texture = Texture.create(size=(170, 30))
+            self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
-                    size=(340,60),
-                    pos=(0,1020),
+                    size=(170*2.5,30*6),
+                    pos=(0,1080-30*6),
                     texture=self.led_output_texture)
 
     @property
@@ -219,8 +218,6 @@ class DebugMenuScreen(Screen):
             'decay_constant',
             'max_energy',
             'aural_effect_strength_multiplier',
-            'autoplay_interval',
-            'autoplay_crossfade',
             'brain_position',
             'brightness'
         ]
@@ -235,8 +232,8 @@ class DebugMenuScreen(Screen):
             self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(
-                    size=(340,60),
-                    pos=(0,1020),
+                    size=(170*2.5,30*6),
+                    pos=(0,1080-30*6),
                     texture=self.led_output_texture)
 
     def next_screen_callback(self, touch):

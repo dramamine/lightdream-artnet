@@ -87,7 +87,7 @@
         id: BLOBS
         size: 160, 160
     ThisScreenLabel:
-        text: 'Lightdream'
+        text: '' # Lightdream
         size: 300, 75
     NextScreenButton:
         id: NEXT_SCREEN_BUTTON
@@ -161,7 +161,7 @@
                     GridLayout:
                         id: autoplay_options
                         cols: 1
-                        padding: (250, 10, 250, 200)
+                        padding: (10, 10, 10, 10)
                         spacing: 50
                         canvas.before:
                             Color:
@@ -169,43 +169,11 @@
                             Rectangle:
                                 pos: self.pos
                                 size: self.size
-
-                        Label:
-                            text: "Auto Controls"
-                            size_hint_y: None
-                            height: 200
-
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint_y: 0.15
-                            padding: 30
-                            Label:
-                                text: "Autoclips clip length (in seconds)"
-                            Label:
-                                id: autoplay_interval_value
-                        Slider:
-                            id: autoplay_interval
-                            min: 0
-                            max: 60
-                            step: 1
-                            on_touch_up: root.update_config_value('autoplay_interval', self.value)
-
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            padding: 30
-                            Label:
-                                text: "Crossfade Interval (in seconds)"
-                            Label:
-                                id: autoplay_crossfade_value
-                        Slider:
-                            id: autoplay_crossfade
-                            min: 0
-                            max: 20
-                            step: 0.5
-                            on_touch_up: root.update_config_value('autoplay_crossfade', self.value)
-
-
+                        Image:
+                            source: './images/dj-instructions.jpg'
+                            width: 1244
+                            height: 761
+                            allow_stretch: True
                     GridLayout:
                         id: audio_responsiveness
                         cols: 1
