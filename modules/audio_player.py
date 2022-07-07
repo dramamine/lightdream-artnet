@@ -11,7 +11,7 @@ sounds = dict()
 for track_name in tracks:
   sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.ogg'.format(track_name)))
 sounds['metronome'] = SoundLoader.load(os.path.join('audio', 'metronome.wav'))
-print("audio: music files cached", time() - start_time)
+print(f"audio: music files cached in {(time() - start_time):.1f} seconds")
 
 class AudioPlayer:
   sound = None

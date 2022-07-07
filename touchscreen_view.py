@@ -32,8 +32,6 @@ LAYOUT_IMAGE_HEIGHT = 1080
 Config.set('graphics', 'width', LAYOUT_IMAGE_WIDTH)
 Config.set('graphics', 'height', LAYOUT_IMAGE_HEIGHT)
 
-# hide cursor
-Config.set('graphics','show_cursor','0')
 
 FULLSCREEN_MODE = config.read("FULLSCREEN_MODE")
 
@@ -43,6 +41,8 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'left', 0)
     Config.set('graphics', 'width', 1920)
     Config.set('graphics', 'height', 1080)
+    # hide cursor
+    Config.set('graphics','show_cursor','0')
     pass
 
 # this needs to be imported after configuration
