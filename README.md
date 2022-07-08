@@ -8,6 +8,12 @@ Project to run lightdream-scripts code on an rpi instead.
 # Windows
 pip install -r requirements.txt
 
+For audio listener, you need
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+PyAudio‑0.2.11‑cp310‑cp310‑win_amd64.whl
+then `pip install PyAudio‑0.2.11‑cp310‑cp310‑win_amd64.whl`
+
+
 # RPi: you also need these:
 pip install gstreamer-player PyGObject pycairo mesa-utils
 

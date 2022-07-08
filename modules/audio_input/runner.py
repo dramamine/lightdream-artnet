@@ -32,10 +32,15 @@ def output_reader(proc):
         # freq = values[0]
         update_energy( float(values[1]) )
 
-is_mock = "" if config.read("PLATFORM") == "rpi" else "_mock"
+# use mock process except on 
+suffix = "_mock"
+if config.read("PLATFORM") == "win":
+  suffix = "_pyaudio"
+elif config.read("PLATFORM") == "rpi":
+  suffix = "alsaaudio"
 
 proc = subprocess.Popen(['python', '-u', 
-  'modules/audio_input/audio_listener_subprocess{}.py'.format(is_mock)],
+  'modules/audio_input/subprocess{}.py'.format(suffix)],
   stdout=subprocess.PIPE,
   stderr=subprocess.STDOUT)
 
