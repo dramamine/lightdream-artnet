@@ -9,7 +9,7 @@ LED_VIEWER: false
 TOUCHSCREEN_DATA_REFRESH_RATE: 15
 MODE: playlist
 PLATFORM: rpi
-FRAME_DELAY: 10
+FRAME_DELAY: 5
 aural_effect_strength_multiplier: 0.25
 autoplay_crossfade: 5
 autoplay_interval: 50
