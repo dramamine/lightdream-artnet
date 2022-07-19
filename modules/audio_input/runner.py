@@ -27,17 +27,20 @@ def update_energy(value):
 def output_reader(proc):
     global freq, energy
     for line in iter(proc.stdout.readline, b''):
-        # [freq, energy] = line.decode('utf-8').strip().split()
-        values = line.decode('utf-8').strip().split()
-        # freq = values[0]
-        update_energy( float(values[1]) )
+        try:
+          values = line.decode('utf-8').strip().split() # (freq, energy)
+          update_energy( float(values[1]) )
+        except ValueError:
+          print("bad line from audio runner:", line.decode('utf-8').strip())
+        except IndexError:
+          print("bad line from audio runner:", line.decode('utf-8').strip())
 
 # use mock process except on 
 suffix = "_mock"
 if config.read("PLATFORM") == "win":
   suffix = "_pyaudio"
 elif config.read("PLATFORM") == "rpi":
-  suffix = "alsaaudio"
+  suffix = "_alsaaudio"
 
 proc = subprocess.Popen(['python', '-u', 
   'modules/audio_input/subprocess{}.py'.format(suffix)],

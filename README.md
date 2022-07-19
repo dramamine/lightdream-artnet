@@ -22,6 +22,10 @@ sudo apt-get install gstreamer1.0-tools gstreamer1.0-pulseaudio \
   libgirepository1.0-dev libcairo2-dev gir1.2-gstreamer-1.0
 
 # check audio output device and make sure it's not HDMI
+https://www.alsa-project.org/main/index.php/Setting_the_default_device
+
+cat /proc/asound/cards
+echo -e "defaults.pcm.card 1\ndefaults.ctl.card 1" > /etc/asound.conf
 
 
 ```
