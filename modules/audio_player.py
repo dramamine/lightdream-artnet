@@ -9,6 +9,7 @@ start_time = time()
 print("audio: music files loading")
 sounds = dict()
 for track_name in tracks:
+  print(f"loading {track_name}")
   sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.ogg'.format(track_name)))
 sounds['metronome'] = SoundLoader.load(os.path.join('audio', 'metronome.wav'))
 print(f"audio: music files cached in {(time() - start_time):.1f} seconds")
