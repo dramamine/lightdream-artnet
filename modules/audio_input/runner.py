@@ -7,7 +7,7 @@ import numpy as np
 
 # i.e. length of the array; this should be high enough so that 'decay' works,
 # and long enough so that the debug display works.
-ENERGY_TAIL_LENGTH = 20
+ENERGY_TAIL_LENGTH = 1200
 
 energy_original = deque(maxlen=ENERGY_TAIL_LENGTH)
 energy_original.extend(list(repeat(0,ENERGY_TAIL_LENGTH)))
@@ -16,13 +16,29 @@ energy_modified.extend(list(repeat(0,ENERGY_TAIL_LENGTH)))
 
 audio_condition = threading.Condition()
 
+ticks = 0
 def update_energy(value):
+  global ticks
+  ticks = ticks + 1
   with audio_condition:
     energy_original.appendleft(value)
 
     # see if a decayed value would be higher
     decayed = energy_modified[0] * e ** config.read("decay_constant")
     energy_modified.appendleft( max(value, decayed) )
+  
+  if ticks >= ENERGY_TAIL_LENGTH:
+    ticks = 0
+    recalculate_max_energy()
+
+def recalculate_max_energy():
+  if config.read("MODE") == "playlist":
+    return
+  last = config.read("max_energy")
+  next = max(energy_original) * 1.1
+  print(f"updating max energy from {last} to {next}")
+  config.write("max_energy", next)
+
 
 def output_reader(proc):
     global freq, energy
