@@ -42,7 +42,7 @@ if FULLSCREEN_MODE:
     Config.set('graphics', 'width', 1920)
     Config.set('graphics', 'height', 1080)
     # hide cursor
-    Config.set('graphics','show_cursor','0')
+    # Config.set('graphics','show_cursor','0')
     pass
 
 # this needs to be imported after configuration
@@ -50,7 +50,7 @@ from kivy.app import App
 input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
 CURRENTLY_ENABLED_SCREENS = [
-    'lightdream',
+    # 'lightdream',
     'debug_menu',
     # 'layout_test',
 ]
@@ -61,139 +61,34 @@ def get_next_screen(this_screen):
 
 touchscreen_api = {}
 
-class TouchableScreen(Screen):
-    def on_touch_down(self, touch):
-        point = (touch.x, touch.y)
-        # print("============================>point", point)
-        input_mapper.process_touch_enter(touch.id, point)
+# class TouchableScreen(Screen):
+#     def on_touch_down(self, touch):
+#         point = (touch.x, touch.y)
+#         # print("============================>point", point)
+#         input_mapper.process_touch_enter(touch.id, point)
 
-        # Annoying: touch bindings on the TouchableScreens override all button
-        # press bindings.  DebugMenu screen has working on_press() bindings,
-        # and shouldn't need to check for button collisions in the touch handler.
-        if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
-            # Only go to next screen on double tap
-            if touch.is_double_tap:
-                self.next_screen_callback(touch)
+#         # Annoying: touch bindings on the TouchableScreens override all button
+#         # press bindings.  DebugMenu screen has working on_press() bindings,
+#         # and shouldn't need to check for button collisions in the touch handler.
+#         if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
+#             # Only go to next screen on double tap
+#             if touch.is_double_tap:
+#                 self.next_screen_callback(touch)
 
-        return super().on_touch_down(touch)
+#         return super().on_touch_down(touch)
 
-    def on_touch_move(self, touch):
-        point = (touch.x, touch.y)
-        input_mapper.process_touch_motion(touch.id, point)
-        return super().on_touch_move(touch)
+#     def on_touch_move(self, touch):
+#         point = (touch.x, touch.y)
+#         input_mapper.process_touch_motion(touch.id, point)
+#         return super().on_touch_move(touch)
 
-    def on_touch_up(self, touch):
-        point = (touch.x, touch.y)
-        input_mapper.process_touch_leave(touch.id)
-        return super().on_touch_up(touch)
+#     def on_touch_up(self, touch):
+#         point = (touch.x, touch.y)
+#         input_mapper.process_touch_leave(touch.id)
+#         return super().on_touch_up(touch)
 
-    def next_screen_callback(self, touch):
-        self.manager.current = get_next_screen(self.manager.current)
-
-
-class LayoutTestScreen(TouchableScreen):
-    pass
-
-
-class LightdreamTouchScreen(TouchableScreen):
-    led_output_texture = ObjectProperty()
-    CIRCLES = {
-        'HUESHIFT': HUESHIFT,
-        'KALEIDOSCOPE': KALEIDOSCOPE,
-        'TUNNEL': TUNNEL,
-        'LIGHTNING': LIGHTNING,
-        'NUCLEAR': NUCLEAR,
-        'SPIRAL': SPIRAL,
-        'RADIANTLINES': RADIANTLINES,
-        'RINGS': RINGS,
-        'SPOTLIGHT': SPOTLIGHT,
-        'WEDGES': WEDGES,
-        'TRIFORCE': TRIFORCE,
-        'BLOBS': BLOBS,
-    }
-    def __init__(self):
-        super().__init__()
-        for circle in self.CIRCLES.keys():
-            self.ids[circle].source = self.CIRCLES[circle].path
-            self.ids[circle].center_x = self.CIRCLES[circle].center[0]
-            self.ids[circle].center_y = self.CIRCLES[circle].center[1]
-
-        self.spotlight_image.source = SPOTLIGHT.active_path
-        self.spotlight_image.pos = (
-            SPOTLIGHT.center[0] - SPOTLIGHT.radius,
-            SPOTLIGHT.center[1] - SPOTLIGHT.radius
-        )
-        self.spotlight_mask.pos = (-500, -500)
-
-        if config.read("LED_VIEWER") == True:
-            self.led_output_texture = Texture.create(size=(170,30))
-            with self.canvas:
-                Rectangle(
-                    size=(170*2.5,30*6),
-                    pos=(0,1080-30*6),
-                    texture=self.led_output_texture)
-
-    @property
-    def spotlight_image(self):
-        return self.canvas.after.get_group('spotlight-image')[0]
-
-    @property
-    def spotlight_mask(self):
-        return self.canvas.after.get_group('spotlight-mask')[0]
-
-    def activate_circle(self, circle, touch):
-        if circle == 'SPOTLIGHT':
-            # show the spotlight (positioned from bottom left)
-            self.spotlight_mask.pos = (touch.x - 50, touch.y - 50)
-        else:
-            # set the image path to the brighter, 'active' image
-            self.ids[circle].source = self.CIRCLES[circle].active_path
-
-    def deactivate_circle(self, circle, touch):
-        if circle == 'SPOTLIGHT':
-            # hide the spotlight by dumping it offscreen
-            self.spotlight_mask.pos = (-500, -500)
-        else:
-            # set the image path to the dim / regular image
-            self.ids[circle].source = self.CIRCLES[circle].path
-
-    def update_active(self, touch):
-        # loop through all circles, check active, and update display
-        for circle in self.CIRCLES.keys():
-            circle_config = self.CIRCLES[circle]
-            if input_mapper.is_active(circle_config.key):
-                self.activate_circle(circle, touch)
-            else:
-                self.deactivate_circle(circle, touch)
-
-    def on_touch_down(self, touch):
-        super().on_touch_down(touch)
-        self.update_active(touch)
-        return
-
-    def on_touch_move(self, touch):
-        super().on_touch_move(touch)
-        self.update_active(touch)
-        return
-
-    def on_touch_up(self, touch):
-        super().on_touch_up(touch)
-        self.update_active(touch)
-        return
-
-
-
-def enqueue(evt):
-    touchscreen_api['playlist'].enqueue(evt.value)
-        
-
-def dequeue(evt):
-    touchscreen_api['playlist'].dequeue(evt.value)
-        
-
-def skip_track(evt):
-    touchscreen_api['skip_track']()
-        
+#     def next_screen_callback(self, touch):
+#         self.manager.current = get_next_screen(self.manager.current)
 
 
 class DebugMenuScreen(Screen):
@@ -203,18 +98,6 @@ class DebugMenuScreen(Screen):
     def __init__(self):
         super().__init__()
 
-        # create buttons for each track
-        for id, track in track_metadata.items():
-            artist_name = track['artist_name']
-            track_name = track['track_name']
-            display_name = f'{artist_name} - {track_name}'
-            btn = Button(
-                text=display_name,
-                font_size="15sp"
-            )
-            btn.value = id # @TODO could we use 'name' here instead
-            btn.bind(on_press=enqueue)
-            self.ids['track_grid'].add_widget(btn)
 
         # read slider values from config
         slider_ids = [
@@ -272,35 +155,6 @@ class DebugMenuScreen(Screen):
         else:
             self.ids[f'{slider_id}_value'].text = f'{slider_value:.0f}'
 
-    def update_track_queue(self, now_playing, queue):
-        if now_playing == None:
-            return
-
-        track_queue_layout = self.ids['track_queue']
-        track_queue_layout.clear_widgets()
-
-        # now playing
-        track_name = track_metadata[now_playing]['track_name']
-        btn = Button(
-            text=f'NOW PLAYING: {track_name}',
-            font_size="15sp",
-            size_hint_y = None
-        )
-        btn.bind(on_press=skip_track)
-        track_queue_layout.add_widget(btn)
-
-        # upcoming
-        for track_id in queue:
-            track_name = track_metadata[track_id]['track_name']
-            btn = Button(
-                text=track_name,
-                font_size="15sp",
-                size_hint_y=None
-            )
-            btn.value = track_id
-            btn.bind(on_press=dequeue)
-            track_queue_layout.add_widget(btn)
-
     def update_audio_viewer(self, energy_original, energy_modified):
         max_energy = config.read("max_energy")
         self.energy_orig_list = list(map(lambda x: x / max_energy, energy_original))[:10]
@@ -351,23 +205,12 @@ class MainApp(App):
 
     def build(self):
         sm = ScreenManager()
-        self.touchscreen = LightdreamTouchScreen()
-        sm.add_widget(self.touchscreen, name='lightdream')
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
-        if 'layout_test' in CURRENTLY_ENABLED_SCREENS:
-            sm.add_widget(LayoutTestScreen(), name='layout_test')
 
         Clock.schedule_interval(self.update_audio_data_from_main_thread, 1/self.fps)
-        Clock.schedule_interval(self.update_playlist_data_from_main_thread, 2/self.fps)
         self.sm = sm
         return sm
-
-    def update_playlist_status(self, playlist):
-        if not playlist.dirty.empty():
-            print("playlist was dirty, updating:")
-            self.debug_menu.update_track_queue(playlist.now_playing, playlist.deque.copy())
-            playlist.dirty.get(block=True, timeout=0.5)
 
     def update_audio_viewer(self, energy_original, energy_modified):
         pass
@@ -379,10 +222,6 @@ class MainApp(App):
         touchscreen_api = api
 
     def update_frame(self, frame):
-        if self.touchscreen and self.sm.current == "lightdream":
-            self.touchscreen.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
-            with self.touchscreen.canvas:
-                self.touchscreen.canvas.ask_update()
         if self.debug_menu and self.sm.current == "debug_menu":
             self.debug_menu.led_output_texture.blit_buffer(bytes(frame), colorfmt='rgb', bufferfmt='ubyte')
             with self.debug_menu.canvas:
@@ -401,13 +240,6 @@ class MainApp(App):
                     al.energy_modified,
                 )
 
-                    
-    def update_playlist_data_from_main_thread(self, dt):
-        global touchscreen_api
-        if (self.sm.current == "debug_menu") and config.read("MODE") == "playlist":
-            self.update_playlist_status(
-                touchscreen_api['playlist']
-            )
 
 if __name__ == '__main__':
     MainApp().run()

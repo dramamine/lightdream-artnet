@@ -12,50 +12,50 @@ def prefer_a(a, b):
 
 prefer_a_vectorized = np.vectorize(prefer_a)
 
-# these straight-up replace the input frame
-class SourceEffect:
-  def __init__(self, key):
-    self.key = key
-    self.sp = SequencePlayer(loop=True)
-    self.sp.play(os.path.join('video', 'sources', "{}.mp4".format(key)))
+# # these straight-up replace the input frame
+# class SourceEffect:
+#   def __init__(self, key):
+#     self.key = key
+#     self.sp = SequencePlayer(loop=True)
+#     self.sp.play(os.path.join('video', 'sources', "{}.mp4".format(key)))
 
 
-  def apply(self, frame, fingers):
-    if not fingers:
-      return frame
+#   def apply(self, frame, fingers):
+#     if not fingers:
+#       return frame
     
-    source = self.sp.read_frame()
-    return prefer_a_vectorized(source, frame)
+#     source = self.sp.read_frame()
+#     return prefer_a_vectorized(source, frame)
 
 
-class SourceEffectCached:
-  def __init__(self, key, count):
-    self.key = key
-    self.count = count
-    self.frame_idx = 0
+# class SourceEffectCached:
+#   def __init__(self, key, count):
+#     self.key = key
+#     self.count = count
+#     self.frame_idx = 0
 
-    # frame cache
-    format_str = '{:02d}' if count < 100 else '{:03d}'
-    self.frames_cache = list(map(
-      lambda x: remove_unused_pixels_from_frame( cv2.imread(os.path.join(
-        'video', 'sources', key, # folder
-        '{}{}.png'.format(key, '{:02d}'.format(x)) # filename
-      ))),
-      range(count)
-    ))
+#     # frame cache
+#     format_str = '{:02d}' if count < 100 else '{:03d}'
+#     self.frames_cache = list(map(
+#       lambda x: remove_unused_pixels_from_frame( cv2.imread(os.path.join(
+#         'video', 'sources', key, # folder
+#         '{}{}.png'.format(key, '{:02d}'.format(x)) # filename
+#       ))),
+#       range(count)
+#     ))
 
-  def read_frame(self, idx):
-    assert(idx >= 0)
-    assert(idx <= self.count)
-    return self.frames_cache[idx]
+#   def read_frame(self, idx):
+#     assert(idx >= 0)
+#     assert(idx <= self.count)
+#     return self.frames_cache[idx]
 
-  def apply(self, frame, fingers):
-    if not fingers:
-      return frame
+#   def apply(self, frame, fingers):
+#     if not fingers:
+#       return frame
 
-    self.frame_idx = (self.frame_idx + 1) % self.count
-    source = self.read_frame(self.frame_idx)
-    return source
+#     self.frame_idx = (self.frame_idx + 1) % self.count
+#     source = self.read_frame(self.frame_idx)
+#     return source
 
 
 class SourceEffectCachedVideo:
@@ -92,5 +92,3 @@ class SourceEffectCachedVideo:
     return source
 
 radiant = SourceEffectCachedVideo(FilterNames.RADIANTLINES)
-triforce = SourceEffectCachedVideo(FilterNames.TRIFORCE)
-lightning = SourceEffectCachedVideo(FilterNames.LIGHTNING)

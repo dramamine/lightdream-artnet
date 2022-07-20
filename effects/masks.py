@@ -28,5 +28,4 @@ class MaskEffectCached(SourceEffectCachedVideo):
     return frame * mask
 
 nuclear = MaskEffectCached(FilterNames.NUCLEAR)
-blobs = MaskEffectCached(FilterNames.BLOBS)
 spiral = MaskEffectCached(FilterNames.SPIRAL)

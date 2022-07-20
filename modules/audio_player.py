@@ -17,9 +17,7 @@ print(f"audio: music files cached in {(time() - start_time):.1f} seconds")
 class AudioPlayer:
   sound = None
   def play(self, track_name):
-    start_time = time()
     self.sound = sounds[track_name]
-    # player.queue(source)
 
     if config.read("DISABLE_AUDIO") == True:
       self.sound.volume = 0
@@ -32,7 +30,7 @@ class AudioPlayer:
       return self.sound.state == "play"
     return False
 
-  # @TODO needs testing, i.e. doesn't work
+  # @TODO needs testing, i.e. doesn't work or are these unused / repetitive
   def stop(self):
     if self.sound:
       self.sound.stop()
