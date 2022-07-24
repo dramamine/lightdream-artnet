@@ -1,27 +1,11 @@
 
 
 from kivy.config import Config
-from kivy.uix.button import Button
 from kivy.graphics import Rectangle
 from kivy.graphics.texture import Texture
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty
 from kivy.clock import Clock
-
-from touch_circles import HUESHIFT
-from touch_circles import KALEIDOSCOPE
-from touch_circles import TUNNEL
-from touch_circles import LIGHTNING
-from touch_circles import NUCLEAR
-from touch_circles import SPIRAL
-from touch_circles import RADIANTLINES
-from touch_circles import RINGS
-from touch_circles import SPOTLIGHT
-from touch_circles import WEDGES
-from touch_circles import TRIFORCE
-from touch_circles import BLOBS
-
-from touch_input import InputCoordinateMapper
 
 from util.track_metadata import track_metadata
 from util.config import config
@@ -47,12 +31,9 @@ if FULLSCREEN_MODE:
 
 # this needs to be imported after configuration
 from kivy.app import App
-input_mapper = InputCoordinateMapper(LAYOUT_IMAGE_WIDTH, LAYOUT_IMAGE_HEIGHT)
 
 CURRENTLY_ENABLED_SCREENS = [
-    # 'lightdream',
     'debug_menu',
-    # 'layout_test',
 ]
 
 def get_next_screen(this_screen):
@@ -60,36 +41,6 @@ def get_next_screen(this_screen):
     return screens[screens.index(this_screen) + 1 - len(screens)]
 
 touchscreen_api = {}
-
-# class TouchableScreen(Screen):
-#     def on_touch_down(self, touch):
-#         point = (touch.x, touch.y)
-#         # print("============================>point", point)
-#         input_mapper.process_touch_enter(touch.id, point)
-
-#         # Annoying: touch bindings on the TouchableScreens override all button
-#         # press bindings.  DebugMenu screen has working on_press() bindings,
-#         # and shouldn't need to check for button collisions in the touch handler.
-#         if self.ids.NEXT_SCREEN_BUTTON.collide_point(*touch.pos):
-#             # Only go to next screen on double tap
-#             if touch.is_double_tap:
-#                 self.next_screen_callback(touch)
-
-#         return super().on_touch_down(touch)
-
-#     def on_touch_move(self, touch):
-#         point = (touch.x, touch.y)
-#         input_mapper.process_touch_motion(touch.id, point)
-#         return super().on_touch_move(touch)
-
-#     def on_touch_up(self, touch):
-#         point = (touch.x, touch.y)
-#         input_mapper.process_touch_leave(touch.id)
-#         return super().on_touch_up(touch)
-
-#     def next_screen_callback(self, touch):
-#         self.manager.current = get_next_screen(self.manager.current)
-
 
 class DebugMenuScreen(Screen):
     energy_orig_list = ListProperty([0,0,0,0,0,0,0,0,0,0])
@@ -115,6 +66,7 @@ class DebugMenuScreen(Screen):
         self.set_mode(config.read("MODE"))
 
         if config.read("LED_VIEWER") == True:
+            print("yes we have led viewer")
             self.led_output_texture = Texture.create(size=(170,30))
             with self.canvas:
                 Rectangle(

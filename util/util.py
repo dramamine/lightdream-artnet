@@ -35,5 +35,11 @@ def to_polar(point):
   theta = math.degrees(math.atan2(y,x)) % 360
   return r, theta
 
+def scale_to(val, old_range, new_range):
+  (old_range_min, old_range_max) = old_range
+  normalized_val = (val - old_range_min) / (old_range_max - old_range_min)
+  (new_range_min, new_range_max) = new_range
+  return normalized_val * (new_range_max - new_range_min) + new_range_min
+
 # all blacks
 nullframe = np.zeros((30,510), dtype=np.uint8)

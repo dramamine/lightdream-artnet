@@ -103,28 +103,28 @@ class ImageFilter:
       '{}{}.png'.format(key, idx_str)))
     return remove_unused_pixels_from_frame(frame)
 
-  def value_to_frame_idx(self, point):
-    value = to_polar(point)[0]
+  # value is 0-1
+  def value_to_frame_idx(self, value):
+    try:
+      assert(value >= 0)
+      assert(value <= 1)
+    except AssertionError:
+      print(f"value_to_frame_idx called with value {value}, why?? capping it")
+      value = max(0, (min(1, value)))
     return round(self.count * value)
 
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1
-  def apply(self, frame, fingers):
-    if not fingers:
+  def apply(self, frame, values):
+    if not values:
       return frame
 
     frames = list(map(lambda x: self.read_frame(
       self.key, self.value_to_frame_idx(x)
-    ), fingers))
+    ), values))
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
     return (combined/255) * frame
 
-class WedgeFilter(ImageFilter):
-  # try to move top wedge to the top
-  wedge_offset = 270
-  def value_to_frame_idx(self, point):
-    value = ((self.wedge_offset + (360 - to_polar(point)[1])) / 360) % 1
-    return round(self.count * value)
 
 # each finger = one ring of visibility
 # rings000.png = outer edges / base of dome
@@ -133,4 +133,4 @@ rings = ImageFilter(FilterNames.RINGS, 178)
 
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
-wedges = WedgeFilter(FilterNames.WEDGES, 202)
+wedges = ImageFilter(FilterNames.WEDGES, 202)
