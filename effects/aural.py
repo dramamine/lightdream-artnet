@@ -3,7 +3,7 @@ from random import random
 from util.config import config
 import modules.audio_input.runner as audio_listener
 from util.util import make_rgb_frame, numpy_mixer, scale_to
-from effects.filters import wedges
+from effects.filters import wedges, rings, reveal
 
 
 effects = [
@@ -21,6 +21,12 @@ wedge_effects = [
   lambda ticks: [(ticks * speed) % 1, (ticks * speed + 0.33) % 1, (ticks * speed + 0.66) % 1],
   lambda ticks: [(-ticks * speed) % 1, (-ticks * speed + 0.5) % 1],
   lambda ticks: [(-ticks * speed) % 1, (-ticks * speed + 0.33) % 1, (-ticks * speed + 0.66) % 1],
+]
+
+ring_effects = [
+  lambda ticks: [math.cos(ticks * speed), 1 - math.cos(ticks * speed)],
+  lambda ticks: [(ticks * speed) % 1, (ticks * speed + 0.5) % 1],
+  lambda ticks: [(-ticks * speed) % 1, (-ticks * speed + 0.5) % 1],
 ]
 
 effects_count = len(effects) + 1
@@ -41,12 +47,18 @@ class Aural:
 
   def rotate_aural_effects(self):
     x = random()
-    if x < .8:
+    if x < .0005:
       self.active_effect = self.apply_basic_effects
-      self.effect_variation_idx = math.floor( len(effects) * (x / .8) )
-    else:
+      self.effect_variation_idx = math.floor( len(effects) * (x / .5) )
+    elif x < .0007:
       self.active_effect = self.apply_wedge_effects
-      self.effect_variation_idx = math.floor( len(wedge_effects) * ((x-.8) / .2) )
+      self.effect_variation_idx = math.floor( len(wedge_effects) * ((x-.7) / .2) )
+    elif x < .0009:
+      self.active_effect = self.apply_ring_effects
+      self.effect_variation_idx = math.floor( len(ring_effects) * ((x-.9) / .2) )
+    else:
+      self.active_effect = self.apply_reveal_effects
+
     print("updated effects:", x, self.active_effect, self.effect_variation_idx)
 
   # frame: the frame to which we apply this effect
@@ -77,5 +89,19 @@ class Aural:
     wedge_frame = wedges.apply(frame, values_fn(self.ticks))
     return numpy_mixer(wedge_frame, frame, scale_to(energy, (0,1), (0, 0.5)))
     
+  def apply_ring_effects(self, frame):
+    self.ticks += 1
+    values_fn = ring_effects[self.effect_variation_idx]
+    energy = audio_listener.get_visual_strength()
+
+    ring_frame = rings.apply(frame, values_fn(self.ticks))
+    return numpy_mixer(ring_frame, frame, scale_to(energy, (0,1), (0, 0.5)))
+
+  def apply_reveal_effects(self, frame):
+    self.ticks += 1
+    energy = audio_listener.get_visual_strength()
+
+    reveal_frame = reveal.apply(frame, [energy])
+    return numpy_mixer(frame, reveal_frame, config.read("aural_effect_strength_reveal"))
 
 aural = Aural()

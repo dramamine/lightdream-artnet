@@ -21,6 +21,8 @@ class FilterNames:
   RINGS = 'rings'
   WEDGES = 'wedges'
 
+  CIRCULAR_REVEAL = 'circular-reveal'
+
 # these straight-up replace the input frame
 class BrightnessFilter:
   def __init__(self):
@@ -134,3 +136,5 @@ rings = ImageFilter(FilterNames.RINGS, 178)
 # each finger = one pie wedge
 # wedges000.png = top, going clockwise
 wedges = ImageFilter(FilterNames.WEDGES, 202)
+
+reveal = ImageFilter(FilterNames.CIRCULAR_REVEAL, 64)

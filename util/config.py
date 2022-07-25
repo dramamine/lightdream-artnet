@@ -39,10 +39,14 @@ defaults = {
   # what is the highest energy we can expect?
   "max_energy": 10,
   # 1.0 is no brightness adjustment. range: 0 -> inf
-  "brightness": 1.0,
+  "brightness": 0.15,
 
   # range: 0 -> 1
-  "aural_effect_strength_multiplier": 0.25,
+  "aural_effect_strength_multiplier": 0.15,
+
+  # circular reveal: 0 = original frame, 1 = only what's revealed by it
+  "aural_effect_strength_reveal": 0.75,
+
   # seconds until changing auto-clip
   "autoplay_interval": 50,
   # seconds over which we fade from one section to the next
