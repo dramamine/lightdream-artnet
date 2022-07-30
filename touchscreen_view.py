@@ -125,25 +125,48 @@ class MainApp(App):
                 # If it exists, this widget is a VKeyboard object which you can use
                 # to change the keyboard layout.
                 pass
-            self._keyboard.bind(on_key_down=self._on_keyboard_down)            
+            self._keyboard.bind(on_key_down=self._on_keyboard_down, on_key_up=self._on_keyboard_up)            
     def _keyboard_closed(self):
-        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down, on_key_up=self._on_keyboard_up)
         self._keyboard = None
 
+    def _on_keyboard_up(self, keyboard, keycode):
+        if keycode[0] == 51:
+            self.metronome_pressed = False
+            print("metronome released!")
+        return True
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-    #     print('The key', keycode, 'have been pressed')
-    #     print(' - text is %r' % text)
-    #     print(' - modifiers are %r' % modifiers)
+        print('The key', keycode, 'have been pressed')
+        print(' - text is %r' % text)
+        print(' - modifiers are %r' % modifiers)
 
         try:
+            if self.metronome_pressed:
+                if keycode[0] == 49:
+                    old_brain_position = config.read("brain_position")
+                    new_brain_position = (old_brain_position - 1) % 10
+                    config.write("brain_position", new_brain_position, True)
+                    print(f"updated brain_position to {new_brain_position}")
+                    return True
+                elif keycode[0] == 50:
+                    old_brain_position = config.read("brain_position")
+                    new_brain_position = (old_brain_position + 1) % 10
+                    config.write("brain_position", new_brain_position, True)
+                    print(f"updated brain_position to {new_brain_position}")      
+                    return True
+                return True
+
             if keycode[0] == 49:
                 if config.read("MODE") == "playlist":
-                    return touchscreen_api['skip_track']()
+                    touchscreen_api['skip_track']()
+                    return True
                 return touchscreen_api['set_mode']("playlist")
             elif keycode[0] == 50:
                 touchscreen_api['set_mode']("autoplay")
             elif keycode[0] == 51:
                 touchscreen_api['set_mode']("metronome")
+                self.metronome_pressed = True
+                print("metronome pressed!")
         except:
             print("ERROR: some error with _on_keyboard_down that we're ignoring")
         # Keycode is composed of an integer + a string
