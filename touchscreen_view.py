@@ -103,6 +103,9 @@ class MainApp(App):
         super().__init__()
         self.fps = fps
         self.sm = None      
+        self.autoplay_pressed = False
+        self.metronome_pressed = False
+        
         if config.read("FULLSCREEN_MODE"):
             from kivy.core.window import Window
             self._keyboard = Window.request_keyboard(
@@ -117,16 +120,33 @@ class MainApp(App):
         self._keyboard = None
 
     def _on_keyboard_up(self, keyboard, keycode):
-        if keycode[0] == 51:
+        if not self.autoplay_pressed and keycode[0] == 51:
             self.metronome_pressed = False
             print("metronome released!")
+        if not self.metronome_pressed and keycode[0] == 50:
+            self.autoplay_pressed = False
         return True
+
     def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
         print('The key', keycode, 'have been pressed')
         print(' - text is %r' % text)
         print(' - modifiers are %r' % modifiers)
 
         try:
+            if self.autoplay_pressed:
+                if keycode[0] == 49:
+                    old_brightness = config.read("brightness")
+                    new_brightness = (old_brightness - 0.02)
+                    config.write("brightness", new_brightness, True)
+                    print(f"updated brightness to {new_brightness}")
+                    return True
+                elif keycode[0] == 51:
+                    old_brightness = config.read("brightness")
+                    new_brightness = (old_brightness + 0.02)
+                    config.write("brightness", new_brightness, True)
+                    print(f"updated brightness to {new_brightness}")      
+                    return True
+                return True
             if self.metronome_pressed:
                 if keycode[0] == 49:
                     old_brain_position = config.read("brain_position")
@@ -142,6 +162,7 @@ class MainApp(App):
                     return True
                 return True
 
+
             if keycode[0] == 49:
                 if config.read("MODE") == "playlist":
                     touchscreen_api['skip_track']()
@@ -149,6 +170,7 @@ class MainApp(App):
                 return touchscreen_api['set_mode']("playlist")
             elif keycode[0] == 50:
                 touchscreen_api['set_mode']("autoplay")
+                self.autoplay_pressed = True
             elif keycode[0] == 51:
                 touchscreen_api['set_mode']("metronome")
                 self.metronome_pressed = True
