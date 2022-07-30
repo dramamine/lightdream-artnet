@@ -10,7 +10,7 @@ import cv2
 
 
 class FilterNames:
-  HUESHIFT = 'hueshift'
+  # HUESHIFT = 'hueshift'
   KALEIDOSCOPE = 'kaleidoscope'
   TUNNEL = 'tunnel'
 
@@ -46,64 +46,27 @@ class ValidateFilter:
 
 validate = ValidateFilter()
 
-class HueshiftFilter:
-  def __init__(self):
-    self.key = FilterNames.HUESHIFT
-    self.active = False
-
-  # static method
-  # do multiple fingers touch the huewheel? if so,
-  # find a nice in-between value
-  def reduce_fingers(self, finger_values):
-    if len(finger_values) == 2:
-      if abs(finger_values[1] - finger_values[0]) > 180:
-        return (finger_values[0] + finger_values[1] + 360) / 2
-    return np.average(
-      np.add(finger_values, range(len(finger_values)))
-    ) % 360
-
-  def apply(self, frame, fingers):
-    if not fingers:
-      if self.active:
-        self.active = False
-      return frame
-
-    finger_values = [to_polar(point)[1] for point in fingers]
-
-    if not self.active:
-      self.active = time()
-
-    # seconds since active: (0 - 0.15) mapped to (0.15 - 0.30)
-    mix_amount = min(time() - self.active, 0.15) + 0.15
-
-    # float in 0-1 range
-    val = self.reduce_fingers(finger_values)
-
-    # flip and rotate
-    val = (360 + 90 - val) % 360
-
-    # convert to hue. red is up
-    # ex. [255,0,0]
-    rgb = np.array(hsv2rgb(val, 1, 1))
-    mixed = numpy_mixer(frame, make_rgb_frame(rgb), mix_amount)
-
-    # exponent & divide should fix contrast, i.e. blacks stay black
-    return mixed * mixed / 255
-
-hueshift = HueshiftFilter()
-
 class ImageFilter:
   def __init__(self, key, count):
     self.key = key
     self.count = count
+    self.frames_cache = self.cache_images(key, count)
+    print(f"done cacheing images for {key}")
 
-  def read_frame(self, key, idx):
+  def cache_images(self, key, count):
+    # TODO just use a map or whatever
+    res = []
+    for i in range(count):
+      res.append(
+        cv2.imread(os.path.join('video', 'overlays', key,
+        '{}{}.png'.format(key, '{:03d}'.format(i))))
+      )
+    return res
+
+  def read_frame(self, idx):
     assert(idx >= 0)
-    assert(idx <= self.count)
-    idx_str = '{:03d}'.format(idx)
-    frame = cv2.imread(os.path.join('video', 'overlays', key,
-      '{}{}.png'.format(key, idx_str)))
-    return remove_unused_pixels_from_frame(frame)
+    assert(idx < self.count)
+    return remove_unused_pixels_from_frame(self.frames_cache[idx])
 
   # value is 0-1
   def value_to_frame_idx(self, value):
@@ -113,7 +76,7 @@ class ImageFilter:
     except AssertionError:
       print(f"value_to_frame_idx called with value {value}, why?? capping it")
       value = max(0, (min(1, value)))
-    return round(self.count * value)
+    return min( round(self.count * value), self.count-1)
 
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1
@@ -122,7 +85,7 @@ class ImageFilter:
       return frame
 
     frames = list(map(lambda x: self.read_frame(
-      self.key, self.value_to_frame_idx(x)
+      self.value_to_frame_idx(x)
     ), values))
     combined = frames[0] if len(frames) == 1 else np.sum(frames, axis=0)
     return (combined/255) * frame

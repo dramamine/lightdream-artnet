@@ -45,7 +45,7 @@ defaults = {
   "aural_effect_strength_multiplier": 0.15,
 
   # circular reveal: 0 = original frame, 1 = only what's revealed by it
-  "aural_effect_strength_reveal": 0.75,
+  "aural_effect_strength_reveal": 0.85,
 
   "chance_basic_effects": .5,
   "chance_wedge_effects": .2,
