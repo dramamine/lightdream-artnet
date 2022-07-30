@@ -47,6 +47,11 @@ defaults = {
   # circular reveal: 0 = original frame, 1 = only what's revealed by it
   "aural_effect_strength_reveal": 0.75,
 
+  "chance_basic_effects": .5,
+  "chance_wedge_effects": .2,
+  "chance_ring_effects": .2,
+  "chance_reveal_effects": .1,
+
   # seconds until changing auto-clip
   "autoplay_interval": 50,
   # seconds over which we fade from one section to the next

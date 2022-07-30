@@ -23,14 +23,15 @@ wedge_effects = [
   lambda ticks: [(-ticks * speed) % 1, (-ticks * speed + 0.33) % 1, (-ticks * speed + 0.66) % 1],
 ]
 
+wave_speed = 0.04
 ring_effects = [
-  lambda ticks: [math.cos(ticks * speed), 1 - math.cos(ticks * speed)],
+  lambda ticks: [
+    (.5 + .5*(math.cos(ticks * wave_speed))) % 1, 
+    (.5 - .5*(math.cos(ticks * wave_speed))) % 1
+  ],
   lambda ticks: [(ticks * speed) % 1, (ticks * speed + 0.5) % 1],
   lambda ticks: [(-ticks * speed) % 1, (-ticks * speed + 0.5) % 1],
 ]
-
-effects_count = len(effects) + 1
-
 
 class Aural:
   def __init__(self):
@@ -47,19 +48,21 @@ class Aural:
 
   def rotate_aural_effects(self):
     x = random()
-    if x < .0005:
+    if x < config.read("chance_basic_effects"):
       self.active_effect = self.apply_basic_effects
       self.effect_variation_idx = math.floor( len(effects) * (x / .5) )
-    elif x < .0007:
+    elif x < config.read("chance_basic_effects") + config.read("chance_wedge_effects"):
       self.active_effect = self.apply_wedge_effects
       self.effect_variation_idx = math.floor( len(wedge_effects) * ((x-.7) / .2) )
-    elif x < .0009:
+    elif x < config.read("chance_basic_effects") + config.read("chance_wedge_effects") + config.read("chance_ring_effects"):
       self.active_effect = self.apply_ring_effects
       self.effect_variation_idx = math.floor( len(ring_effects) * ((x-.9) / .2) )
     else:
       self.active_effect = self.apply_reveal_effects
 
-    print("updated effects:", x, self.active_effect, self.effect_variation_idx)
+    # print("updated effects:", x, self.active_effect, self.effect_variation_idx)
+    # self.active_effect = self.apply_reveal_effects
+    # self.effect_variation_idx = 0
 
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1
@@ -68,6 +71,7 @@ class Aural:
     if mode != "autoplay":
       return frame
     
+    self.ticks += 1
     return self.active_effect(frame)
     
 
@@ -77,28 +81,21 @@ class Aural:
     return frame + make_rgb_frame(enhanced)
 
   def apply_wedge_effects(self, frame):
-    self.ticks += 1
     values_fn = wedge_effects[self.effect_variation_idx]
     energy = audio_listener.get_visual_strength()
-    # er, these values would be fun for rings
-    # speed = 60
-    # values_to_use = [math.sin(self.ticks / speed), 1-math.sin(self.ticks / speed)]
-
-    # energy = scale_to(energy, 0,1, 0.5,1) 
 
     wedge_frame = wedges.apply(frame, values_fn(self.ticks))
     return numpy_mixer(wedge_frame, frame, scale_to(energy, (0,1), (0, 0.5)))
     
   def apply_ring_effects(self, frame):
-    self.ticks += 1
     values_fn = ring_effects[self.effect_variation_idx]
     energy = audio_listener.get_visual_strength()
 
     ring_frame = rings.apply(frame, values_fn(self.ticks))
+    print("using values:", values_fn(self.ticks))
     return numpy_mixer(ring_frame, frame, scale_to(energy, (0,1), (0, 0.5)))
 
   def apply_reveal_effects(self, frame):
-    self.ticks += 1
     energy = audio_listener.get_visual_strength()
 
     reveal_frame = reveal.apply(frame, [energy])
