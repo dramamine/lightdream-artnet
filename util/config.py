@@ -14,7 +14,10 @@ defaults = {
   # this gets disabled in production.
   "DEBUG_TRACKLIST": True,
 
+  # if there's a screen, do we show LED output?
   "LED_VIEWER": False,
+  # if there's a screen, do we show audio viewer?
+  "AUDIO_VIEWER": False,
 
   # if true, fullscreen touchscreen
   "FULLSCREEN_MODE": False,

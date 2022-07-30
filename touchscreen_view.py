@@ -49,20 +49,6 @@ class DebugMenuScreen(Screen):
     def __init__(self):
         super().__init__()
 
-
-        # read slider values from config
-        slider_ids = [
-            'decay_constant',
-            'max_energy',
-            'aural_effect_strength_multiplier',
-            'brain_position',
-            'brightness'
-        ]
-        for slider_id in slider_ids:
-            value = config.read(slider_id)
-            self.ids[slider_id].value = value
-            self.ids[f'{slider_id}_value'].text = str(value)
-
         self.set_mode(config.read("MODE"))
 
         if config.read("LED_VIEWER") == True:
@@ -183,14 +169,10 @@ class MainApp(App):
         self.debug_menu = DebugMenuScreen()
         sm.add_widget(self.debug_menu, name='debug_menu')
 
-        Clock.schedule_interval(self.update_audio_data_from_main_thread, 1/self.fps)
+        if config.read("LED_VIEWER") or config.read("AUDIO_VIEWER"):
+            Clock.schedule_interval(self.update_audio_data_from_main_thread, 1/self.fps)
         self.sm = sm
         return sm
-
-    def update_audio_viewer(self, energy_original, energy_modified):
-        pass
-        if config.read("MODE") == "autoplay":
-            self.debug_menu.update_audio_viewer(energy_original, energy_modified)
 
     def add_touchscreen_api(self, api):
         global touchscreen_api
@@ -202,15 +184,15 @@ class MainApp(App):
             with self.debug_menu.canvas:
                 self.debug_menu.canvas.ask_update()
 
-    def update_audio_data_from_main_thread(self, dt):
+    def update_audio_data_from_main_thread(self, _dt):
         global touchscreen_api
         if config.read("LED_VIEWER"):
             self.update_frame(touchscreen_api['get_frame']())
                 
-        if (self.sm.current == "debug_menu") and config.read("MODE") == "autoplay":
+        if config.read("AUDIO_VIEWER") and (self.sm.current == "debug_menu") and config.read("MODE") == "autoplay":
             with touchscreen_api['audio_condition']:
                 al = touchscreen_api['audio_listener']
-                self.update_audio_viewer(
+                self.debug_menu.update_audio_viewer(
                     al.energy_original,
                     al.energy_modified,
                 )

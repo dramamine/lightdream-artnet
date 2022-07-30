@@ -180,13 +180,6 @@
                                     pos: 1360+180,740
                                     size: 20,20
 
-                        Slider:
-                            id: max_energy
-                            min: 5
-                            max: 250
-                            step: 5
-                            on_touch_up: root.update_config_value('max_energy', self.value)
-
                         BoxLayout:
                             orientation: 'horizontal'
                             size_hint_y: 0.05
@@ -256,27 +249,6 @@
                                     pos: 1360+180,470
                                     size: 20,20
 
-                        Slider:
-                            id: decay_constant
-                            min: -0.1
-                            max: -0.01
-                            step: 0.001
-                            on_touch_up: root.update_config_value('decay_constant', self.value)
-
-
-                        BoxLayout:
-                            orientation: 'horizontal'
-                            size_hint_y: 0.05
-                            Label:
-                                text: "Aural Effect Strength Multiplier"
-                            Label:
-                                id: aural_effect_strength_multiplier_value
-                        Slider:
-                            id: aural_effect_strength_multiplier
-                            min: 0
-                            max: 1
-                            step: 0.01
-                            on_touch_up: root.update_config_value('aural_effect_strength_multiplier', self.value)
             FloatLayout:
                 id: metronome_controller
                 canvas.before:
@@ -306,12 +278,6 @@
                                 text: "Brain Position\n0-4 normal cycle, 5-9 reversed"
                             Label:
                                 id: brain_position_value
-                        Slider:
-                            id: brain_position
-                            min: 0
-                            max: 9
-                            step: 1
-                            on_touch_up: root.update_config_value('brain_position', int(self.value))
                         
                         BoxLayout:
                             orientation: 'horizontal'
@@ -320,12 +286,6 @@
                                 text: "Brightness"
                             Label:
                                 id: brightness_value
-                        Slider:
-                            id: brightness
-                            min: 0
-                            max: 1.5
-                            step: 0.01
-                            on_touch_up: root.update_config_value('brightness', self.value)
 
 
 
