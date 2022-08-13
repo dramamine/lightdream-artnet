@@ -5,15 +5,12 @@ from modules.artnet import show
 from util.config import config
 from time import time
 import modules.audio_input.runner as audio_listener
-#from touchscreen_view import MainApp
 from util.periodicrun import periodicrun
 
 from modules.controller import Controller
 import pynput.keyboard as keyboard
 
 fps = 40
-
-# app = MainApp(config.read("TOUCHSCREEN_DATA_REFRESH_RATE"))
 
 controller = Controller(
   config.read("MODE")
@@ -76,16 +73,6 @@ def loop_timer(dt=0):
     
   avg_loop_time = avg_loop_time + (loop_time - avg_loop_time) / frame_counter
 
-# app.add_touchscreen_api({
-#   'playlist': controller.pl,
-#   'get_frame': controller.get_frame,
-#   'skip_track': queue_skip_track,
-#   'set_mode': queue_set_mode,
-#   'audio_listener': audio_listener,
-#   'audio_condition': audio_listener.audio_condition
-# })
-
-# playlist_pressed = False
 autoplay_pressed = False # 2
 metronome_pressed = False # 3
 def on_press(key):
@@ -171,9 +158,6 @@ else:
 
 try:
   pr.run()
-  while True:
-    pass
-  # app.run()
 finally:
   audio_listener.thread_ender()
   pr.interrupt()
