@@ -85,21 +85,74 @@ def loop_timer(dt=0):
 #   'audio_condition': audio_listener.audio_condition
 # })
 
-
+# playlist_pressed = False
+autoplay_pressed = False # 2
+metronome_pressed = False # 3
 def on_press(key):
-    try:
-        print('alphanumeric key {0} pressed'.format(
-            key.char))
-    except AttributeError:
-        print('special key {0} pressed'.format(
-            key))
+  global autoplay_pressed, metronome_pressed
+  try:
+    # print('alphanumeric key {0} pressed'.format(
+    #   key.char))
+    if autoplay_pressed:
+      if key.char == '1':
+        old_brightness = config.read("brightness")
+        new_brightness = (old_brightness - 0.02)
+        config.write("brightness", new_brightness, True)
+        print(f"updated brightness to {new_brightness}")
+        return True
+      elif key.char == '3':
+        old_brightness = config.read("brightness")
+        new_brightness = (old_brightness + 0.02)
+        config.write("brightness", new_brightness, True)
+        print(f"updated brightness to {new_brightness}")  
+        return True
+      return True
+
+    if metronome_pressed:
+      if key.char == '1':
+        old_brain_position = config.read("brain_position")
+        new_brain_position = (old_brain_position - 1) % 10
+        config.write("brain_position", new_brain_position, True)
+        print(f"updated brain_position to {new_brain_position}")
+        return True
+      elif key.char == '2':
+        old_brain_position = config.read("brain_position")
+        new_brain_position = (old_brain_position + 1) % 10
+        config.write("brain_position", new_brain_position, True)
+        print(f"updated brain_position to {new_brain_position}")      
+        return True
+      return True
+
+    if key.char == '1':
+        if config.read("MODE") == "playlist":
+            print("skipping track")
+            queue_skip_track()
+            return True
+        print("setting mode to playlist")
+        queue_set_mode("playlist")
+    elif key.char == '2':
+        print("setting mode to autoplay")
+        queue_set_mode("autoplay")
+        autoplay_pressed = True
+    elif key.char == '3':
+        print("setting mode to metronome")
+        queue_set_mode("metronome")
+        metronome_pressed = True
+  except AttributeError:
+    print('special key {0} pressed'.format(
+      key))
 
 def on_release(key):
-    print('{0} released'.format(
-        key))
-    if key == keyboard.Key.esc:
-        # Stop listener
-        return False
+  global autoplay_pressed, metronome_pressed
+  # print('{0} released'.format(
+  #   key))
+  if key.char == '2':
+    autoplay_pressed = False
+  elif key.char == '3':
+    metronome_pressed = False
+  elif key == keyboard.Key.esc:
+    # Stop listener
+    return False
 
 listener = keyboard.Listener(
     on_press=on_press,
