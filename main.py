@@ -9,11 +9,7 @@ import modules.audio_input.runner as audio_listener
 from util.periodicrun import periodicrun
 
 from modules.controller import Controller
-
-import keyboard
-keyboard.add_hotkey('1', lambda: print("you pressed 1"))
-keyboard.add_hotkey('2', lambda: print("you pressed 2"))
-keyboard.add_hotkey('3', lambda: print("you pressed 3"))
+import pynput.keyboard as keyboard
 
 fps = 40
 
@@ -89,6 +85,28 @@ def loop_timer(dt=0):
 #   'audio_condition': audio_listener.audio_condition
 # })
 
+
+def on_press(key):
+    try:
+        print('alphanumeric key {0} pressed'.format(
+            key.char))
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
+
+def on_release(key):
+    print('{0} released'.format(
+        key))
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+listener = keyboard.Listener(
+    on_press=on_press,
+    on_release=on_release)
+listener.start()
+
+
 # TODO try lower values on rpi
 accuracy = 0.025 
 
@@ -99,7 +117,7 @@ else:
   pr = periodicrun(1/fps, loop, list(), 0, accuracy)
 
 try:
-  pr.run_thread()
+  pr.run()
   while True:
     pass
   # app.run()
