@@ -68,8 +68,8 @@ def loop_timer(dt=0):
     last_time = diff
 
   loop_time = time() - loop_start_time
-  if loop_time > 0.020:
-    print("warning: loop qok too long (needs to be < 0.025):", loop_time)
+  if loop_time > 0.025:
+    print("warning: loop took too long (needs to be < 0.025):", loop_time)
     
   avg_loop_time = avg_loop_time + (loop_time - avg_loop_time) / frame_counter
 

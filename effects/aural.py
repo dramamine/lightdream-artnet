@@ -48,15 +48,19 @@ class Aural:
 
   def rotate_aural_effects(self):
     x = random()
-    if x < config.read("chance_basic_effects"):
+    breakpoint_a = config.read("chance_basic_effects")
+    breakpoint_b = breakpoint_a + config.read("chance_wedge_effects")
+    breakpoint_c = breakpoint_b + config.read("chance_ring_effects")
+
+    if x < breakpoint_a:
       self.active_effect = self.apply_basic_effects
-      self.effect_variation_idx = math.floor( len(effects) * (x / .5) )
-    elif x < config.read("chance_basic_effects") + config.read("chance_wedge_effects"):
+      self.effect_variation_idx = math.floor( len(effects) * (x / config.read("chance_basic_effects")) )
+    elif x < breakpoint_b:
       self.active_effect = self.apply_wedge_effects
-      self.effect_variation_idx = math.floor( len(wedge_effects) * ((x-.7) / .2) )
-    elif x < config.read("chance_basic_effects") + config.read("chance_wedge_effects") + config.read("chance_ring_effects"):
+      self.effect_variation_idx = math.floor( len(wedge_effects) * ((x-breakpoint_a) / config.read("chance_wedge_effects")) )
+    elif x < breakpoint_c:
       self.active_effect = self.apply_ring_effects
-      self.effect_variation_idx = math.floor( len(ring_effects) * ((x-.9) / .2) )
+      self.effect_variation_idx = math.floor( len(ring_effects) * ((x-breakpoint_b) / config.read("chance_ring_effects")) )
     else:
       self.active_effect = self.apply_reveal_effects
 

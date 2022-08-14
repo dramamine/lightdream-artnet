@@ -36,7 +36,7 @@ def recalculate_max_energy():
     return
   last = config.read("max_energy")
   next = max(energy_original) * 1.1
-  print(f"updating max energy from {last} to {next}")
+  print(f"updating max energy from {last:.1f} to {next:.1f}")
   config.write("max_energy", next)
 
 
