@@ -1,4 +1,4 @@
-
+#!/usr/bin/python
 from queue import Queue
 from modules.artnet import show
 
@@ -69,7 +69,7 @@ def loop_timer(dt=0):
 
   loop_time = time() - loop_start_time
   if loop_time > 0.020:
-    print("warning: loop took too long (needs to be < 0.025):", loop_time)
+    print("warning: loop qok too long (needs to be < 0.025):", loop_time)
     
   avg_loop_time = avg_loop_time + (loop_time - avg_loop_time) / frame_counter
 
@@ -147,10 +147,8 @@ listener = keyboard.Listener(
     on_release=on_release)
 listener.start()
 
-
 # TODO try lower values on rpi
 accuracy = 0.025 
-
 
 if config.read("USE_PERFORMANCE_TIMING"):
   pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
@@ -161,6 +159,6 @@ try:
   pr.run()
 finally:
   audio_listener.thread_ender()
-  pr.interrupt()
+  # pr.interrupt()
   if config.read("USE_PERFORMANCE_TIMING"):
     print(f"avg loop time (ms): {1000*avg_loop_time:.1f}") 
