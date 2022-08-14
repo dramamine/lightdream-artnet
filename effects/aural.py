@@ -60,7 +60,7 @@ class Aural:
     else:
       self.active_effect = self.apply_reveal_effects
 
-    print("updated effects:", x, self.active_effect, self.effect_variation_idx)
+    print(f"updated effects: {self.active_effect.__name__} variation {self.effect_variation_idx}")
     self.active_effect = self.apply_wedge_effects
     self.effect_variation_idx = 0
 
@@ -92,7 +92,6 @@ class Aural:
     energy = audio_listener.get_visual_strength()
 
     ring_frame = rings.apply(frame, values_fn(self.ticks))
-    print("using values:", values_fn(self.ticks))
     return numpy_mixer(ring_frame, frame, scale_to(energy, (0,1), (0, 0.5)))
 
   def apply_reveal_effects(self, frame):

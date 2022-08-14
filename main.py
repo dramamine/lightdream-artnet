@@ -78,8 +78,7 @@ metronome_pressed = False # 3
 def on_press(key):
   global autoplay_pressed, metronome_pressed
   try:
-    # print('alphanumeric key {0} pressed'.format(
-    #   key.char))
+    # print('alphanumeric key {0} pressed'.format(key.char))
     if autoplay_pressed:
       if key.char == '1':
         old_brightness = config.read("brightness")
@@ -131,15 +130,17 @@ def on_press(key):
 
 def on_release(key):
   global autoplay_pressed, metronome_pressed
-  # print('{0} released'.format(
-  #   key))
-  if key.char == '2':
-    autoplay_pressed = False
-  elif key.char == '3':
-    metronome_pressed = False
-  elif key == keyboard.Key.esc:
-    # Stop listener
-    return False
+  # print('{0} released'.format(key))
+  try:
+    if key == keyboard.Key.esc:
+      # Stop listener
+      return False
+    elif key.char == '2':
+      autoplay_pressed = False
+    elif key.char == '3':
+      metronome_pressed = False
+  except AttributeError:
+    pass
 
 listener = keyboard.Listener(
     on_press=on_press,
@@ -161,4 +162,5 @@ try:
 finally:
   audio_listener.thread_ender()
   pr.interrupt()
-  print(f"avg loop time (ms): {1000*avg_loop_time:.1f}") 
+  if config.read("USE_PERFORMANCE_TIMING"):
+    print(f"avg loop time (ms): {1000*avg_loop_time:.1f}") 

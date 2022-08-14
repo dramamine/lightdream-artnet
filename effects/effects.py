@@ -15,8 +15,6 @@ class EffectsManager:
   # note that 'frame' could be dtype uint8 or float64 at this point.
   # but output has gotta be uint8 so we can convert to bytearray later.
   def apply_effects(self, frame, finger_manager):
-    # print("before:", frame[0][0], frame[0][1], frame[0][2])
-
     for effects_list in [self.filter_effects, self.audio_based_effects]:
       for effect in effects_list:
         frame = effect.apply(frame, finger_manager.get_values(effect.key) )
