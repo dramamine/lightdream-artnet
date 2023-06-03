@@ -51,7 +51,6 @@ class Autoplay:
 
   def tick(self):
     time_since = time.time() - self.timer
-    # print(time_since)
     if time_since > config.read("autoplay_interval"):
       self.crossfade_to_next_track()
       time_since = 0
