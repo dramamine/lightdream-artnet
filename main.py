@@ -7,6 +7,12 @@ from time import time
 import modules.audio_input.runner as audio_listener
 from util.periodicrun import periodicrun
 
+# show basic rainbow image
+from util.util import make_rgb_frame
+show(make_rgb_frame([138,43,226]))
+print("it has been shown")
+
+# audio files loaded here
 from modules.controller import Controller
 import pynput.keyboard as keyboard
 
