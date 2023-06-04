@@ -8,8 +8,19 @@ import modules.audio_input.runner as audio_listener
 from util.periodicrun import periodicrun
 
 # show basic rainbow image
-from util.util import make_rgb_frame
-show(make_rgb_frame([138,43,226]))
+import os
+import cv2
+from util.util import make_rgb_frame, remove_unused_pixels_from_frame
+res = []
+key = "loading-pattern"
+res = remove_unused_pixels_from_frame(
+  cv2.imread(os.path.join('video', 'overlays',
+  'loading-pattern.png'))
+)
+
+assert(len(res) == 30)
+assert(len(res[0]) == 510)
+show(res)
 print("it has been shown")
 
 # audio files loaded here
