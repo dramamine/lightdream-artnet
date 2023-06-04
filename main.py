@@ -162,6 +162,7 @@ else:
 try:
   pr.run()
 except:
+  print("some exception occurred.")
   show_error_pattern()
 finally:
   audio_listener.thread_ender()
