@@ -6,22 +6,9 @@ from util.config import config
 from time import time
 import modules.audio_input.runner as audio_listener
 from util.periodicrun import periodicrun
+from util.util import show_error_pattern, show_loading_pattern
 
-# show basic rainbow image
-import os
-import cv2
-from util.util import make_rgb_frame, remove_unused_pixels_from_frame
-res = []
-key = "loading-pattern"
-res = remove_unused_pixels_from_frame(
-  cv2.imread(os.path.join('video', 'overlays',
-  'loading-pattern.png'))
-)
-
-assert(len(res) == 30)
-assert(len(res[0]) == 510)
-show(res)
-print("it has been shown")
+show_loading_pattern()
 
 # audio files loaded here
 from modules.controller import Controller
@@ -174,6 +161,8 @@ else:
 
 try:
   pr.run()
+except:
+  show_error_pattern()
 finally:
   audio_listener.thread_ender()
   # pr.interrupt()
