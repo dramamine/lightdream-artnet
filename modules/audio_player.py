@@ -27,7 +27,7 @@ class AudioPlayer:
     
   def load(self, track_name):
     print(f"loading track: {track_name}")
-    sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.wav'.format(track_name)))
+    sounds[track_name] = SoundLoader.load(os.path.join('audio', '{}.ogg'.format(track_name)))
     # time.sleep(5)
     print("done loading track")
 
