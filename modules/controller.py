@@ -43,11 +43,17 @@ class Controller:
   def get_frame(self):
     return self.frame
 
-  def update_frame(self):
+  def update_frame(self, restart_pr):
     if self.mode == "autoplay":
       frame = self.ap.tick()
     else:
+      needs_to_load_audio = self.pl.needs_to_load_audio()
+
       frame = self.pl.tick()
+
+      if needs_to_load_audio:
+        print("restarting pr")
+        restart_pr()
 
     frame = effects_manager.apply_effects(frame, finger_manager)
 

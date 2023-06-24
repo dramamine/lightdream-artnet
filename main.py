@@ -41,7 +41,7 @@ def loop():
       skip_track_queue.get(block=True, timeout=0.5)
       controller.pl.skip_track()
 
-    controller.update_frame()
+    controller.update_frame(restart_pr)
 
 
 start_time = time()
@@ -158,6 +158,15 @@ if config.read("USE_PERFORMANCE_TIMING"):
   pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
 else:
   pr = periodicrun(1/fps, loop, list(), 0, accuracy)
+
+def restart_pr():
+  print("restarting pr")
+  pr.interrupt()
+  if config.read("USE_PERFORMANCE_TIMING"):
+    pr = periodicrun(1/fps, loop_timer, list(), 0, accuracy)
+  else:
+    pr = periodicrun(1/fps, loop, list(), 0, accuracy)
+  
 
 try:
   pr.run()

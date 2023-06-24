@@ -39,8 +39,7 @@ class Playlist:
     return tracks[self.idx]
     
   def start_track(self, track_name):
-    print("starting audio:", track_name)
-
+    self.ap.load(track_name)
     self.sp.play(os.path.join('video', 'sequences', '{}.mp4'.format(track_name)))
     self.ap.play(track_name)
 
@@ -61,6 +60,9 @@ class Playlist:
       self.start_track( self.pick_track() )
     
     return self.sp.read_frame()
+
+  def needs_to_load_audio(self):
+    return not self.ap.is_playing()
 
   def enqueue(self, track_name):
     # no duplicates; could just be too many presses from kivy
