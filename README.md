@@ -37,7 +37,21 @@ https://www.alsa-project.org/main/index.php/Setting_the_default_device
 
 cat /proc/asound/cards
 echo -e "defaults.pcm.card 1\ndefaults.ctl.card 1" > /etc/asound.conf
-```
+
+How to run at startup:
+
+cat ~/.config/lxsession/LXDE-pi/autostart 
+
+@lxpanel --profile LXDE-pi
+@pcmanfm --desktop --profile LXDE-pi
+@xscreensaver -no-splash
+
+cat /etc/xdg/autostart/lightdream.desktop
+[Desktop Entry]
+Exec=lxterminal -e "cd ~/lightdream-artnet && python main.py; bash"
+
+
+``
 
 Features:
 
