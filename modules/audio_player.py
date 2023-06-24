@@ -24,6 +24,9 @@ class AudioPlayer:
       self.sound.volume = 0
 
     self.sound.play()
+    # wait for it to be playing
+    while self.sound.state != "play":
+      continue
     
   def load(self, track_name):
     print(f"loading track: {track_name}")
