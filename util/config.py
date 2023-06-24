@@ -35,6 +35,9 @@ defaults = {
   # playing frames from video file. this helps with audio sync
   "FRAME_DELAY": 5,
 
+  # load audio from pickle file instead
+  "USE_PRELOADED_AUDIO": False,
+
 
   # range: -0.1 is a really sharp decay (10% per frame)
   #        -0.01 is weaker (1% per frame)
