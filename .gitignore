@@ -160,3 +160,4 @@ audio/*.ogg
 desktop.ini
 *.img
 .vscode
+*.whl
