@@ -65,8 +65,6 @@ class Aural:
       self.active_effect = self.apply_reveal_effects
 
     print(f"updated effects: {self.active_effect.__name__} variation {self.effect_variation_idx}")
-    self.active_effect = self.apply_wedge_effects
-    self.effect_variation_idx = 0
 
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1

@@ -59,6 +59,8 @@ class Playlist:
     if not self.ap.is_playing():
       print("song ended.")
       self.start_track( self.pick_track() )
+    elif self.sp.ended:
+      self.start_track( self.pick_track() )
     
     return self.sp.read_frame()
 
