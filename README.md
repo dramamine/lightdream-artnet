@@ -70,24 +70,9 @@ Exec=lxterminal -e "cd ~/lightdream-artnet && python main.py; bash"
 
 ```
 
-Helpful commands for running on Rpi:
-
-```bash
-# you want to run with X11 running. it's possible to use from the command-line
-# with Kivy as your touchscreen and keyboard input. but, with pynput for
-# your keyboard, it's easier to just open X11.
-sudo vi /etc/xdg/lxsession/LXDE-pi/autostart
-
-# the file should look like this:
-# https://forums.raspberrypi.com/viewtopic.php?t=294014
-@lxpanel --profile LXDE-pi
-@pcmanfm --desktop --profile LXDE-pi
-@xscreensaver -no-splash
-@lxterminal
-
-# switch between desktop/CLI
-sudo raspi-config
-```
-
 Loading an .img file onto Rpi SD card:
 - use [Win32 Disk Imager](https://sourceforge.net/projects/win32diskimager/)
+- to minify images:
+  - sudo mount -t drvfs E: /mnt/e
+  - cd /mnt/e/git/lightdream-artnet
+  - sudo /usr/local/bin/pishrink.sh {imagefile.img}
