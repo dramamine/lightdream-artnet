@@ -14,7 +14,10 @@ defaults = {
   # this gets disabled in production.
   "DEBUG_TRACKLIST": True,
 
+  # if there's a screen, do we show LED output?
   "LED_VIEWER": False,
+  # if there's a screen, do we show audio viewer?
+  "AUDIO_VIEWER": False,
 
   # if true, fullscreen touchscreen
   "FULLSCREEN_MODE": False,
@@ -39,10 +42,19 @@ defaults = {
   # what is the highest energy we can expect?
   "max_energy": 10,
   # 1.0 is no brightness adjustment. range: 0 -> inf
-  "brightness": 1.0,
+  "brightness": 0.15,
 
   # range: 0 -> 1
-  "aural_effect_strength_multiplier": 0.25,
+  "aural_effect_strength_multiplier": 0.15,
+
+  # circular reveal: 0 = original frame, 1 = only what's revealed by it
+  "aural_effect_strength_reveal": 0.85,
+
+  "chance_basic_effects": .5,
+  "chance_wedge_effects": .2,
+  "chance_ring_effects": .2,
+  "chance_reveal_effects": .1,
+
   # seconds until changing auto-clip
   "autoplay_interval": 50,
   # seconds over which we fade from one section to the next

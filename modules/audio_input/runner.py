@@ -35,10 +35,10 @@ def recalculate_max_energy():
   if config.read("MODE") == "playlist":
     return
   last = config.read("max_energy")
-  next = max(energy_original) * 1.1
-  print(f"updating max energy from {last} to {next}")
-  config.write("max_energy", next)
-
+  if energy_original[0] > 0:
+    next = max(energy_original[0] * 1.1, 20)
+    print(f"updating max energy from {last:.1f} to {next:.1f}")
+    config.write("max_energy", next)
 
 def output_reader(proc):
     global freq, energy
@@ -84,7 +84,10 @@ def get_visual_strength():
   return as_float(get_energy())
 
 def as_float(energy):
-  return min( 1, energy / config.read("max_energy") )
+  try:
+    return min( 1, energy / config.read("max_energy") )
+  except:
+    return 50.0
 
 def float_to_color(val):
   val = min(1, max(val, 0))
