@@ -68,9 +68,7 @@ cat /etc/xdg/autostart/lightdream.desktop
 Exec=lxterminal -e "cd ~/lightdream-artnet && python main.py; bash"
 
 
-``
-
-
+```
 
 Helpful commands for running on Rpi:
 
@@ -90,3 +88,6 @@ sudo vi /etc/xdg/lxsession/LXDE-pi/autostart
 # switch between desktop/CLI
 sudo raspi-config
 ```
+
+Loading an .img file onto Rpi SD card:
+- use [Win32 Disk Imager](https://sourceforge.net/projects/win32diskimager/)
