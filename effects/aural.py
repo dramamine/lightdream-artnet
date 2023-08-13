@@ -69,14 +69,8 @@ class Aural:
   # frame: the frame to which we apply this effect
   # fingers: a list of parameters 0-1
   def apply(self, frame, fingers):
-    mode = config.read("MODE")
-    if mode != "autoplay":
-      return frame
+    return frame
     
-    self.ticks += 1
-    return self.active_effect(frame)
-    
-
   def apply_basic_effects(self, frame):
     energy = audio_listener.get_visual_strength() * config.read("aural_effect_strength_multiplier")
     enhanced = effects[self.effect_variation_idx](255 * energy)

@@ -41,43 +41,13 @@ def recalculate_max_energy():
     config.write("max_energy", next)
 
 def output_reader(proc):
-    global freq, energy
-    for line in iter(proc.stdout.readline, b''):
-        try:
-          values = line.decode('utf-8').strip().split() # (freq, energy)
-          update_energy( float(values[1]) )
-        except ValueError:
-          print("bad line from audio runner:", line.decode('utf-8').strip())
-        except IndexError:
-          print("bad line from audio runner:", line.decode('utf-8').strip())
-
-# use mock process except on 
-suffix = "_mock"
-if config.read("PLATFORM") == "win":
-  suffix = "_pyaudio"
-elif config.read("PLATFORM") == "rpi":
-  suffix = "_alsaaudio"
-
-proc = subprocess.Popen(['python', '-u', 
-  'modules/audio_input/subprocess{}.py'.format(suffix)],
-  stdout=subprocess.PIPE,
-  stderr=subprocess.STDOUT)
-
-t = threading.Thread(target=output_reader, args=(proc,))
-t.start()
+  return
 
 def thread_ender():
-  proc.terminate()
-  try:
-    proc.wait(timeout=0.2)
-    print('== audio input subprocess exited with return code ', proc.returncode)
-  except subprocess.TimeoutExpired:
-    print('subprocess did not terminate in time')
-
-  t.join()
+  return
 
 def get_energy():
-  return energy_modified[0]
+  return 0
 
 # returns a float 0-1 for how strong we want the audio visualization effect to be
 def get_visual_strength():
