@@ -23,11 +23,6 @@ bite:
   artist_name: Oneohtrix Point Never
   bpm: 
   energy: 
-dyscontrolled:
-  track_name: Dyscontrolled Galaxy
-  artist_name: Camellia?
-  bpm: 
-  energy: 
 faster:
   track_name: Happy Faster
   artist_name: UFO Project
@@ -63,11 +58,6 @@ hustlebones:
   artist_name: Death Grips
   bpm: 215
   energy: high
-ithica:
-  track_name: Ithica 27 o 9
-  artist_name: Mogwai
-  bpm: 165
-  energy: low
 misty:
   track_name: I Awoke on a Misty Morning
   artist_name: Julie Fowlis
