@@ -60,6 +60,7 @@ https://github.com/PaulStoffregen/OctoWS2811/tree/master/extras
     - Audio playback removed
     - Header changed. It's still 5 bytes but the format is the following:
     [0]: should be "*" or 0x2A to designate the start of an image frame
+         0x7E to designate the end of the movie file
     [1-2]: the image size. this should match LED_WIDTH * LED_HEIGHT. 
            ex. [0x02 0x00] = 2*256+0 = 512 LEDs per frame, or 64 width * 8
            ex. [0x05 0x50] = 5*256 + 80 = 1360 LEDs per frame, or 170 width * 8
@@ -78,10 +79,12 @@ https://github.com/PaulStoffregen/OctoWS2811/tree/master/extras
 #include <SD.h>
 #include <Wire.h>
 
-#define LED_WIDTH    170   // number of LEDs horizontally
-#define LED_HEIGHT   8   // number of LEDs vertically (must be multiple of 8)
+#define LED_WIDTH    200   // number of LEDs horizontally
+#define LED_HEIGHT   2   // number of LEDs vertically (must be multiple of 8)
 
-#define FILENAME     "output.bin"
+#define FILENAME     "output-200x2.bin"
+
+#define DELAY_WHEN_RELOADING_FILE = 2000
 
 const int ledsPerStrip = LED_WIDTH * LED_HEIGHT / 8;
 DMAMEM int displayMemory[ledsPerStrip*6];
@@ -162,15 +165,19 @@ void loop()
       Serial.printf("my header: %u %u %u %u %u\n", header[0], header[1], header[2], header[3], header[4]);
       if (header[0] == '*') {
         // found an image frame
-        // unsigned int size = (header[1] | (header[2] << 8)) * 3;
-        unsigned int size = 3*LED_WIDTH*LED_HEIGHT;
-        // unsigned int usec = header[3] | (header[4] << 8);
-        unsigned int usec = 33333; // 30.0 fps
+        unsigned int size = (header[1] | (header[2] << 8)) * 3;
+        
+        // note that we could just use LED_WIDTH and LED_HEIGHT here, but this
+        // will tell us about read errors when the data encoded doesn't match
+        // the constants in this file.
+        // unsigned int size = 3*LED_WIDTH*LED_HEIGHT;
+        unsigned int usec = header[3] | (header[4] << 8);
+        // same deal, we could hardcode usec here but might as well save it in the heade
+        // unsigned int usec = 33333; // 30.0 fps
         // unsigned int usec = 10000; // 100 fps
         // unsigned int usec = 4166; // 240 fps
         unsigned int readsize = size;
-        Serial.printf("size calc: %u %u == %u\n", header[1], header[2], size);
-	      Serial.printf("size and usec: %u %u\n", size, usec);
+        // Serial.printf("size and usec: %u %u\n", size, usec);
         if (readsize > sizeof(drawingMemory)) {
           readsize = sizeof(drawingMemory);
         }
@@ -188,6 +195,9 @@ void loop()
         if (readsize < size) {
           sd_card_skip(size - readsize);
         }
+      } else if (header[0] == 0x7E) {
+        Serial.println("end-of-file detected.");
+        return;
       } else {
         error("unknown header");
         return;
@@ -197,7 +207,7 @@ void loop()
       return;
     }
   } else {
-    delay(2000);
+    delay(DELAY_WHEN_RELOADING_FILE);
     videofile = SD.open(FILENAME, FILE_READ);
     if (videofile) {
       Serial.println("File opened");
