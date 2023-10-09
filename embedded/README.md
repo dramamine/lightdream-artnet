@@ -53,4 +53,25 @@ Upload this source file to your Teensy. You can do this using [Teensyduino](http
 You can check the Serial monitor once your script is running to confirm you don't see any error messages. A common error you might see is "unable to read header"; this can happen if there's a mismatch between your stated data size (LED_WIDTH * LED_HEIGHT) and the data size actually present in `output.bin`.
 
 
-### More data: 170 x 16 LEDs and beyond
+### More data: sending more than 170 LEDs per strand (up to 8 strands)
+
+Say you've got fixtures with more than 170 pixels that you want to treat as one strand on your Teensy:
+https://i.imgur.com/OMnzS34.png
+
+This requires 2 universes worth of data to send.
+https://i.imgur.com/BjXOalP.png
+
+Make sure each strand starts with the correct universe. Here I've got Lumiverse 1 sending to universes 0-1, and Lumiverse 2 sending to universes 2-3, etc. up to Lumiverse 8 sending to universes 14-15.
+https://i.imgur.com/HFRH2az.png
+
+In Lightjams, we'd set our number of universes correctly to match the total outputted data.
+
+In our script we'd run:
+
+```bash
+python video2sdcard.py lightjams.mp4 --width=200 --height==8 --fps=30.0 --output=output.bin
+```
+
+Where 2 matches the number of strands to output (not the total # of universes) - the script will validate the # of universes per strand based on the given width and the video frames provided.
+
+This works best when sending to 8 strands (you can send blank data to unused strands)
